@@ -1,23 +1,23 @@
-const baseUrl = process.env.BASE_URL; 
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function fetchUsersPerMonth(){ 
+const baseUrl = process.env.BASE_URL;
 
-
+export async function fetchContractsPerMonth(){
   try {
-    const response = await fetch(`${baseUrl}/api/dashboard/users/`, {
+    const response = await fetch(`${baseUrl}/api/dashboard/contracts/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    const textResponse = await response.text();
+    const textResponse = await response.json();
     console.log('Backend response:', textResponse, 'Status:', response.status);
 
     if (!response.ok) {
       try {
         const errorData = JSON.parse(textResponse);
-        console.error('Error fetching users:', errorData.detail || '404 response was not ok');
+        console.error('Error fetching contracts:', errorData.detail || 'Network response was not ok');
         return null;
       } catch (e) {
 
@@ -25,12 +25,11 @@ export async function fetchUsersPerMonth(){
         return null;
       }
     }
-
     const result = JSON.parse(textResponse);
-    console.log('Fetched users per month successfully:', result);
+    console.log('Fetched contracts per month successfully:', result);
     return result;
   } catch (error) {
-    console.error('Error during fetching users:', error);
+    console.error('Error during fetching contracts:', error);
     return null;
   }
 }

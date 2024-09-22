@@ -1,10 +1,15 @@
 const baseUrl = process.env.BASE_URL; 
 
-export async function fetchUsersPerMonth(){ 
 
+export async function fetchPaymentsPerMonth(){
+  
+  if (!baseUrl) {
+    console.error('BASE_URL is not defined in the environment variables.');
+    return null;
+  }
 
   try {
-    const response = await fetch(`${baseUrl}/api/dashboard/users/`, {
+    const response = await fetch(`${baseUrl}/api/dashboard/transactions/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -17,20 +22,20 @@ export async function fetchUsersPerMonth(){
     if (!response.ok) {
       try {
         const errorData = JSON.parse(textResponse);
-        console.error('Error fetching users:', errorData.detail || '404 response was not ok');
+        console.error('Error fetching ongoing payments:', errorData.detail || 'Network response was not ok');
         return null;
       } catch (e) {
-
+    
         console.error('Unexpected response format from backend:', textResponse);
         return null;
       }
     }
 
     const result = JSON.parse(textResponse);
-    console.log('Fetched users per month successfully:', result);
+    console.log('Fetched ongoing payments per month successfully:', result);
     return result;
   } catch (error) {
-    console.error('Error during fetching users:', error);
+    console.error('Error during fetching ongoing payments:', error);
     return null;
   }
 }

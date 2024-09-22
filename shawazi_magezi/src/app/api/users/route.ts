@@ -4,7 +4,7 @@ export async function fetchUsersPerMonth(){
 
 
   try {
-    const response = await fetch(`${baseUrl}/api/dashboard/users/`, {
+    const response = await fetch(`${baseUrl}/api/count/users/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

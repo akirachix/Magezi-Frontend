@@ -4,7 +4,7 @@ const baseUrl = process.env.BASE_URL;
 
 export async function fetchContractsPerMonth(){
   try {
-    const response = await fetch(`${baseUrl}/api/dashboard/contracts/`, {
+    const response = await fetch(`${baseUrl}/api/count/contracts/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

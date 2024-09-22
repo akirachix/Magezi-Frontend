@@ -9,7 +9,7 @@ export async function fetchPaymentsPerMonth(){
   }
 
   try {
-    const response = await fetch(`${baseUrl}/api/dashboard/transactions/`, {
+    const response = await fetch(`${baseUrl}/api/count/payments/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

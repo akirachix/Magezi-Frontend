@@ -32,7 +32,7 @@ const SideBar = () => {
         { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/contracts' },
         { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/payments' },
         { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/users' },
-        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/users' },
+        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
     ];
 
     const toggleMenu = () => {

@@ -7,13 +7,22 @@ import React from 'react';
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex min-h-screen">
+<<<<<<< HEAD
             <div>
                
+=======
+    <Layout>
+    <div>
+              
+>>>>>>> dev
             </div>
 
             <div className="flex-grow p-4">
                 {children}
             </div>
-        </div>
+
+      </Layout>
+           
+      </div>
     );
 }

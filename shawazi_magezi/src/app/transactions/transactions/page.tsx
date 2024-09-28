@@ -1,16 +1,16 @@
 "use client";
-import { formatDate } from "@/app/util/formatDate";
+import { formatDate } from "@/app/utils/formatDate";
 import Link from "next/link";
 import ProgressBar from "@/app/components/Progressbar";
 import useTransactions from "@/app/hooks/useTransactions";
-import Sidebar from "@/app/components/Sidebar";
+import SideBarPwa from "@/app/components/SideBarPwa";
 
 const TransactionsDisplay = () => {
   const { transactions, isLoading, error } = useTransactions();
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white">
-      <Sidebar />
+      <SideBarPwa />
       <div className="flex-grow p-6  md:mr-4 lg:mr-0">
         <header className="flex justify-center items-center p-4 w-full max-w-5xl">
           <h1 className="text-center text-xl md:text-2xl lg:text-4xl font-bold text-primary mt-[-50px]">

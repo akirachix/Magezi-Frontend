@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { fetchTransaction } from '../util/fetchTransaction';
+import { fetchTransaction } from '../utils/fetchTransaction';
 
 interface Transaction {
     name: string;

@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import { MdFileUpload } from "react-icons/md";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { postTransaction } from "@/app/util/postTransaction";
-import { fetchTransaction } from "@/app/util/fetchTransaction";
-import { formatDate } from "@/app/util/formatDate";
-import Sidebar from "@/app/components/Sidebar";
+import { postTransaction } from "@/app/utils/postTransaction";
+import { fetchTransaction } from "@/app/utils/fetchTransaction";
+import { formatDate } from "@/app/utils/formatDate";
 import Cookies from "js-cookie"; 
+import SideBarPwa from "@/app/components/SideBarPwa";
 
 interface Transaction {
   name: string;
@@ -90,7 +90,7 @@ const TransactionsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
-      <Sidebar />
+      <SideBarPwa />
       <div className="flex-1 p-4 sm:p-8 lg:p-16 overflow-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-primary text-center">
           Transactions

@@ -12,7 +12,7 @@ const SecureTransactions = () => {
           alt="Secure Land Transactions"
           width={450}
           height={450}
-          className="max-w-full h-auto"  // Image scales responsively
+          className="max-w-full h-auto"  
         />
       </div>
 

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
-// import SellerPage from '../../seller/page';
+
 
 const SecureLandTransactions = () => {
   return (
@@ -12,7 +12,7 @@ const SecureLandTransactions = () => {
           alt="Secure Land Transactions"
           width={450}
           height={450}
-          className="max-w-full h-auto"  // Ensures the image scales with screen size
+          className="max-w-full h-auto"  
         />
       </div>
      

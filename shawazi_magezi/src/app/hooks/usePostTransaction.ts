@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { postTransaction } from '../util/postTransaction';
+import { postTransaction } from '../utils/postTransaction';
 
 const usePostTransaction = () => {
     const [message, setMessage] = useState<string>('');

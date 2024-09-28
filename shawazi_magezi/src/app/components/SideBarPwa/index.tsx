@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MdOutlineSettings } from "react-icons/md";
-import { HiMenu, HiX } from "react-icons/hi";
-import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa';
-import { BiLogOut } from "react-icons/bi";
+import { HiMenu, HiX } from "react-icons/hi"; 
+import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa'; 
+import { BiLogOut } from "react-icons/bi"; 
+
 const SideBar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
     const pathname = usePathname();
+
     useEffect(() => {
         const checkScreenSize = () => {
             const width = window.innerWidth;
@@ -18,20 +20,25 @@ const SideBar = () => {
                 setIsOpen(true);
             }
         };
+
         checkScreenSize();
         window.addEventListener('resize', checkScreenSize);
+
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
+
     const menuItems = [
         { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: '/' },
         { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/contracts' },
         { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/payments' },
         { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/users' },
-        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
+        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/users' },
     ];
+
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
     const sidebarContent = (
         <div className="flex flex-col h-full relative">
             <div className="flex items-left justify-between p-4">
@@ -41,6 +48,7 @@ const SideBar = () => {
                     className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
                 />
             </div>
+
             <nav className="flex-grow overflow-y-auto">
                 <ul className="space-y-6 px-4 py-8">
                     {menuItems.map((item) => (
@@ -60,6 +68,7 @@ const SideBar = () => {
                     ))}
                 </ul>
             </nav>
+
             <div className="mt-auto p-4">
                 <button
                     onClick={() => setShowSettings(!showSettings)}
@@ -92,8 +101,10 @@ const SideBar = () => {
             </div>
         </div>
     );
+
     return (
         <div className="relative">
+        
             <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
                 {!showSidebar && (
                     <button onClick={toggleMenu} className="focus:outline-none">
@@ -106,22 +117,21 @@ const SideBar = () => {
                 )}
                 <span className="ml-4 text-lg font-semibold text-[#562B00]"></span>
             </div>
+
+          
             <div
-                className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out
+                className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
                 ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r border-gray-300 shadow-[4px_0px_10px_-2px_rgba(87,_50,_0,_0.5)] z-40`}
             >
                 {sidebarContent}
             </div>
+
+           
             <div className={`pt-16 ${showSidebar ? 'ml-64' : ''} transition-all duration-300`}>
+                
             </div>
         </div>
     );
 };
+
 export default SideBar;
-
-
-
-
-
-
-

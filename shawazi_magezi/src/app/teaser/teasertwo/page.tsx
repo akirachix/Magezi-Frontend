@@ -12,7 +12,7 @@ const SeamlessTransactions = () => {
           alt="Secure Land Transactions"
           width={400}
           height={400}
-          className="max-w-full h-auto"  // Image scales responsively
+          className="max-w-full h-auto"  
         />
       </div>
 

@@ -13,6 +13,7 @@ const config: Config = {
         foreground: "#E4960E",
         primary: "#3E1C00",
         secondary: "#E4960E",
+        customGreen: "#508408",
         hover: "#508408",
         white: "#FFFFFF",
       },

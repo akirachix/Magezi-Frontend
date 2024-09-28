@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Sidebar from "../components/Sidebar";
+
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex min-h-screen">
     <Layout>
     <div>
-                <Sidebar />
+              
             </div>
 
             <div className="flex-grow p-4">

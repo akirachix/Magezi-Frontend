@@ -9,6 +9,7 @@ const LandSearch = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
   const [parcelNumber, setParcelNumber] = useState<string>("");
+
   const { land, loading, error } = useLandData(parcelNumber);
 
   const handleSearch = useCallback(() => {
@@ -20,23 +21,37 @@ const LandSearch = () => {
 
   const handleClose = useCallback(() => {
     setShowModal(false);
-    setShowErrorModal(false); 
+    setShowErrorModal(false);
     setQuery("");
     setParcelNumber("");
   }, []);
 
-  useEffect(() => {
+  const handleRetry = useCallback(() => {
+    setShowErrorModal(false);
     if (parcelNumber) {
-      if (land) {
-        setShowModal(true);
-        setShowErrorModal(false);
-      } else if (!loading && !land) {
-        // This condition ensures the error modal is shown when the search is complete but no land is found
-        setShowErrorModal(true);
-        setShowModal(false);
-      }
+      handleSearch();
     }
-  }, [land, loading, parcelNumber]);
+  }, [handleSearch, parcelNumber]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | undefined;
+    if (parcelNumber) {
+      timeoutId = setTimeout(() => {
+        if (land) {
+          setShowModal(true);
+          setShowErrorModal(false);
+        } else if (error) {
+          setShowErrorModal(true);
+          setShowModal(false);
+        } else if (!loading && !land) {
+          setShowErrorModal(true);
+          setShowModal(false);
+        }
+      }, 50);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [land, loading, error, parcelNumber]);
 
   return (
     <div className="container mx-auto p-4 ml-4 mr-6 md:ml-6 lg:ml-8">
@@ -65,9 +80,11 @@ const LandSearch = () => {
       )}
 
       {showErrorModal && (
-        <SearchErrorModal onClose={handleClose} onRetry={function (): void {
-          throw new Error("Function not implemented.");
-        } } message={""} />
+        <SearchErrorModal
+          onClose={handleClose}
+          onRetry={handleRetry}
+          message={`The parcel number ${parcelNumber} does not match any land record. Please check the number and try again.`}
+        />
       )}
     </div>
   );

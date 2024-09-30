@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import Pusher from 'pusher-js';
+import { useEffect, useState } from 'react';
 
 export interface Message {
   id: string;
@@ -10,51 +10,40 @@ export interface Message {
 
 export const useChatMessages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:5001', {
-      reconnectionAttempts: 5,
-      transports: ['websocket'],
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '',
     });
 
-    socketRef.current.on('connect', () => {
-      console.log('Connected to server');
-      setIsLoaded(true);
-    });
+    const channel = pusher.subscribe('chat-channel');
 
-    socketRef.current.on('initial messages', (initialMessages: Message[]) => {
-      setMessages(initialMessages);
-    });
-
-    socketRef.current.on('new message', (newMessage: Message) => {
+    channel.bind('new-message', (newMessage: Message) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    socketRef.current.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-    });
-
     return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
+      channel.unbind_all();
+      channel.unsubscribe();
     };
   }, []);
 
-  const addMessage = async (content: string, sender: string) => {
-    if (!socketRef.current) return;
-
-    const newMessage = {
+  const addMessage = (content: string, sender: string) => {
+    const newMessage: Message = {
       id: Date.now().toString(),
       sender,
       content,
       timestamp: Date.now(),
     };
 
-    socketRef.current.emit('new message', newMessage);
+    fetch('/api/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newMessage),
+    });
   };
 
-  return { messages, addMessage, isLoaded };
+  return { messages, addMessage };
 };

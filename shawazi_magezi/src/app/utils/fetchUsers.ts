@@ -1,6 +1,4 @@
 const url = '/api/users';
-
-
 export const fetchUsers = async () => {
   try {
     const response = await fetch('/api/users'); 

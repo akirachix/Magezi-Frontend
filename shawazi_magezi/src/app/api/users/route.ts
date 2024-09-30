@@ -3,7 +3,7 @@ export async function GET() {
   console.log({baseUrl});
   
     try {
-      const response = await fetch(`${baseUrl}/api/users`, {
+      const response = await fetch(`api/users`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

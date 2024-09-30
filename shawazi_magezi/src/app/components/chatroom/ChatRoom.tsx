@@ -3,10 +3,11 @@ import { getCookie } from 'cookies-next';
 import { useChatMessages } from '../../hooks/useChatMessages';
 import { useScrollToBottom } from '../../hooks/useScrollToBottom';
 import { formatTimestamp } from '../../utils/dateUtils';
+import { Send, User } from 'lucide-react';
 import { useGetUsers } from '@/app/hooks/useGetUsers';
 import UserCard from '@/app/hooks/usersCard/UserCard';
 
-interface UserType {
+interface User {
     id: string;
     first_name: string;
     role: string;
@@ -25,8 +26,8 @@ const ChatRoom: React.FC = () => {
 
     const [inputMessage, setInputMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-    const [availableUsers, setAvailableUsers] = useState<UserType[]>([]);
-    const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+    const [availableUsers, setAvailableUsers] = useState<User[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const messagesEndRef = useScrollToBottom<HTMLDivElement>();
     const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
     const [currentUserName, setCurrentUserName] = useState<string | null>(null);
@@ -39,21 +40,24 @@ const ChatRoom: React.FC = () => {
 
     useEffect(() => {
         const userRole = getCookie('userRole');
-        const userName = getCookie('userName') || 'Gatweri'; 
-        setCurrentUserRole(userRole as string);
-        setCurrentUserName(userName as string);
+        const userName = getCookie('userName');
+
+        setCurrentUserRole(typeof userRole === 'string' ? userRole : null);
+        setCurrentUserName(typeof userName === 'string' ? userName : null);
     }, []);
 
     useEffect(() => {
-        if (!loading && !error) {
-            let filteredUsers: UserType[] = [];
-            if (currentUserRole === 'lawyer') {
-                filteredUsers = users.filter((user: { role: string; }) => user.role === 'buyer' || user.role === 'seller');
-            } else if (currentUserRole === 'buyer') {
-                filteredUsers = users.filter((user: { role: string; }) => user.role === 'seller');
-            } else if (currentUserRole === 'seller') {
-                filteredUsers = users.filter((user: { role: string; }) => user.role === 'buyer');
-            }
+        if (!loading && !error && Array.isArray(users)) {
+            let filteredUsers = users.filter((user) => {
+                if (currentUserRole === 'lawyer') {
+                    return user.role === 'buyer' || user.role === 'seller';
+                } else if (currentUserRole === 'buyer') {
+                    return user.role === 'seller';
+                } else if (currentUserRole === 'seller') {
+                    return user.role === 'buyer';
+                }
+                return false;
+            });
             setAvailableUsers(filteredUsers);
         }
     }, [loading, error, users, currentUserRole]);
@@ -69,9 +73,14 @@ const ChatRoom: React.FC = () => {
             setInputMessage('');
 
             setTimeout(() => {
-                const responseRole = currentUserRole === 'lawyer' ? selectedUser.role : 'lawyer';
-                const responseMessage = hardCodedMessages[responseRole][Math.floor(Math.random() * hardCodedMessages[responseRole].length)];
-                addMessage(responseMessage, selectedUser.first_name);
+                if (selectedUser && currentUserRole) {
+                    const responseRole = currentUserRole === 'lawyer' ? selectedUser.role : 'lawyer';
+                    const responseMessages = hardCodedMessages[responseRole as keyof typeof hardCodedMessages];
+                    if (responseMessages) {
+                        const responseMessage = responseMessages[Math.floor(Math.random() * responseMessages.length)];
+                        addMessage(responseMessage, selectedUser.first_name);
+                    }
+                }
             }, 1000);
         } catch (error) {
             console.error('Error sending message:', error);
@@ -91,17 +100,17 @@ const ChatRoom: React.FC = () => {
         return sender.toLowerCase().includes(searchTerm.toLowerCase()) || content.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    const startConversation = (user: UserType) => {
+    const startConversation = (user: User) => {
         setSelectedUser(user);
         console.log(`Starting conversation with ${user.first_name} (${user.role})`);
     };
 
     if (!isLoaded || loading) {
-        return <div>Loading...</div>;
+        return <div className="flex justify-center items-center h-full">Loading...</div>;
     }
 
     if (error) {
-        return <div>Error loading users: {error.message}</div>;
+        return <div className="flex justify-center items-center h-full">Error loading users: {error}</div>;
     }
 
     const getUserListTitle = () => {
@@ -118,86 +127,77 @@ const ChatRoom: React.FC = () => {
     };
 
     return (
-        <div className="flex bg-gray-100 font-jost h-[777px] w-full">
-            <div className="flex flex-1 max-w-7xl mx-auto px-2">
-                <div className="w-1/4 bg-white border-r border-gray-200 p-2 flex flex-col">
-                    <div className="mb-4">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search users..."
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
-                    <div className="flex-grow overflow-y-auto">
-                        <h2 className="font-semibold mt-4">
-                            {getUserListTitle()}
-                        </h2>
-
-                        {availableUsers.length > 0 ? (
-                            availableUsers.map((user) => (
-                                <UserCard 
-                                    key={user.id} 
-                                    user={user} 
-                                    startConversation={() => startConversation(user)} 
-                                />
-                            ))
-                        ) : (
-                            <p>No users available</p>
-                        )}
-                    </div>
+        <div className="flex flex-col md:flex-row bg-gray-100 font-jost h-screen">
+            <div className="flex flex-col w-full md:w-1/4 bg-white border-r border-gray-200 p-4 shadow-md">
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search users..."
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+                    />
                 </div>
+                <h2 className="font-semibold mt-4">
+                    {getUserListTitle()}
+                </h2>
+                <div className="flex-grow overflow-y-auto mt-2">
+                    {availableUsers.length > 0 ? (
+                        availableUsers.map((user) => (
+                            <UserCard 
+                                key={user.id} 
+                                user={user} 
+                                startConversation={() => startConversation(user)} 
+                            />
+                        ))
+                    ) : (
+                        <p className="text-gray-500">No users available</p>
+                    )}
+                </div>
+            </div>
 
-                <div className="flex flex-col flex-grow">
-                    <header className="bg-white shadow-sm p-3 flex items-center">
-                        <h1 className="text-xl font-semibold text-green-700">
-                            {selectedUser ? `Chat with ${selectedUser.first_name} (${selectedUser.role})` : 'Select a user to chat'}
-                        </h1>
-                    </header>
+            <div className="flex flex-col flex-grow w-full">
+                <header className="bg-white shadow-sm p-3 flex items-center border-b border-gray-200">
+                    <h1 className="text-xl font-semibold text-green-700 flex-1">
+                        {selectedUser ? `Chat with ${selectedUser.first_name} (${selectedUser.role})` : 'Select a user to chat'}
+                    </h1>
+                    <User size={24} className="text-green-700" />
+                </header>
 
-                    <main className="flex-1 overflow-y-auto p-4 bg-gray-50" ref={messagesEndRef}>
-                        {filteredMessages.map((message) => (
-                            <div key={message.id} className={`mb-4 ${message.sender === currentUserName ? 'flex justify-end' : 'flex justify-start'}`}>
-                                <div className={`max-w-[70%] p-2 rounded-lg ${
-                                    message.sender === currentUserName 
-                                    ? 'bg-blue-500 text-white' 
-                                    : 'bg-gray-200 text-gray-800'
-                                }`}>
-                                    <p className="font-semibold">{message.sender}</p>
-                                    <p>{message.content}</p>
-                                    <p className={`text-xs ${
-                                        message.sender === currentUserName 
-                                        ? 'text-blue-200' 
-                                        : 'text-gray-500'
-                                    }`}>
-                                        {formatTimestamp(message.timestamp)}
-                                    </p>
+                <main className="flex-1 overflow-y-auto p-4 bg-gray-50 ">
+                    {filteredMessages.map((message: MessageType) => (
+                        <div key={message.id} ref={messagesEndRef} className={`flex ${message.sender === currentUserName ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`p-2 rounded-lg shadow-md mb-2 ${message.sender === currentUserName ? 'bg-green-600 text-white' : 'bg-gray-400 text-black'}`}>
+                                <div className="text-sm">
+                                    {message.sender} <span className="text-xs text-gray-600">{formatTimestamp(message.timestamp)}</span>
                                 </div>
+                                <div>{message.content}</div>
                             </div>
-                        ))}
-                    </main>
+                        </div>
+                    ))}
+                </main>
 
-                    <footer className="bg-white p-4 flex">
-                        <input
-                            type="text"
-                            value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            placeholder="Type your message..."
-                            className="flex-1 p-2 border rounded"
-                        />
-                        <button 
-                            onClick={handleSendMessage} 
-                            className="ml-2 bg-green-500 text-white p-2 rounded"
-                        >
-                            Send
-                        </button>
-                    </footer>
-                </div>
+                <footer className="p-4 bg-white border-t border-gray-200 flex items-center">
+                    <input
+                        type="text"
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Type your message..."
+                        className="flex-grow p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+                    />
+                    <button
+                        onClick={handleSendMessage}
+                        className="ml-2 p-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                        <Send size={24} />
+                    </button>
+                </footer>
             </div>
         </div>
     );
 };
 
 export default ChatRoom;
+
+

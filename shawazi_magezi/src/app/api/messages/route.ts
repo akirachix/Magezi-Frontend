@@ -12,7 +12,6 @@ const pusher = new Pusher({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { id, sender, content, timestamp } = req.body;
-
     try {
       await pusher.trigger('chat-channel', 'new-message', {
         id,

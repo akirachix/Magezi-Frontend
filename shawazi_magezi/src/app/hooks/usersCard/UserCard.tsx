@@ -1,5 +1,6 @@
-import {UserData } from "@/hooks/useGetUsers";
+import { UserData } from "../useGetUsers";
 import React from "react";
+
 interface UserCardDetails {
     user: UserData;
     startConversation: () => void; 

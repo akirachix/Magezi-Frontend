@@ -1,4 +1,4 @@
-import { io } from 'socket.io-client';
+import Pusher from 'pusher-js';
 
 export interface Message {
   id: string;
@@ -7,51 +7,66 @@ export interface Message {
   timestamp: number;
 }
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5001';
-
-const socket = io(SOCKET_URL, {
-  transports: ['websocket'], 
-  reconnectionAttempts: 5, 
-  reconnectionDelayMax: 10000,
+// Initialize Pusher
+const pusher = new Pusher('PUSHER_APP_KEY', {
+  cluster: 'PUSHER_CLUSTER',
 });
 
-export const sendMessage = (content: string, sender: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    if (!content || !sender) {
-      return reject('Content and sender are required');
-    }
+const channel = pusher.subscribe('chat-channel');
 
-    socket.emit('new message', { content, sender }, (error: any) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
+export const sendMessage = async (content: string, sender: string): Promise<void> => {
+  await fetch('http://localhost:5001/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ content, sender }),
   });
 };
 
-export const fetchMessages = (): Promise<Message[]> => {
-  return new Promise((resolve, reject) => {
-    socket.on('initial messages', (messages: Message[]) => {
-      resolve(messages);
-    });
-
-    socket.on('connect_error', (error: any) => {
-      reject(error);
-    });
-  });
+export const fetchMessages = async (): Promise<Message[]> => {
+  const response = await fetch('http://localhost:5001/messages');
+  return response.json();
 };
 
 export const onNewMessage = (callback: (message: Message) => void) => {
-  socket.on('new message', callback);
-
-  return () => {
-    socket.off('new message', callback);
-  };
+  channel.bind('new-message', callback);
 };
 
-socket.on('disconnect', () => {
-  console.warn('Socket disconnected. Attempting to reconnect...');
-});
+
+
+
+
+// import { io } from 'socket.io-client';
+
+// export interface Message {
+//   id: string;
+//   sender: string;
+//   content: string;
+//   timestamp: number;
+// }
+
+// const socket = io('http://localhost:5001');
+
+// export const sendMessage = (content: string, sender: string): Promise<void> => {
+//   return new Promise((resolve) => {
+//     socket.emit('new message', { content, sender });
+//     resolve();
+//   });
+// };
+
+// export const fetchMessages = (): Promise<Message[]> => {
+//   return new Promise((resolve) => {
+//     socket.on('initial messages', (messages: Message[]) => {
+//       resolve(messages);
+//     });
+//   });
+// };
+
+// export const onNewMessage = (callback: (message: Message) => void) => {
+//   socket.on('new message', callback);
+// };
+
+
+
 

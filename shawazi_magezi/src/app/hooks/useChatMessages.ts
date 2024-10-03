@@ -1,46 +1,77 @@
-// useChatMessages.ts
 import { useState, useEffect } from 'react';
 import Pusher from 'pusher-js';
+import { v4 as uuidv4 } from 'uuid';
+
+interface Message {
+  id: string;
+  content: string;
+  sender: string;
+  receiverId: string;
+  role: string;
+  timestamp: string;
+}
 
 const useChatMessages = (currentUserId: string, currentUserRole: string) => {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  // Initialize Pusher and subscribe to the channel
   useEffect(() => {
-    const pusher = new Pusher('YOUR_PUSHER_KEY', {
-      cluster: 'YOUR_CLUSTER',
+    const savedMessages = localStorage.getItem('messages');
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    }
+
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
 
     const channel = pusher.subscribe('chat-channel');
-    channel.bind('new-message', (data: any) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+    channel.bind('new-message', (data: Message) => {
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages, data];
+        localStorage.setItem('messages', JSON.stringify(updatedMessages));
+        return updatedMessages;
+      });
     });
 
     return () => {
-      pusher.unsubscribe('chat-channel');
+      channel.unbind_all();
+      channel.unsubscribe();
+      pusher.disconnect();
     };
   }, []);
 
-  // Function to send a message
-  const sendMessage = async (message: string, receiverId: string) => {
-    const newMessage = {
-      message,
-      senderId: currentUserId,
+  const sendMessage = async (content: string, receiverId: string) => {
+    const newMessage: Message = {
+      id: uuidv4(),
+      content,
+      sender: currentUserId,
       receiverId,
       role: currentUserRole,
+      timestamp: new Date().toISOString(),
     };
 
-    // Send the message to the backend
     try {
-      await fetch('http://localhost:5000/messages', {
+      const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newMessage),
       });
+
+      if (!response.ok) {
+        throw new Error(`Error sending message: ${response.statusText}`);
+      }
+
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages, newMessage];
+        localStorage.setItem('messages', JSON.stringify(updatedMessages));
+        return updatedMessages;
+      });
+
     } catch (error) {
       console.error('Error sending message:', error);
+      throw error; 
     }
   };
 
@@ -54,54 +85,3 @@ export default useChatMessages;
 
 
 
-
-
-
-
-
-
-// import { useState, useEffect } from 'react';
-// import Pusher from 'pusher-js'; 
-// import { Message, sendMessage, fetchMessages, onNewMessage } from '../utils/chatUtils';
-
-// export const useChatMessages = () => {
-//   const [messages, setMessages] = useState<Message[]>([]);
-//   const [error, setError] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     const initializeMessages = async () => {
-//       try {
-//         const initialMessages = await fetchMessages();
-//         setMessages(initialMessages);
-//       } catch (error) {
-//         console.error('Error fetching messages:', error);
-//         setError('Failed to fetch messages');
-//       }
-//     };
-//     initializeMessages();
-//     const pusher = new Pusher('PUSHER_APP_KEY', {
-//       cluster: 'PUSHER_CLUSTER',
-//     });
-
-//     const channel = pusher.subscribe('chat-channel');
-//     channel.bind('new-message', (newMessage: Message) => {
-//       setMessages((prevMessages) => [...prevMessages, newMessage]);
-//     });
-
-//     return () => {
-//       pusher.unsubscribe('chat-channel');
-//       pusher.disconnect();
-//     };
-//   }, []);
-
-//   const addMessage = async (content: string, sender: string) => {
-//     try {
-//       await sendMessage(content, sender);
-//     } catch (error) {
-//       console.error('Error sending message:', error);
-//       setError('Failed to send message');
-//     }
-//   };
-
-//   return { messages, addMessage, error };
-// };

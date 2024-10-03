@@ -6,7 +6,7 @@ import ChatRoom from './components/chatroom/ChatRoom';
 
 const ChatRoomPage = () => {
     useEffect(() => {
-        setCookie('userRole', 'buyer', { maxAge: 60 * 60 * 24 * 7 }); 
+        setCookie('userRole', 'lawyer', { maxAge: 60 * 60 * 24 * 7 }); 
     }, []);
 
     return <ChatRoom />;

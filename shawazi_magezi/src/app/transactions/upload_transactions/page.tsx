@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { MdFileUpload } from "react-icons/md";
 import Link from "next/link";
+import Image from "next/image";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { postTransaction } from "@/app/utils/postTransaction";
 import { fetchTransaction } from "@/app/utils/fetchTransaction";
@@ -24,13 +25,12 @@ const TransactionsPage: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [agreementId, setAgreementId] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
-  const [userType, setUserType] = useState<string>("buyer"); // Default to buyer
+  const [userType, setUserType] = useState<string>("buyer"); 
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -90,7 +90,7 @@ const TransactionsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
-      <SideBarPwa />
+      <SideBarPwa userRole={""} />
       <div className="flex-1 p-4 sm:p-8 lg:p-16 overflow-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-primary text-center">
           Transactions
@@ -154,17 +154,7 @@ const TransactionsPage: React.FC = () => {
               </button>
             </form>
           </div>
-          {uploadProgress !== null && (
-            <div className="mt-2">
-              <p>Uploading: {uploadProgress}%</p>
-              <div className="bg-gray-300 h-2 rounded">
-                <div
-                  className="bg-hover h-full"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-            </div>
-          )}
+      
         </div>
         
         {userType === "seller" && (
@@ -174,7 +164,7 @@ const TransactionsPage: React.FC = () => {
               {transactions.map((transaction, idx) => (
                 transaction.sellerUploaded && transaction.sellerImageUrl && (
                   <div key={idx} className="border rounded-lg p-2">
-                    <img
+                    <Image
                       src={transaction.sellerImageUrl}
                       alt={`Uploaded image for transaction ${idx + 1}`}
                       className="w-full h-auto rounded-md"
@@ -203,8 +193,8 @@ const TransactionsPage: React.FC = () => {
             <tbody>
               {transactions.length > 0 ? (
                transactions
-               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by date descending
-               .slice(0, 4) // Get the latest 4 transactions
+               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+               .slice(0, 4) 
                .map((transaction, idx) => (
                   <tr key={idx} className="border-b border-primary">
                     <td className="p-2">{formatDate(transaction.date)}</td>

@@ -5,7 +5,7 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails } from "../utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import SideBar from "../components/SideBarPwa";
-import LandSearch from "../components/searchbar";
+import LandSearch from "../components/Searchbar";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;

@@ -2,7 +2,6 @@ import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
 
-
 const SecureLandTransactions = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
@@ -27,9 +26,13 @@ const SecureLandTransactions = () => {
       </p>
 
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-96 mb-8">
+      
+      <Link href="/register">
         <button className="w-full sm:w-48 px-6 py-2 border-2 border-hover text-hover rounded-lg hover:bg-green-50">
           Skip
         </button>
+        </Link>
+
         <Link href="/teaser/teasertwo">
           <button className="w-full sm:w-48 px-6 py-2 bg-hover text-white rounded-lg hover:bg-secondary">
             Next

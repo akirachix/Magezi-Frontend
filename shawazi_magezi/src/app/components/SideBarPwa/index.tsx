@@ -10,6 +10,7 @@ import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-
 import { BiLogOut } from "react-icons/bi"; 
 import Image from 'next/image'; 
 
+
 interface SideBarProps {
   userRole: string;
 }

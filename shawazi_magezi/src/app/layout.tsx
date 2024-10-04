@@ -1,4 +1,3 @@
-
 // app/layout.tsx or equivalent
 
 import type { Metadata } from "next";
@@ -30,9 +29,6 @@ export const viewport = {
   initialScale: 1,
   minimumScale: 1,
 };
-
-// New export for themeColor
-export const themeColor = "#000000";
 
 export default function RootLayout({
   children,

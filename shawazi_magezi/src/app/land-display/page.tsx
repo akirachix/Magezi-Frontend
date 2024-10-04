@@ -1,6 +1,5 @@
 "use client";
 import { SetStateAction, useEffect, useState } from "react";
-import Link from "next/link";
 import useDisplayLand from "../hooks/useDisplayLand";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails } from "../utils/types";
@@ -50,9 +49,18 @@ function LandDetailsList() {
   };
 
   const mapContainerStyle = {
-    width: "110%",
+    width: "100%",
     height: "250px",
   };
+
+  const handleInterestClick = (land: LandDetails) => {
+    const notificationData = {
+        message: `A buyer is interested in ${land.location_name}!`,
+        timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
+    alert("Notification sent to seller!"); 
+};
 
   return (
     <div
@@ -138,7 +146,7 @@ function LandDetailsList() {
                       <span className="font-semibold">Address:</span>{" "}
                       {land.address}
                     </p>
-                    <button className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700">
+                    <button onClick={() => handleInterestClick(land)} className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700">
                       Interested
                     </button>
                   </div>
@@ -179,7 +187,7 @@ function LandDetailsList() {
         </div>
       </div>
 
-      <SideBar />
+      <SideBar userRole={""} />
     </div>
   );
 }

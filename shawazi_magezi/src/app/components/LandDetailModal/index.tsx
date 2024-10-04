@@ -12,13 +12,12 @@ interface LandDetailsModalProps {
 
 const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) => {
   useEffect(() => {
-    // Check if API key is loaded
     console.log("Google Maps API Key:", process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
   }, []);
 
   if (!land || !land.latitude || !land.longitude) {
     console.error("Invalid land details or missing latitude/longitude.");
-    return null; // Early return if the data is invalid
+    return null; 
   }
 
   const containerStyle = {
@@ -30,6 +29,15 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
     return dateStr ? new Date(dateStr).toLocaleDateString() : "N/A";
   };
 
+  const handleInterestClick = (land: LandDetails) => {
+    const notificationData = {
+        message: `A buyer is interested in ${land.location_name}!`,
+        timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
+    alert("Notification sent to seller!"); 
+};
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-3xl mx-auto relative h-[80vh] w-[80vw] overflow-auto">
@@ -40,9 +48,7 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
         >
           <MdClose className="h-6 w-6 text-gray-500 hover:text-black" />
         </button>
-
         <h2 className="text-2xl font-bold mb-6">Land Details</h2>
-
         <div className="h-72 mb-4 border-4 border-blue-500 rounded-lg overflow-hidden">
           <LoadScript
             googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
@@ -51,16 +57,14 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
           >
             <GoogleMap
               mapContainerStyle={containerStyle}
-              center={{ lat: Number(land.latitude), lng: Number(land.longitude) }} 
+              center={{ lat: Number(land.latitude), lng: Number(land.longitude) }}
               zoom={13}
               onLoad={() => console.log('Google Map loaded')}
-              onError={() => console.error('Error loading Google Map')}
             >
               <Marker position={{ lat: Number(land.latitude), lng: Number(land.longitude) }} />
             </GoogleMap>
           </LoadScript>
         </div>
-
         <div className="text-xl leading-relaxed space-y-4">
           <p><strong>Location:</strong> {land.location_name || "N/A"}</p>
           <p><strong>Parcel Number:</strong> {land.parcel_number || "N/A"}</p>
@@ -70,8 +74,7 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
           <p><strong>Address:</strong> {land.address || "N/A"}</p>
           <p><strong>National ID:</strong> {land.national_id || "N/A"}</p>
         </div>
-
-        <button className="bg-foreground hover:bg-primary text-white font-bold py-2 px-4 rounded mt-4">
+        <button onClick={() => handleInterestClick(land)} className="bg-foreground hover:bg-primary text-white font-bold py-2 px-4 rounded mt-4">
           Interested
         </button>
       </div>
@@ -80,12 +83,3 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
 };
 
 export default LandDetailsModal;
-
-
-
-
-
-
-
-
-

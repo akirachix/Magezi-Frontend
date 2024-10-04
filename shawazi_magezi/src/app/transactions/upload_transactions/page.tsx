@@ -25,13 +25,12 @@ const TransactionsPage: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [image, setImage] = useState<File | null>(null);
   const [agreementId, setAgreementId] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
-  const [userType, setUserType] = useState<string>("buyer"); // Default to buyer
+  const [userType, setUserType] = useState<string>("buyer"); 
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -91,7 +90,7 @@ const TransactionsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
-      <SideBarPwa />
+      <SideBarPwa userRole={""} />
       <div className="flex-1 p-4 sm:p-8 lg:p-16 overflow-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-primary text-center">
           Transactions
@@ -155,7 +154,7 @@ const TransactionsPage: React.FC = () => {
               </button>
             </form>
           </div>
-          
+      
         </div>
         
         {userType === "seller" && (
@@ -194,8 +193,8 @@ const TransactionsPage: React.FC = () => {
             <tbody>
               {transactions.length > 0 ? (
                transactions
-               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by date descending
-               .slice(0, 4) // Get the latest 4 transactions
+               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+               .slice(0, 4) 
                .map((transaction, idx) => (
                   <tr key={idx} className="border-b border-primary">
                     <td className="p-2">{formatDate(transaction.date)}</td>

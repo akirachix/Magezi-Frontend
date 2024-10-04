@@ -1,5 +1,4 @@
 
-
 const baseUrl = process.env.BASE_URL;
 
 export async function GET(request: Request) {
@@ -21,7 +20,6 @@ export async function GET(request: Request) {
       );
     }
 
-  
     const params = new URLSearchParams();
     if (parcel_number) params.append('parcel_number', parcel_number);
     if (pk) params.append('pk', pk);

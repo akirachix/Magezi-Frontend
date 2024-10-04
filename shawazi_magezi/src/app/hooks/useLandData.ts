@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LandDetails } from '../utils/types';
-import { fetchLandDetails } from '../utils/getLandDetails'; 
+import { fetchLandDetails } from '../utils/getLandDetails';
+
 
 export const useLandData = (parcelNumber: string) => {
   const [land, setLandDetails] = useState<LandDetails | null>(null);
@@ -13,8 +14,10 @@ export const useLandData = (parcelNumber: string) => {
       setError(null);
 
       try {
+
         const data = await fetchLandDetails(parcelNumber);
         setLandDetails(data);  
+
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error('Error fetching land details:', err.message);

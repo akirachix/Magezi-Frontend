@@ -111,7 +111,9 @@ const Transactionss = () => {
         </table>
         
       </div>
+
       <SideBar userRole={""} />
+
     </div>
   );
 };

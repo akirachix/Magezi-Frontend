@@ -3,12 +3,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { MdOutlineSettings } from "react-icons/md";
 import { HiMenu, HiX } from "react-icons/hi"; 
 import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa'; 
 import { BiLogOut } from "react-icons/bi"; 
-import Image from 'next/image'; 
+
 
 
 interface SideBarProps {
@@ -56,7 +57,9 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
         <div className="flex flex-col h-full relative">
             <div className="flex items-left justify-between p-4">
                 <Image
+
                     src="/images/shawazilogo.png" 
+
                     alt="Shawazi Logo"
                     className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
                     width={80}

@@ -205,9 +205,12 @@ const Signup = () => {
             {loading ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
-        <p className="text-center text-sm mt-4">
-          Already have an account? <Link href="/login" className="text-primary underline">Log In</Link>
-        </p>
+        <div className="mt-8 text-center text-lg sm:text-xl">
+          <span className="text-primary">Already have an account? </span>
+            <Link href="./login/" className="font-medium text-foreground hover:text-secondary hover:underline">
+                Log In
+            </Link>
+        </div>
       </div>
     </div>
   );

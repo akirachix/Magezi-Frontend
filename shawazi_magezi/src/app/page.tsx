@@ -10,9 +10,7 @@ const Home = () => {
 
     setCookie("userRole", "lawyer", { maxAge: 60 * 60 * 24 * 7 });
     setCookie("userName", "Gatweri", { maxAge: 60 * 60 * 24 * 7 });
-  }, [])
-
-
+  }, []);
 
   return (
     <div>

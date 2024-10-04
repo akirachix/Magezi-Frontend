@@ -1,4 +1,4 @@
-import { ResetPasswordData, UserLogin } from "./types";
+import {  UserLogin } from "./types";
 
 export const loginUser = async (data: UserLogin) => {
     try {
@@ -22,24 +22,3 @@ export const loginUser = async (data: UserLogin) => {
     }
 };
 
-export const resetPassword = async (data: ResetPasswordData) => {
-    try {
-        const response = await fetch('/api/reset-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'An error occurred while resetting password.');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Reset password error:", error);
-        throw error; 
-    }
-};

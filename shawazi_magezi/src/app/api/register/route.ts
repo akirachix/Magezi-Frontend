@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 const baseUrl = process.env.BASE_URL;
 export async function POST(request: NextRequest) {
   if (!baseUrl) {
@@ -26,7 +25,7 @@ export async function POST(request: NextRequest) {
     });
     const textResponse = await response.text();
     console.log('Backend response:', textResponse, 'Status:', response.status);
-    // Handle non-OK responses
+
     if (!response.ok) {
       return NextResponse.json(
         { error: textResponse || 'Register failed. Invalid credentials.' },

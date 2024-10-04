@@ -13,8 +13,10 @@ export const useLandData = (parcelNumber: string) => {
       setError(null);
 
       try {
-        // const data = await fetchLandDetails(parcelNumber);
-        setLandDetails(null);
+
+        const data = await fetchLandDetails(parcelNumber);
+        setLandDetails(data);  
+
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error('Error fetching land details:', err.message);
@@ -31,9 +33,28 @@ export const useLandData = (parcelNumber: string) => {
     if (parcelNumber) {
       loadLandDetails();
     }
-  }, [parcelNumber]); 
+  }, [parcelNumber]);
 
   return { land, loading, error, setError };
 };
 
 export default useLandData;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

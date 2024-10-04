@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - name: List files in shawazi_magezi directory
+        working-directory: ./shawazi_magezi  
+        run: ls -la .
 
       - name: Install dependencies
         working-directory: ./shawazi_magezi  

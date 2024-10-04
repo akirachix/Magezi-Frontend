@@ -28,13 +28,13 @@ const LandSearch: React.FC = () => {
     setParcelNumber("");
   }, []);
 
-  const handleRetry = useCallback(() => {
-    setShowErrorModal(false);
-    if (parcelNumber) {
-      setQuery(parcelNumber);
-      handleSearch();
-    }
-  }, [handleSearch, parcelNumber]);
+  // const handleRetry = useCallback(() => {
+  //   setShowErrorModal(false);
+  //   if (parcelNumber) {
+  //     setQuery(parcelNumber);
+  //     handleSearch();
+  //   }
+  // }, [handleSearch, parcelNumber]);
 
   useEffect(() => {
     if (!loading && parcelNumber) {
@@ -81,7 +81,7 @@ const LandSearch: React.FC = () => {
       {showErrorModal && (
         <SearchErrorModal
           onClose={handleClose}
-          onRetry={handleRetry}
+          // onRetry={handleRetry}
           message={`The parcel number ${parcelNumber} does not match any land record. Please check the number and try again.`}
         />
       )}

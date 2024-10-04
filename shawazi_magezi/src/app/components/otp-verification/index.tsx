@@ -2,9 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import Cookies from 'js-cookie';
-import { fetchUsers } from "../utils/getUsers";
-import { UserData } from "../utils/types";
+import Cookies from "js-cookie";
+import { fetchUsers } from "../../utils/getUsers";
+import { UserData } from "../../utils/types";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -23,8 +23,8 @@ const OtpVerification = () => {
     } else {
       setError("Phone number not found. Please log in again.");
     }
-    
-    const cachedUsers = Cookies.get('users');
+
+    const cachedUsers = Cookies.get("users");
     if (cachedUsers) {
       setUsers(JSON.parse(cachedUsers));
     } else {
@@ -35,8 +35,8 @@ const OtpVerification = () => {
     try {
       const fetchedUsers = await fetchUsers();
       setUsers(fetchedUsers);
-     
-      Cookies.set('users', JSON.stringify(fetchedUsers), { expires: 1/24 });
+
+      Cookies.set("users", JSON.stringify(fetchedUsers), { expires: 1 / 24 });
     } catch (error) {
       console.error("Error fetching users:", error);
       setError("Failed to fetch users. Please try again.");
@@ -64,7 +64,7 @@ const OtpVerification = () => {
     setError("");
     try {
       const isVerified = await verifyOtp(otp.join(""));
-      console.log("Users at submit:", users);  
+      console.log("Users at submit:", users);
       if (users.length === 0) {
         setError("Failed to load users. Please try again.");
         setLoading(false);
@@ -72,14 +72,20 @@ const OtpVerification = () => {
       }
       if (isVerified && phoneNumber) {
         const cleanPhoneNumber = (phone: string) => phone.replace(/\D/g, "");
-        console.log("Phone number to compare:", cleanPhoneNumber(phoneNumber));  
-        const currentUser = users.find(
-          (user: UserData) => {
-            console.log("Checking user phone:", cleanPhoneNumber(user.phone_number), "with", cleanPhoneNumber(phoneNumber));
-            return cleanPhoneNumber(user.phone_number) === cleanPhoneNumber(phoneNumber);
-          }
-        );
-        console.log("Current user:", currentUser); 
+        console.log("Phone number to compare:", cleanPhoneNumber(phoneNumber));
+        const currentUser = users.find((user: UserData) => {
+          console.log(
+            "Checking user phone:",
+            cleanPhoneNumber(user.phone_number),
+            "with",
+            cleanPhoneNumber(phoneNumber)
+          );
+          return (
+            cleanPhoneNumber(user.phone_number) ===
+            cleanPhoneNumber(phoneNumber)
+          );
+        });
+        console.log("Current user:", currentUser);
         if (currentUser) {
           let redirectUrl = "/";
           switch (currentUser.role) {
@@ -94,7 +100,9 @@ const OtpVerification = () => {
               break;
             default:
               console.error("Unknown user role:", currentUser.role);
-              setError("Unable to determine user role. Please try logging in again.");
+              setError(
+                "Unable to determine user role. Please try logging in again."
+              );
               setLoading(false);
               return;
           }

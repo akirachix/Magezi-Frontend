@@ -15,9 +15,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,39 +22,26 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '18'
 
-      - name: List files in project directory
+      - name: List repository contents
         run: |
-          echo "Listing files in project directory:"
+          echo "Repository root contents:"
           ls -la
-          echo "Current directory: $(pwd)"
+          echo "shawazi_magezi directory contents:"
+          ls -la shawazi_magezi
 
-      - name: Check for package-lock.json
-        id: check-lock-file
-        run: |
-          if [ -f "package-lock.json" ]; then
-            echo "Lock file found"
-            echo "lockfile=true" >> $GITHUB_OUTPUT
-          else
-            echo "Lock file not found"
-            echo "lockfile=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Install dependencies (with package-lock.json)
-        if: steps.check-lock-file.outputs.lockfile == 'true'
+      - name: Install dependencies
+        working-directory: ./shawazi_magezi
         run: npm ci
 
-      - name: Install dependencies (without package-lock.json)
-        if: steps.check-lock-file.outputs.lockfile == 'false'
-        run: npm install
-
       - name: Build Next.js project
+        working-directory: ./shawazi_magezi
         run: npm run build
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
@@ -67,12 +51,15 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
+        working-directory: ./shawazi_magezi
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts for Vercel
+        working-directory: ./shawazi_magezi
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
+        working-directory: ./shawazi_magezi
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Notify Deployment Success

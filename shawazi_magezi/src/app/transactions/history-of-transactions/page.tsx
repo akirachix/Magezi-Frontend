@@ -20,8 +20,9 @@ const Transactionss = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mt-[-50px] p-6 bg-white min-h-screen ml-0 md:ml-48">
-      <SideBarPwa />
+    
+    <div className="flex flex-col items-center mt-[-50px] p-6 min-h-screen bg-white ml-0 md:ml-48">
+     
 
       <header className="flex justify-center items-center p-4 w-full max-w-5xl bg-white">
         <h1 className="text-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
@@ -110,6 +111,7 @@ const Transactionss = () => {
         </table>
         
       </div>
+      <SideBarPwa />
     </div>
   );
 };

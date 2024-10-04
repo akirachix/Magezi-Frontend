@@ -140,7 +140,7 @@ const TransactionsPage: React.FC = () => {
                 <select
                   value={userType}
                   onChange={handleUserTypeChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-secondary"
+                  className="mt-1 block w-full border border-gray-300 p-1 rounded-md shadow-sm focus:ring focus:ring-secondary"
                 >
                   <option value="buyer">Buyer</option>
                   <option value="seller">Seller</option>
@@ -202,7 +202,10 @@ const TransactionsPage: React.FC = () => {
             </thead>
             <tbody>
               {transactions.length > 0 ? (
-                transactions.map((transaction, idx) => (
+               transactions
+               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by date descending
+               .slice(0, 4) // Get the latest 4 transactions
+               .map((transaction, idx) => (
                   <tr key={idx} className="border-b border-primary">
                     <td className="p-2">{formatDate(transaction.date)}</td>
                     <td className="p-2">
@@ -258,6 +261,7 @@ const TransactionsPage: React.FC = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

@@ -1,9 +1,11 @@
 "use client";
 import { formatDate } from "@/app/utils/formatDate";
 import Link from "next/link";
+// import ProgressBar from "@/app/components/Progressbar";
+// import useTransactions from "@/app/hooks/useTransactions";
+import SideBarPwa from "@/app/components/SideBarPwa";
 import ProgressBar from "@/app/components/Progressbar";
 import useTransactions from "@/app/hooks/useTransactions";
-import SideBarPwa from "@/app/components/SideBarPwa";
 
 const TransactionsDisplay = () => {
   const { transactions, isLoading, error } = useTransactions();
@@ -32,6 +34,13 @@ const TransactionsDisplay = () => {
                 Upload Payments
               </button>
             </Link>
+            <div className="flex justify-end mt-[-40px]">
+            <Link href="/transactions/history-of-transactions">
+              <button className="bg-hover text-white py-2 px-4 rounded-lg">
+                View More
+              </button>
+            </Link>
+          </div>
           </div>
 
           <table className="w-full text-left border-collapse">
@@ -56,7 +65,10 @@ const TransactionsDisplay = () => {
                   </td>
                 </tr>
               ) : transactions.length > 0 ? (
-                transactions.map((transaction, idx) => (
+                transactions
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by date descending
+                .slice(0, 5) // Get the latest 4 transactions
+                .map((transaction, idx) => (
                   <tr key={idx} className="border-b border-primary">
                     <td className="p-2 text-sm md:text-base lg:text-lg">{formatDate(transaction.date)}</td>
                     <td className="p-2 text-sm md:text-base lg:text-lg">
@@ -87,13 +99,7 @@ const TransactionsDisplay = () => {
             </tbody>
           </table>
 
-          <div className="flex justify-end mt-4">
-            <Link href="/transactions/history-of-transactions">
-              <button className="bg-hover text-white py-2 px-4 rounded-lg">
-                View More
-              </button>
-            </Link>
-          </div>
+          
         </div>
       </div>
     </div>

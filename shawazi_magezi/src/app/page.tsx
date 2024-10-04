@@ -7,14 +7,14 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <link rel="icon" href="/images/shawazilogo.png" />
+      <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
         
         
         <SecureLandTransactions />
         
-        <></>
+        
 
         
       </main>

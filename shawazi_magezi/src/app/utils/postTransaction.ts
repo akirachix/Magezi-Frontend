@@ -1,7 +1,7 @@
-
+const baseURL = process.env.BASE_URL;
 export const postTransaction = async (formData: FormData) => {
     try {
-            const response = await fetch('/api/transactions/', {
+            const response = await fetch('https://shawazi-6941c000049b.herokuapp.com/api/transactions/', {
             method: 'POST',
             body: formData,
         });

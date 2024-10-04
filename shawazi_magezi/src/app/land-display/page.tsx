@@ -103,7 +103,7 @@ function LandDetailsList() {
               ? currentItems.map((land: LandDetails) => (
                   <div
                     key={land.land_details_id}
-                    className="border border-gray-300 rounded-lg p-4 shadow-lg"
+                    className="border rounded-lg p-4 shadow-lg"
                   >
                     {land.latitude && land.longitude ? (
                       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY!}>

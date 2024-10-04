@@ -14,6 +14,7 @@ const config: Config = {
         primary: "#3E1C00",
         secondary: "#E4960E",
         customGreen: "#508408",
+        'secondary-light': '#FFEDD5',
         hover: "#508408",
         white: "#FFFFFF",
       },

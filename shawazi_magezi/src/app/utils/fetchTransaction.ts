@@ -1,5 +1,5 @@
 
-const baseURL = process.env.BASE_URL;
+
 export const fetchTransaction = async () => {
     try {
         // const response = await fetch(`${baseURL}/api/transactions/`);

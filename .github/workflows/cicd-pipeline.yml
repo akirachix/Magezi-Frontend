@@ -44,17 +44,13 @@ jobs:
             echo "lockfile=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Cache dependencies
+      - name: Install dependencies (with package-lock.json)
         if: steps.check-lock-file.outputs.lockfile == 'true'
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-
-      - name: Install dependencies
         run: npm ci
+
+      - name: Install dependencies (without package-lock.json)
+        if: steps.check-lock-file.outputs.lockfile == 'false'
+        run: npm install
 
       - name: Build Next.js project
         run: npm run build

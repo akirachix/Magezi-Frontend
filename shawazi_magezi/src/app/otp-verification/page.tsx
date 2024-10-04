@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Cookies from 'js-cookie';
 import { fetchUsers } from "../utils/getUsers";
+import { UserData } from "../utils/types";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,7 +74,7 @@ const OtpVerification = () => {
         const cleanPhoneNumber = (phone: string) => phone.replace(/\D/g, "");
         console.log("Phone number to compare:", cleanPhoneNumber(phoneNumber));  
         const currentUser = users.find(
-          (user: any) => {
+          (user: UserData) => {
             console.log("Checking user phone:", cleanPhoneNumber(user.phone_number), "with", cleanPhoneNumber(phoneNumber));
             return cleanPhoneNumber(user.phone_number) === cleanPhoneNumber(phoneNumber);
           }

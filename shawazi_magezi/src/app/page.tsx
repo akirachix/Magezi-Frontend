@@ -1,22 +1,28 @@
+"use client"; 
 
+import { useEffect } from "react";
+import { setCookie } from "cookies-next";
+import SecureLandTransactions from "./teaser/teaserone/page";
 import Head from "next/head";
 
-import SecureLandTransactions from "./teaser/teaserone/page";
+const Home = () => {
+  useEffect(() => {
 
-export default function Home() {
+    setCookie("userRole", "lawyer", { maxAge: 60 * 60 * 24 * 7 });
+    setCookie("userName", "Gatweri", { maxAge: 60 * 60 * 24 * 7 });
+  }, []);
+
   return (
     <div>
       <Head>
       <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        
-        
         <SecureLandTransactions />
-        
-        
       </main>
  
     </div>
   );
-}
+};
+
+export default Home;

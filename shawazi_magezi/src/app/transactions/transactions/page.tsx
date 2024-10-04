@@ -11,7 +11,9 @@ const TransactionsDisplay = () => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white">
+
       <SideBarPwa userRole={""} />
+
       <div className="flex-grow p-6  md:mr-4 lg:mr-0">
         <header className="flex justify-center items-center p-4 w-full max-w-5xl">
           <h1 className="text-center text-xl md:text-2xl lg:text-4xl font-bold text-primary mt-[-50px]">
@@ -33,7 +35,6 @@ const TransactionsDisplay = () => {
                 Upload Payments
               </button>
             </Link>
-           
             <Link href="/transactions/history-of-transactions">
               <button className="bg-hover text-white py-2 px-4 rounded-lg">
                 View More

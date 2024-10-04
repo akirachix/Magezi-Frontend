@@ -10,11 +10,13 @@ const config: Config = {
     extend: {
       colors: {
         background: "var(--background)",
-        foreground: "#E4960E",
+        foreground: "#508408",
         primary: "#3E1C00",
         secondary: "#E4960E",
         customGreen: "#508408",
         'secondary-light': '#FFEDD5',
+        'custom-green': '#508408',
+        'border-color': '#F30808',
         hover: "#508408",
         white: "#FFFFFF",
       },

@@ -3,23 +3,23 @@ interface Notification {
   message: string;
   timestamp: string;
 }
-// SellerNotifications component
+
 import { useEffect, useState } from 'react';
 import { FaBell } from 'react-icons/fa';
 const SellerNotifications = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]); // Specify the type here
+  const [notifications, setNotifications] = useState<Notification[]>([]); 
   const [showNotifications, setShowNotifications] = useState(false);
   const checkForNotifications = () => {
       const notification = localStorage.getItem("buyerNotification");
       if (notification) {
           const parsedNotification: Notification = JSON.parse(notification);
           setNotifications((prev) => [...prev, parsedNotification]);
-          localStorage.removeItem("buyerNotification"); // Clear after reading
+          localStorage.removeItem("buyerNotification"); 
       }
   };
   useEffect(() => {
-      const intervalId = setInterval(checkForNotifications, 5000); // Poll every 5 seconds
-      return () => clearInterval(intervalId); // Cleanup on component unmount
+      const intervalId = setInterval(checkForNotifications, 5000); 
+      return () => clearInterval(intervalId); 
   }, []);
   const toggleNotifications = () => {
       setShowNotifications((prev) => !prev);

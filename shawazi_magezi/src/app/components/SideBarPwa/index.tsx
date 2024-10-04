@@ -37,7 +37,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
 
     const menuItems = [
         { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: '/land-display' },
-        { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
+        { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/contracts' },
         { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom' },
         { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/agreementNext' },
         { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
@@ -70,7 +70,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
                         <li key={item.name}>
                             <Link
                                 href={item.href}
-                                className={`flex items-center px-4 py-2 text-[#562B00] hover:bg-orange-100 rounded-lg transition-colors duration-200 ${
+                                className={`flex items-center px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
                                     pathname === item.href ? 'bg-orange-100 text-orange-600' : ''
                                 }`}
                             >
@@ -134,7 +134,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
 
             <div
                 className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
-                ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r border-gray-300 shadow-[4px_0px_10px_-2px_rgba(87,_50,_0,_0.5)] z-40`}
+                ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r z-40`}
             >
                 {sidebarContent}
             </div>

@@ -1,11 +1,10 @@
 "use client";
 import { formatDate } from "@/app/utils/formatDate";
 import Link from "next/link";
-// import ProgressBar from "@/app/components/Progressbar";
-// import useTransactions from "@/app/hooks/useTransactions";
+import useTransactions from "@/app/hooks/useTransactions";
 import SideBarPwa from "@/app/components/SideBarPwa";
 import ProgressBar from "@/app/components/Progressbar";
-import useTransactions from "@/app/hooks/useTransactions";
+
 
 const TransactionsDisplay = () => {
   const { transactions, isLoading, error } = useTransactions();

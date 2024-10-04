@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { MdFileUpload } from "react-icons/md";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
@@ -24,7 +25,7 @@ const TransactionsPage: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+
   const [image, setImage] = useState<File | null>(null);
   const [agreementId, setAgreementId] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -154,17 +155,7 @@ const TransactionsPage: React.FC = () => {
               </button>
             </form>
           </div>
-          {uploadProgress !== null && (
-            <div className="mt-2">
-              <p>Uploading: {uploadProgress}%</p>
-              <div className="bg-gray-300 h-2 rounded">
-                <div
-                  className="bg-hover h-full"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-            </div>
-          )}
+          
         </div>
         
         {userType === "seller" && (
@@ -174,7 +165,7 @@ const TransactionsPage: React.FC = () => {
               {transactions.map((transaction, idx) => (
                 transaction.sellerUploaded && transaction.sellerImageUrl && (
                   <div key={idx} className="border rounded-lg p-2">
-                    <img
+                    <Image
                       src={transaction.sellerImageUrl}
                       alt={`Uploaded image for transaction ${idx + 1}`}
                       className="w-full h-auto rounded-md"

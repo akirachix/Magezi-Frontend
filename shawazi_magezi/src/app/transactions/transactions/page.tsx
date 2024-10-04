@@ -34,13 +34,13 @@ const TransactionsDisplay = () => {
                 Upload Payments
               </button>
             </Link>
-            <div className="flex justify-end mt-[-40px]">
+           
             <Link href="/transactions/history-of-transactions">
               <button className="bg-hover text-white py-2 px-4 rounded-lg">
                 View More
               </button>
             </Link>
-          </div>
+          
           </div>
 
           <table className="w-full text-left border-collapse">

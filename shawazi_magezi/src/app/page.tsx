@@ -2,27 +2,27 @@
 
 import { useEffect } from "react";
 import { setCookie } from "cookies-next";
-
+import SecureLandTransactions from "./teaser/teaserone/page";
 import Head from "next/head";
-import SecureLandTransactions from "./components/teaserone";
 
 const Home = () => {
   useEffect(() => {
 
     setCookie("userRole", "lawyer", { maxAge: 60 * 60 * 24 * 7 });
     setCookie("userName", "Gatweri", { maxAge: 60 * 60 * 24 * 7 });
-  }, []);
+  }, [])
+
+
 
   return (
     <div>
       <Head>
-        <link rel="icon" href="/images/shawazilogo.png" />
+      <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-
-          <SecureLandTransactions/>
-
+        <SecureLandTransactions />
       </main>
+ 
     </div>
   );
 };

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
 import { useScrollToBottom } from '../hooks/useScrollToBottom';
 import { formatTimestamp } from '../utils/dateUtils';
-import { Send, User } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { useGetUsers } from '@/app/hooks/useGetUsers';
 import UserCard from '@/app/hooks/usersCard/UserCard';
 import useChatMessages from '@/app/hooks/useChatMessages';
@@ -27,7 +27,7 @@ const ChatRoom: React.FC = () => {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [sendingMessage, setSendingMessage] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+    const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
     const { messages, sendMessage } = useChatMessages(currentUserId || '', currentUserRole || '');
 
@@ -79,7 +79,7 @@ const ChatRoom: React.FC = () => {
                     sendMessage(simulatedReply, selectedUser.id);
                 }, 1000);
             }
-        } catch (error) {
+        } catch {
             setErrorMessage('Failed to send message. Please try again.');
         } finally {
             setSendingMessage(false);
@@ -118,7 +118,7 @@ const ChatRoom: React.FC = () => {
             first_name: firstName,
             last_name: lastName,
             phone_number: phoneNumber,
-            message: invitationMessage
+            message: invitationMessage,
         };
 
         try {
@@ -138,6 +138,8 @@ const ChatRoom: React.FC = () => {
             alert(result.message || 'Invitation sent successfully!');
             handleCloseModal();
         } catch (error) {
+            console.error('Error sending invitation:', error);
+            alert('Failed to send invitation. Please try again.');
         }
     };
 
@@ -146,7 +148,8 @@ const ChatRoom: React.FC = () => {
     }
 
     if (usersError) {
-        return <div className="flex justify-center items-center h-full">Error: {usersError.message}</div>;
+        const errorMessage = typeof usersError === 'string' ? usersError : usersError.message;
+        return <div className="flex justify-center items-center h-full">Error: {errorMessage}</div>;
     }
 
     const getUserListTitle = () => {
@@ -191,111 +194,61 @@ const ChatRoom: React.FC = () => {
                 <div className="flex flex-col items-end mb-2">
                     <button
                         onClick={handleInviteLawyer}
-                        className="bg-orange-500 hover:bg-green-700 hover:text-white text-white text-sm px-4 py-2 rounded flex items-center transition-all duration-300"
+                        className="bg-green-700 text-white p-2 rounded hover:bg-orange-500"
                     >
                         Invite Lawyer
                     </button>
                 </div>
             </div>
 
-            <div className="md:hidden bg-white p-4 shadow-md">
-                <select
-                    value={selectedUser?.id || ''}
-                    onChange={(e) => {
-                        const selected = availableUsers.find(user => user.id === e.target.value);
-                        if (selected) startConversation(selected);
-                    }}
-                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
-                >
-                    <option value="" disabled>Select a user</option>
-                    {availableUsers.length > 0 ? (
-                        availableUsers.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.first_name} ({user.role})
-                            </option>
-                        ))
-                    ) : (
-                        <option disabled>No users available</option>
-                    )}
-                </select>
-
-                <button
-                    onClick={handleInviteLawyer}
-                    className="mt-4 bg-orange-500 hover:bg-green-700 hover:text-white text-white text-sm px-4 py-2 rounded flex items-center transition-all duration-300 w-full justify-center"
-                >
-                    Invite Lawyer
-                </button>
-            </div>
-
-            <div className="flex flex-col flex-grow w-full">
-                <header className="bg-white shadow-sm p-3 flex flex-col items-center border-b border-gray-200">
-                    <User size={70} className="text-green-600 mb-2 w-30" />
-                    <h1 className="font-bold text-lg">{selectedUser ? selectedUser.first_name : 'Select a User'}</h1>
-                </header>
-
-                <div className="flex-grow overflow-y-auto p-4" ref={messagesEndRef}>
+            <div className="flex flex-col w-full md:w-3/4 p-4">
+                <div className="flex-grow overflow-y-auto p-2 border border-gray-200 rounded-md">
                     {filteredMessages.length > 0 ? (
-                        filteredMessages.map((msg, index) => (
-                            <div key={index} className={`mb-4 ${msg.sender === currentUserId ? 'text-right' : ''}`}>
-                                <span className={`font-semibold ${msg.sender === currentUserId ? 'text-green-600' : 'text-blue-600'}`}>
-                                    {msg.sender}: 
-                                </span>
-                                <span className="ml-2">{msg.content}</span>
-                                <div className="text-xs text-gray-500">{formatTimestamp(msg.timestamp)}</div>
+                        filteredMessages.map((message, index) => (
+                            <div key={index} className={`my-2 ${message.sender === currentUserName ? 'text-right' : 'text-left'}`}>
+                                <div className="font-semibold">{message.sender}</div>
+                                <div className="text-sm text-gray-600">
+                                {formatTimestamp(Number(message.timestamp))}
+                                </div>
+                                <div>{message.content}</div>
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500">No messages yet. Start the conversation!</p>
+                        <p className="text-gray-500">No messages yet</p>
                     )}
+                    <div ref={messagesEndRef} />
                 </div>
-
-                <div className="p-4 border-t border-gray-200">
+                {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+                <div className="flex mt-4">
                     <input
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         onKeyPress={handleKeyPress}
                         placeholder="Type your message..."
-                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+                        className="flex-grow p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
                     />
                     <button
                         onClick={handleSendMessage}
+                        className="ml-2 bg-green-700 text-white p-2 rounded hover:bg-orange-500"
                         disabled={sendingMessage}
-                        className={`mt-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center transition-all duration-300 ${sendingMessage ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        <Send className="mr-2" />
-                        Send
+                        <Send />
                     </button>
-                    {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
                 </div>
             </div>
 
-            <InviteLawyerModal 
-                isOpen={isInviteModalOpen} 
-                onClose={handleCloseModal} 
-                onSubmit={handleSubmitInvite} 
-            />
+            {inviteModalOpen && (
+                <InviteLawyerModal 
+                    onClose={handleCloseModal} 
+                    onSubmit={handleSubmitInvite} 
+                />
+            )}
         </div>
     );
 };
 
 export default ChatRoom;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

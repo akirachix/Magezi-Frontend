@@ -49,7 +49,7 @@ const LandSearch: React.FC = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          className="flex-grow p-2 border rounded-l mb-2 sm:mb-0 sm:rounded-l-none sm:rounded-l border-r-0"
+          className="flex-grow p-2 border rounded-l mb-2 sm:mb-0 sm:rounded-l-none border-r-0"
         />
         <button
           onClick={handleSearch}

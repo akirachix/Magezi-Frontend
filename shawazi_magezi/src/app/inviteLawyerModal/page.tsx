@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+
 interface InviteLawyerModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -19,18 +20,15 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
         setIsSubmitting(true);
         setErrorMessage('');
 
-       
         try {
-            console.log('Sending invitation with details:', { first_name, last_name, invited_by, phone_number });
             const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/, '');
 
             if (!BASE_URL) {
                 throw new Error('BASE_URL is undefined. Please check your .env file.');
             }
 
-            console.log(`Using BASE_URL: ${BASE_URL}`);
-          
-
+            console.log('Sending invitation with details:', { first_name, last_name, invited_by, phone_number });
+            
             const response = await fetch(`${BASE_URL}/api/send_invitation/`, {
                 method: 'POST',
                 headers: {
@@ -45,15 +43,14 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
             });
 
             if (!response.ok) {
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.indexOf("application/json") !== -1) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
                     const errorData = await response.json();
                     throw new Error(`Failed to send invitation: ${errorData.message || 'Unknown error'}`);
-                }
-                 else {
+                } else {
                     const textError = await response.text();
                     console.error('Non-JSON error response:', textError);
-                    throw new Error(`Failed to send invitation: Server returned a non-JSON response`);
+                    throw new Error('Failed to send invitation: Server returned a non-JSON response');
                 }
             }
 
@@ -62,10 +59,10 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
 
             await onSubmit(first_name, last_name, invited_by, phone_number);
             onClose();
-
-        } catch (error: any) {
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
             console.error('Error during invitation submission:', error);
-            setErrorMessage(`Failed to send the invitation: ${error.message}`);
+            setErrorMessage(`Failed to send the invitation: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -134,7 +131,6 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
                     </div>
 
                     <div className="flex justify-between">
-
                         <button
                             type="button"
                             onClick={onClose}
@@ -158,13 +154,26 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
     );
 };
 
-export default InviteLawyerModal;
+const Page = () => {
+    const [isOpen, setIsOpen] = useState(false);
 
+    const handleSubmit = async (first_name: string, last_name: string, invited_by: string, phone_number: string) => {
+        console.log('Invitation submitted:', { first_name, last_name, invited_by, phone_number });
+    };
 
+    return (
+        <>
+            <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white p-2 rounded">
+                Invite a Lawyer
+            </button>
 
+            <InviteLawyerModal
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+                onSubmit={handleSubmit}
+            />
+        </>
+    );
+};
 
-
-
-
-
-
+export default Page; 

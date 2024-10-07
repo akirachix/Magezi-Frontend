@@ -18,7 +18,6 @@ const LandSearch: React.FC = () => {
       setQuery("");
     }
   }, [query]);
-
   const handleClose = useCallback(() => {
     setShowModal(false);
     setShowErrorModal(false);
@@ -71,7 +70,6 @@ const LandSearch: React.FC = () => {
       {showErrorModal && (
         <SearchErrorModal
           onClose={handleClose}
-          // onRetry={handleRetry}
           message={`The parcel number ${parcelNumber} does not match any land record. Please check the number and try again.`}
         />
       )}

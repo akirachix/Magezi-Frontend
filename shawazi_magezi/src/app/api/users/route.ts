@@ -1,11 +1,10 @@
+import { NextResponse } from 'next/server';
+const baseUrl = process.env.BASE_URL;
+
 export async function GET() {
-  const baseUrl = process.env.BASE_URL;
-  
-  console.log('BASE_URL:', baseUrl);
-  
   if (!baseUrl) {
-    console.error('BASE_URL is not defined in environment variables');
-    return new Response('Server configuration error', { status: 500 });
+    console.error('BASE_URL is not defined in the environment variables.');
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
   try {
@@ -15,21 +14,21 @@ export async function GET() {
         'Content-Type': 'application/json',
       },
     });
+
     if (!response.ok) {
-      const errorText = await response.text();
-      return new Response(`HTTP error! Status: ${response.status}, Message: ${errorText}`, { status: response.status });
+      const errorData = await response.json();
+      console.error('Error fetching users:', errorData.detail || 'Network response was not ok');
+      return NextResponse.json({ error: errorData.detail || 'Network response was not ok' }, { status: response.status });
     }
-    const result = await response.json();
-    return new Response(JSON.stringify(result), {
+
+    const data = await response.json();
+    return NextResponse.json(data, {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      statusText: 'Fetched Successfully',
     });
+
   } catch (error) {     
     console.error('Error fetching users:', error);
-    return new Response((error as Error).message, {
-      status: 500,
-    });
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

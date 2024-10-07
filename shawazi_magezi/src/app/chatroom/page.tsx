@@ -1,14 +1,13 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
-import { useScrollToBottom } from '../../hooks/useScrollToBottom';
-import { formatTimestamp } from '../../utils/dateUtils';
-import { Send, Sidebar, User } from 'lucide-react';
+import { useScrollToBottom } from '../hooks/useScrollToBottom';
+import { formatTimestamp } from '../utils/dateUtils';
+import { Send, User } from 'lucide-react';
 import { useGetUsers } from '@/app/hooks/useGetUsers';
 import UserCard from '@/app/hooks/usersCard/UserCard';
 import useChatMessages from '@/app/hooks/useChatMessages';
-import InviteLawyerModal from '../InviteLawyerModal';
-import SideBar from '../SideBarPwa';
-
+import InviteLawyerModal from '../inviteLawyerModal/page';
 
 interface UserType {
     id: string;
@@ -61,34 +60,38 @@ const ChatRoom: React.FC = () => {
     }, [loading, usersError, users, currentUserRole]);
 
     const handleSendMessage = async () => {
-        if (sendingMessage) return; 
-    
         if (inputMessage.trim() === '' || !selectedUser) {
             setErrorMessage('Cannot send message: Message is empty or no user selected.');
             return;
         }
-    
+
         setSendingMessage(true);
         setErrorMessage(null);
-    
+
         try {
             const messageWithSender = `${currentUserName}: ${inputMessage}`;
             await sendMessage(messageWithSender, selectedUser.id);
             setInputMessage('');
+
+            if (currentUserRole === 'buyer') {
+                setTimeout(() => {
+                    const simulatedReply = `Hi, welcome to Shawazi. We look forward to your support.`;
+                    sendMessage(simulatedReply, selectedUser.id);
+                }, 1000);
+            }
         } catch (error) {
             setErrorMessage('Failed to send message. Please try again.');
         } finally {
             setSendingMessage(false);
         }
     };
-    
+
     const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && !sendingMessage) { 
+        if (e.key === 'Enter') {
             e.preventDefault();
             await handleSendMessage();
         }
     };
-    
 
     const filteredMessages = messages.filter((message) => {
         const sender = String(message.sender || '');
@@ -135,7 +138,6 @@ const ChatRoom: React.FC = () => {
             alert(result.message || 'Invitation sent successfully!');
             handleCloseModal();
         } catch (error) {
-            alert(error.message || 'Something went wrong');
         }
     };
 
@@ -162,7 +164,6 @@ const ChatRoom: React.FC = () => {
 
     return (
         <div className="flex flex-col md:flex-row bg-gray-100 font-jost h-screen">
-          <SideBar/>
             <div className="hidden md:flex flex-col w-full md:w-1/4 bg-white border-r border-gray-200 p-4 shadow-md">
                 <div className="mb-4">
                     <input
@@ -232,52 +233,63 @@ const ChatRoom: React.FC = () => {
                     <h1 className="font-bold text-lg">{selectedUser ? selectedUser.first_name : 'Select a User'}</h1>
                 </header>
 
-                <div ref={messagesEndRef} className="flex-grow p-4 overflow-y-auto">
+                <div className="flex-grow overflow-y-auto p-4" ref={messagesEndRef}>
                     {filteredMessages.length > 0 ? (
-                        filteredMessages.map((message, index) => (
-                            <div key={index} className={`my-2 ${message.sender === currentUserName ? 'text-right' : 'text-left'}`}>
-                                <p className={`inline-block p-2 rounded ${message.sender === currentUserName ? 'bg-green-100' : 'bg-gray-200'}`}>
-                                    {message.content}
-                                </p>
-                                <span className="text-xs text-gray-500 ml-2">{formatTimestamp(message.timestamp)}</span>
+                        filteredMessages.map((msg, index) => (
+                            <div key={index} className={`mb-4 ${msg.sender === currentUserId ? 'text-right' : ''}`}>
+                                <span className={`font-semibold ${msg.sender === currentUserId ? 'text-green-600' : 'text-blue-600'}`}>
+                                    {msg.sender}: 
+                                </span>
+                                <span className="ml-2">{msg.content}</span>
+                                <div className="text-xs text-gray-500">{formatTimestamp(msg.timestamp)}</div>
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 text-center">No messages yet</p>
+                        <p className="text-gray-500">No messages yet. Start the conversation!</p>
                     )}
                 </div>
 
-                <div className="p-4 bg-white border-t border-gray-200 flex">
+                <div className="p-4 border-t border-gray-200">
                     <input
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Type a message..."
-                        className="flex-grow border border-gray-300 rounded p-2"
+                        placeholder="Type your message..."
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
                     />
                     <button
                         onClick={handleSendMessage}
                         disabled={sendingMessage}
-                        className="ml-2 bg-green-700 hover:bg-orange-400 text-white rounded p-2 transition-all duration-100"
+                        className={`mt-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center transition-all duration-300 ${sendingMessage ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        {sendingMessage ? 'Sending...' : <Send />}
+                        <Send className="mr-2" />
+                        Send
                     </button>
+                    {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
                 </div>
-
-                {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
             </div>
 
-            <InviteLawyerModal
-                isOpen={isInviteModalOpen}
-                onClose={handleCloseModal}
-                onSubmit={handleSubmitInvite}
+            <InviteLawyerModal 
+                isOpen={isInviteModalOpen} 
+                onClose={handleCloseModal} 
+                onSubmit={handleSubmitInvite} 
             />
         </div>
     );
 };
 
 export default ChatRoom;
+
+
+
+
+
+
+
+
+
+
 
 
 

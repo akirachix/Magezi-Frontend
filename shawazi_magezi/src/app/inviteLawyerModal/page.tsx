@@ -1,5 +1,5 @@
+"use client";
 import React, { useState } from 'react';
-
 interface InviteLawyerModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -19,9 +19,15 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
         setIsSubmitting(true);
         setErrorMessage('');
 
+       
         try {
             console.log('Sending invitation with details:', { first_name, last_name, invited_by, phone_number });
-            const BASE_URL = process.env.BASE_URL?.replace(/\/+$/, '');
+            const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/, '');
+
+            if (!BASE_URL) {
+                throw new Error('BASE_URL is undefined. Please check your .env file.');
+            }
+
             console.log(`Using BASE_URL: ${BASE_URL}`);
           
 
@@ -43,7 +49,8 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     const errorData = await response.json();
                     throw new Error(`Failed to send invitation: ${errorData.message || 'Unknown error'}`);
-                } else {
+                }
+                 else {
                     const textError = await response.text();
                     console.error('Non-JSON error response:', textError);
                     throw new Error(`Failed to send invitation: Server returned a non-JSON response`);
@@ -55,7 +62,8 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
 
             await onSubmit(first_name, last_name, invited_by, phone_number);
             onClose();
-        } catch (error) {
+
+        } catch (error: any) {
             console.error('Error during invitation submission:', error);
             setErrorMessage(`Failed to send the invitation: ${error.message}`);
         } finally {
@@ -151,3 +159,12 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
 };
 
 export default InviteLawyerModal;
+
+
+
+
+
+
+
+
+

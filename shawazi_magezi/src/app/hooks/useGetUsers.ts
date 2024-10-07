@@ -3,9 +3,16 @@ import { fetchUsers } from '../utils/fetchUsers';
 import { User } from '../utils/types';
 
 
+
+interface UserType {
+  id: string;
+  first_name: string;
+  role: 'buyer' | 'seller' | 'lawyer';
+}
+
 export const useGetUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

@@ -2,11 +2,11 @@ import React from "react";
 
 interface SearchErrorModalProps {
   onClose: () => void;
-  onRetry: () => void;
+  // onRetry: () => void;
   message: string;
 }
 
-const SearchErrorModal: React.FC<SearchErrorModalProps> = ({ onClose, onRetry, message }) => {
+const SearchErrorModal: React.FC<SearchErrorModalProps> = ({ onClose, message }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg">

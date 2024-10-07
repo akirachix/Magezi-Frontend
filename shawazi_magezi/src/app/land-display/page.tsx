@@ -1,12 +1,11 @@
 "use client";
 import { SetStateAction, useEffect, useState } from "react";
-import Link from "next/link";
 import useDisplayLand from "../hooks/useDisplayLand";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails } from "../utils/types";
-import SearchBar from "@/app/searchbar/page";
 import { FaTh, FaList } from "react-icons/fa";
 import SideBar from "../components/SideBarPwa";
+import LandSearch from "../components/Searchbar";
 
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -51,9 +50,18 @@ function LandDetailsList() {
   };
 
   const mapContainerStyle = {
-    width: "110%",
+    width: "100%",
     height: "250px",
   };
+
+  const handleInterestClick = (land: LandDetails) => {
+    const notificationData = {
+        message: `A buyer is interested in ${land.location_name}!`,
+        timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
+    alert("Notification sent to seller!"); 
+};
 
   return (
     <div
@@ -71,7 +79,8 @@ function LandDetailsList() {
               Please feel free to carry out your land search
             </p>
             <div className="mr-12">
-              <SearchBar />
+             
+              <LandSearch/>
             </div>
           </div>
           <div className="mb-4 flex justify-between items-center">
@@ -104,7 +113,7 @@ function LandDetailsList() {
               ? currentItems.map((land: LandDetails) => (
                   <div
                     key={land.land_details_id}
-                    className="border border-gray-300 rounded-lg p-4 shadow-lg"
+                    className="border rounded-lg p-4 shadow-lg"
                   >
                     {land.latitude && land.longitude ? (
                       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY!}>
@@ -139,7 +148,7 @@ function LandDetailsList() {
                       <span className="font-semibold">Address:</span>{" "}
                       {land.address}
                     </p>
-                    <button className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700">
+                    <button onClick={() => handleInterestClick(land)} className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700">
                       Interested
                     </button>
                   </div>
@@ -180,7 +189,7 @@ function LandDetailsList() {
         </div>
       </div>
 
-      <SideBar />
+      <SideBar userRole={""} />
     </div>
   );
 }

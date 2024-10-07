@@ -1,10 +1,10 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
-import { useLandData } from "../hooks/useLandData";
-import LandDetailsModal from "../components/LandDetailModal";
-import SearchErrorModal from "../components/SearchError";
+import React, { useState, useCallback, useEffect } from "react";
+import useLandData from "@/app/hooks/useLandData";
+import LandDetailsModal from "../LandDetailModal";
+import SearchErrorModal from "../SearchError";
 
-const LandSearch = () => {
+const LandSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
@@ -13,8 +13,8 @@ const LandSearch = () => {
   const { land, loading, error } = useLandData(parcelNumber);
 
   const handleSearch = useCallback(() => {
-    if (query) {
-      setParcelNumber(query);
+    if (query.trim()) {
+      setParcelNumber(query.trim());
       setQuery("");
     }
   }, [query]);
@@ -26,31 +26,16 @@ const LandSearch = () => {
     setParcelNumber("");
   }, []);
 
-  const handleRetry = useCallback(() => {
-    setShowErrorModal(false);
-    if (parcelNumber) {
-      handleSearch();
-    }
-  }, [handleSearch, parcelNumber]);
-
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout | undefined;
-    if (parcelNumber) {
-      timeoutId = setTimeout(() => {
-        if (land) {
-          setShowModal(true);
-          setShowErrorModal(false);
-        } else if (error) {
-          setShowErrorModal(true);
-          setShowModal(false);
-        } else if (!loading && !land) {
-          setShowErrorModal(true);
-          setShowModal(false);
-        }
-      }, 50);
+    if (!loading && parcelNumber) {
+      if (land) {
+        setShowModal(true); 
+        setShowErrorModal(false);
+      } else if (error) {
+        setShowErrorModal(true);
+        setShowModal(false);
+      }
     }
-
-    return () => clearTimeout(timeoutId);
   }, [land, loading, error, parcelNumber]);
 
   return (
@@ -64,25 +49,29 @@ const LandSearch = () => {
           placeholder="Enter Parcel Number"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           className="flex-grow p-2 border rounded-l mb-2 sm:mb-0 sm:rounded-l-none sm:rounded-l border-r-0"
         />
         <button
           onClick={handleSearch}
-          disabled={loading || !query}
-          className="bg-[#508408] hover:bg-green-500 text-white font-bold m-auto py-2 px-4 rounded sm:rounded-l-none sm:rounded-r"
+          disabled={loading || !query.trim()}
+          className="bg-[#508408] hover:bg-green-500 text-white font-bold m-auto py-2 px-4 rounded sm:rounded-l-none sm:rounded-r disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Searching..." : "Search"}
         </button>
       </div>
 
       {showModal && land && (
-        <LandDetailsModal land={land} onClose={handleClose} />
+        <LandDetailsModal 
+          land={land} 
+          onClose={handleClose}
+        />
       )}
 
       {showErrorModal && (
         <SearchErrorModal
           onClose={handleClose}
-          onRetry={handleRetry}
+          // onRetry={handleRetry}
           message={`The parcel number ${parcelNumber} does not match any land record. Please check the number and try again.`}
         />
       )}
@@ -91,3 +80,4 @@ const LandSearch = () => {
 };
 
 export default LandSearch;
+

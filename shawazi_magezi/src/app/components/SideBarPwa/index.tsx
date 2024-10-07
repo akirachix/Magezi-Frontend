@@ -1,12 +1,22 @@
+
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { MdOutlineSettings } from "react-icons/md";
 import { HiMenu, HiX } from "react-icons/hi"; 
 import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa'; 
 import { BiLogOut } from "react-icons/bi"; 
 
-const SideBar = () => {
+
+
+interface SideBarProps {
+  userRole: string;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
@@ -28,12 +38,16 @@ const SideBar = () => {
     }, []);
 
     const menuItems = [
-        { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: '/' },
-        { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/contracts' },
-        { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/payments' },
-        { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/users' },
-        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/users' },
+        { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: '/land-display' },
+        { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
+        { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
+        { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/agreementNext' },
+        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
     ];
+
+    if (userRole === 'seller') {
+        menuItems.push({ name: 'Seller Dashboard', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/seller-dashboard' });
+    }
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -42,10 +56,15 @@ const SideBar = () => {
     const sidebarContent = (
         <div className="flex flex-col h-full relative">
             <div className="flex items-left justify-between p-4">
-                <img
-                    src="/media/logo.png"
+                <Image
+
+                    src="/images/shawazilogo.png" 
+
                     alt="Shawazi Logo"
                     className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
+                    width={80}
+                    height={80}
+                    priority
                 />
             </div>
 
@@ -55,7 +74,7 @@ const SideBar = () => {
                         <li key={item.name}>
                             <Link
                                 href={item.href}
-                                className={`flex items-center px-4 py-2 text-[#562B00] hover:bg-orange-100 rounded-lg transition-colors duration-200 ${
+                                className={`flex items-center px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
                                     pathname === item.href ? 'bg-orange-100 text-orange-600' : ''
                                 }`}
                             >
@@ -104,7 +123,6 @@ const SideBar = () => {
 
     return (
         <div className="relative">
-        
             <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
                 {!showSidebar && (
                     <button onClick={toggleMenu} className="focus:outline-none">
@@ -118,17 +136,15 @@ const SideBar = () => {
                 <span className="ml-4 text-lg font-semibold text-[#562B00]"></span>
             </div>
 
-          
             <div
                 className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
-                ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r border-gray-300 shadow-[4px_0px_10px_-2px_rgba(87,_50,_0,_0.5)] z-40`}
+                ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r z-40`}
             >
                 {sidebarContent}
             </div>
 
-           
             <div className={`pt-16 ${showSidebar ? 'ml-64' : ''} transition-all duration-300`}>
-                
+
             </div>
         </div>
     );

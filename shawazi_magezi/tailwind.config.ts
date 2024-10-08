@@ -15,6 +15,11 @@ const config: Config = {
         secondary: "#E4960E",
         hover: "#508408",
         white: "#FFFFFF",
+        customGreen: '#CFF1A1',
+      },
+      fontSize: {
+        '24': '24px',
+        '16': '16px',
       },
     },
   },

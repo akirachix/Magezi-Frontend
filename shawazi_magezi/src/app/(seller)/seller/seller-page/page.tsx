@@ -2,9 +2,9 @@
 
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
-import SideBar from "../components/SideBarPwa";
-import SellerNotifications from "../components/NotificationsBell";
-import { Transaction } from "../utils/types"; 
+import SideBar from "@/app/components/SideBarPwa";
+import SellerNotifications from "@/app/components/NotificationsBell";
+import { Transaction } from "@/app/utils/types"; 
 
 const SellerPage: FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);

@@ -3,15 +3,16 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
-import { fetchUsers } from "../../utils/getUsers";
-import { UserData } from "../../utils/types";
+import { fetchUsers } from "../utils/getUsers";
+import { UserDatas } from "../utils/types";
+
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [users, setUsers] = useState<UserData[]>([]);
+  const [users, setUsers] = useState<UserDatas[]>([]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,6 +43,7 @@ const OtpVerification = () => {
       setError("Failed to fetch users. Please try again.");
     }
   };
+  
   const handleOtpChange = (index: number, value: string) => {
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -73,7 +75,7 @@ const OtpVerification = () => {
       if (isVerified && phoneNumber) {
         const cleanPhoneNumber = (phone: string) => phone.replace(/\D/g, "");
         console.log("Phone number to compare:", cleanPhoneNumber(phoneNumber));
-        const currentUser = users.find((user: UserData) => {
+        const currentUser = users.find((user: UserDatas) => {
           console.log(
             "Checking user phone:",
             cleanPhoneNumber(user.phone_number),
@@ -93,10 +95,10 @@ const OtpVerification = () => {
               redirectUrl = "/lawyer/draft-contract";
               break;
             case "buyer":
-              redirectUrl = "/land-display";
+              redirectUrl = "/buyer/land-display";
               break;
             case "seller":
-              redirectUrl = "/seller-page";
+              redirectUrl = "/seller/seller-page";
               break;
             default:
               console.error("Unknown user role:", currentUser.role);

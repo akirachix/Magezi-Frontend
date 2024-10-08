@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -10,144 +9,361 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa'; 
 import { BiLogOut } from "react-icons/bi"; 
 
-
-
 interface SideBarProps {
   userRole: string;
 }
 
+interface MenuItem {
+  name: string;
+  icon: JSX.Element;
+  href: string;
+}
+
 const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [showSidebar, setShowSidebar] = useState(false);
-    const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const pathname = usePathname();
 
-    useEffect(() => {
-        const checkScreenSize = () => {
-            const width = window.innerWidth;
-            setShowSidebar(width >= 768);
-            if (width >= 768) {
-                setIsOpen(true);
-            }
-        };
-
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-
-        return () => window.removeEventListener('resize', checkScreenSize);
-    }, []);
-
-    const menuItems = [
-        { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: '/land-display' },
-        { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
-        { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
-        { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/agreementNext' },
-        { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
-    ];
-
-    if (userRole === 'seller') {
-        menuItems.push({ name: 'Seller Dashboard', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/seller-dashboard' });
-    }
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setShowSidebar(width >= 768);
+      if (width >= 768) {
+        setIsOpen(true);
+      }
     };
 
-    const sidebarContent = (
-        <div className="flex flex-col h-full relative">
-            <div className="flex items-left justify-between p-4">
-                <Image
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
 
-                    src="/images/shawazilogo.png" 
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
-                    alt="Shawazi Logo"
-                    className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
-                    width={80}
-                    height={80}
-                    priority
-                />
-            </div>
+  // Define role-specific routes
+  const roleSpecificRoutes = {
+    seller: {
+      home: '/sellerPage',
+      contract: '/AgreementNext',
+      dashboard: '/AgreementNext'
+    },
+    buyer: {
+      home: '/land-display',
+      contract: '/AgreementNext',
+      dashboard: '/AgreementNext'
+    },
+    lawyer: {
+      home: '/lawyer/draft-contract',
+      contract: '/AgreementNext',
+      dashboard: '/AgreementNext'
+    }
+  };
 
-            <nav className="flex-grow overflow-y-auto">
-                <ul className="space-y-6 px-4 py-8">
-                    {menuItems.map((item) => (
-                        <li key={item.name}>
-                            <Link
-                                href={item.href}
-                                className={`flex items-center px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
-                                    pathname === item.href ? 'bg-orange-100 text-orange-600' : ''
-                                }`}
-                            >
-                                {item.icon}
-                                <span className="text-sm md:text-base lg:text-2xl font-medium">
-                                    {item.name}
-                                </span>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </nav>
+  // Get routes based on user role
+  const routes = (() => {
+    // Ensure userRole is treated as a known role type
+    const role = userRole as keyof typeof roleSpecificRoutes;
+    
+    // Check if the role exists in our defined routes
+    if (role && roleSpecificRoutes[role]) {
+      return roleSpecificRoutes[role];
+    }
+    
+    console.error(`Unknown user role: ${userRole}`);
+    return roleSpecificRoutes.buyer; // Fallback to buyer as default
+  })();
 
-            <div className="mt-auto p-4">
-                <button
-                    onClick={() => setShowSettings(!showSettings)}
-                    className="flex items-center w-full px-4 py-2 text-[#562B00] hover:bg-orange-100 rounded-lg transition-colors duration-200"
-                >
-                    <MdOutlineSettings className="w-6 h-6 mr-4" />
-                    <span className="text-sm md:text-base lg:text-lg font-medium">
-                        Settings
-                    </span>
-                </button>
-                {showSettings && (
-                    <div className="mt-2 ml-6">
-                        <Link
-                            href="/settings"
-                            className="block py-2 text-secondary hover:text-secondary transition-colors duration-200"
-                        >
-                            General Settings
-                        </Link>
-                        <Link
-                            href="/logout"
-                            className="block py-2 text-primary hover:text-red-600 transition-colors duration-200"
-                        >
-                            <span className="flex items-center">
-                                <BiLogOut className="w-5 h-5 mr-2" />
-                                Logout
-                            </span>
-                        </Link>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+  // Base menu items that are common for all users
+  const baseMenuItems: MenuItem[] = [
+    { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
+    { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
+    { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/AgreementNext' },
+    { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
+  ];
 
-    return (
-        <div className="relative">
-            <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
-                {!showSidebar && (
-                    <button onClick={toggleMenu} className="focus:outline-none">
-                        {isOpen ? (
-                            <HiX className="w-8 h-8 text-[#562B00]" />
-                        ) : (
-                            <HiMenu className="w-8 h-8 text-[#562B00]" />
-                        )}
-                    </button>
-                )}
-                <span className="ml-4 text-lg font-semibold text-[#562B00]"></span>
-            </div>
+  const getRoleSpecificItems = (): MenuItem[] => {
+    const items: MenuItem[] = [
+      { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: routes.home },
+    ];
 
-            <div
-                className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
-                ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r z-40`}
+    const dashboardItems = {
+      seller: { name: 'Seller Dashboard', href: '/AgreementNext' },
+      buyer: { name: 'Buyer Dashboard', href: '/AgreementNext' },
+      lawyer: { name: 'Lawyer Section', href: '/AgreementNext' },
+    };
+
+    const dashboardItem = dashboardItems[userRole as keyof typeof dashboardItems];
+    if (dashboardItem) {
+      items.push({
+        ...dashboardItem,
+        icon: <FaUser className="w-5 h-5 mr-2" />
+      });
+    }
+
+    return items;
+  };
+
+  const menuItems = [...getRoleSpecificItems(), ...baseMenuItems];
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full relative">
+      <div className="flex items-left justify-between p-4">
+        <Image
+          src="/images/shawazilogo.png" 
+          alt="Shawazi Logo"
+          className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
+          width={80}
+          height={80}
+          priority
+        />
+      </div>
+
+      <nav className="flex-grow overflow-y-auto">
+        <ul className="space-y-6 px-4 py-8">
+          {menuItems.map((item) => (
+            <li key={item.name}>
+              <Link
+                href={item.href}
+                className={`flex items-center px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
+                  pathname === item.href ? 'bg-orange-100 text-orange-600' : ''
+                }`}
+              >
+                {item.icon}
+                <span className="text-sm md:text-base lg:text-2xl font-medium">
+                  {item.name}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="mt-auto p-4">
+        <button
+          onClick={() => setShowSettings(!showSettings)}
+          className="flex items-center w-full px-4 py-2 text-[#562B00] hover:bg-orange-100 rounded-lg transition-colors duration-200"
+        >
+          <MdOutlineSettings className="w-6 h-6 mr-4" />
+          <span className="text-sm md:text-base lg:text-lg font-medium">
+            Settings
+          </span>
+        </button>
+        {showSettings && (
+          <div className="mt-2 ml-6">
+            <Link
+              href="/settings"
+              className="block py-2 text-secondary hover:text-secondary transition-colors duration-200"
             >
-                {sidebarContent}
-            </div>
+              General Settings
+            </Link>
+            <Link
+              href="/logout"
+              className="block py-2 text-primary hover:text-red-600 transition-colors duration-200"
+            >
+              <span className="flex items-center">
+                <BiLogOut className="w-5 h-5 mr-2" />
+                Logout
+              </span>
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
-            <div className={`pt-16 ${showSidebar ? 'ml-64' : ''} transition-all duration-300`}>
+  return (
+    <div className="relative">
+      <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
+        {!showSidebar && (
+          <button onClick={toggleMenu} className="focus:outline-none">
+            {isOpen ? (
+              <HiX className="w-8 h-8 text-[#562B00]" />
+            ) : (
+              <HiMenu className="w-8 h-8 text-[#562B00]" />
+            )}
+          </button>
+        )}
+        <span className="ml-4 text-lg font-semibold text-[#562B00]">
+          {userRole ? `${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Portal` : 'Portal'}
+        </span>
+      </div>
 
-            </div>
-        </div>
-    );
+      <div
+        className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
+        ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r z-40`}
+      >
+        {sidebarContent}
+      </div>
+
+      <div className={`pt-16 ${showSidebar ? 'ml-64' : ''} transition-all duration-300`}>
+      </div>
+    </div>
+  );
 };
 
 export default SideBar;
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import React, { useState, useEffect } from 'react';
+// import Link from 'next/link';
+// import Image from 'next/image';
+// import { usePathname } from 'next/navigation';
+// import { MdOutlineSettings } from "react-icons/md";
+// import { HiMenu, HiX } from "react-icons/hi"; 
+// import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa'; 
+// import { BiLogOut } from "react-icons/bi"; 
+
+
+
+// interface SideBarProps {
+//   userRole: string;
+// }
+
+// const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
+//     const [isOpen, setIsOpen] = useState(false);
+//     const [showSettings, setShowSettings] = useState(false);
+//     const [showSidebar, setShowSidebar] = useState(false);
+//     const pathname = usePathname();
+
+//     useEffect(() => {
+//         const checkScreenSize = () => {
+//             const width = window.innerWidth;
+//             setShowSidebar(width >= 768);
+//             if (width >= 768) {
+//                 setIsOpen(true);
+//             }
+//         };
+
+//         checkScreenSize();
+//         window.addEventListener('resize', checkScreenSize);
+
+//         return () => window.removeEventListener('resize', checkScreenSize);
+//     }, []);
+
+//     const menuItems = [
+//         { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: '/land-display' },
+//         { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
+//         { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
+//         { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: '/agreementNext' },
+//         { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
+//     ];
+
+//     if (userRole === 'seller') {
+//         menuItems.push({ name: 'Seller Dashboard', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/seller-dashboard' });
+//     }
+
+//     const toggleMenu = () => {
+//         setIsOpen(!isOpen);
+//     };
+
+//     const sidebarContent = (
+//         <div className="flex flex-col h-full relative">
+//             <div className="flex items-left justify-between p-4">
+//                 <Image
+
+//                     src="/images/shawazilogo.png" 
+
+//                     alt="Shawazi Logo"
+//                     className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
+//                     width={80}
+//                     height={80}
+//                     priority
+//                 />
+//             </div>
+
+//             <nav className="flex-grow overflow-y-auto">
+//                 <ul className="space-y-6 px-4 py-8">
+//                     {menuItems.map((item) => (
+//                         <li key={item.name}>
+//                             <Link
+//                                 href={item.href}
+//                                 className={`flex items-center px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
+//                                     pathname === item.href ? 'bg-orange-100 text-orange-600' : ''
+//                                 }`}
+//                             >
+//                                 {item.icon}
+//                                 <span className="text-sm md:text-base lg:text-2xl font-medium">
+//                                     {item.name}
+//                                 </span>
+//                             </Link>
+//                         </li>
+//                     ))}
+//                 </ul>
+//             </nav>
+
+//             <div className="mt-auto p-4">
+//                 <button
+//                     onClick={() => setShowSettings(!showSettings)}
+//                     className="flex items-center w-full px-4 py-2 text-[#562B00] hover:bg-orange-100 rounded-lg transition-colors duration-200"
+//                 >
+//                     <MdOutlineSettings className="w-6 h-6 mr-4" />
+//                     <span className="text-sm md:text-base lg:text-lg font-medium">
+//                         Settings
+//                     </span>
+//                 </button>
+//                 {showSettings && (
+//                     <div className="mt-2 ml-6">
+//                         <Link
+//                             href="/settings"
+//                             className="block py-2 text-secondary hover:text-secondary transition-colors duration-200"
+//                         >
+//                             General Settings
+//                         </Link>
+//                         <Link
+//                             href="/logout"
+//                             className="block py-2 text-primary hover:text-red-600 transition-colors duration-200"
+//                         >
+//                             <span className="flex items-center">
+//                                 <BiLogOut className="w-5 h-5 mr-2" />
+//                                 Logout
+//                             </span>
+//                         </Link>
+//                     </div>
+//                 )}
+//             </div>
+//         </div>
+//     );
+
+//     return (
+//         <div className="relative">
+//             <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
+//                 {!showSidebar && (
+//                     <button onClick={toggleMenu} className="focus:outline-none">
+//                         {isOpen ? (
+//                             <HiX className="w-8 h-8 text-[#562B00]" />
+//                         ) : (
+//                             <HiMenu className="w-8 h-8 text-[#562B00]" />
+//                         )}
+//                     </button>
+//                 )}
+//                 <span className="ml-4 text-lg font-semibold text-[#562B00]"></span>
+//             </div>
+
+//             <div
+//                 className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
+//                 ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r z-40`}
+//             >
+//                 {sidebarContent}
+//             </div>
+
+//             <div className={`pt-16 ${showSidebar ? 'ml-64' : ''} transition-all duration-300`}>
+
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default SideBar;

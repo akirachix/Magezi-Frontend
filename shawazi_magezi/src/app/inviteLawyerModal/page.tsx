@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 interface InviteLawyerModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (first_name: string, last_name: string, invited_by: string, phone_number: string) => Promise<void>;
+    onSubmit: (firstName: string, lastName: string, invitedBy: string, phoneNumber: string) => Promise<void>;
 }
 
 const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const [first_name, setFirstName] = useState('');
-    const [last_name, setLastName] = useState('');
-    const [invited_by, setInvitedBy] = useState('');
-    const [phone_number, setPhoneNumber] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [invitedBy, setInvitedBy] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -21,47 +21,10 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
         setErrorMessage('');
 
         try {
-            const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/, '');
-
-            if (!BASE_URL) {
-                throw new Error('BASE_URL is undefined. Please check your .env file.');
-            }
-
-            console.log('Sending invitation with details:', { first_name, last_name, invited_by, phone_number });
-            
-            const response = await fetch(`${BASE_URL}/api/send_invitation/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    first_name,
-                    last_name,
-                    invited_by,
-                    phone_number,
-                }),
-            });
-
-            if (!response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const errorData = await response.json();
-                    throw new Error(`Failed to send invitation: ${errorData.message || 'Unknown error'}`);
-                } else {
-                    const textError = await response.text();
-                    console.error('Non-JSON error response:', textError);
-                    throw new Error('Failed to send invitation: Server returned a non-JSON response');
-                }
-            }
-
-            const responseData = await response.json();
-            console.log('Invitation sent successfully:', responseData);
-
-            await onSubmit(first_name, last_name, invited_by, phone_number);
+            await onSubmit(firstName, lastName, invitedBy, phoneNumber);
             onClose();
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
-            console.error('Error during invitation submission:', error);
             setErrorMessage(`Failed to send the invitation: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
@@ -87,7 +50,7 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
                         <input
                             type="text"
                             id="firstName"
-                            value={first_name}
+                            value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded"
                             required
@@ -99,7 +62,7 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
                         <input
                             type="text"
                             id="lastName"
-                            value={last_name}
+                            value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded"
                             required
@@ -111,7 +74,7 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
                         <input
                             type="text"
                             id="invitedBy"
-                            value={invited_by}
+                            value={invitedBy}
                             onChange={(e) => setInvitedBy(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded"
                             required
@@ -123,7 +86,7 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
                         <input
                             type="tel"
                             id="phoneNumber"
-                            value={phone_number}
+                            value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded"
                             required
@@ -154,26 +117,4 @@ const InviteLawyerModal: React.FC<InviteLawyerModalProps> = ({ isOpen, onClose, 
     );
 };
 
-const Page = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleSubmit = async (first_name: string, last_name: string, invited_by: string, phone_number: string) => {
-        console.log('Invitation submitted:', { first_name, last_name, invited_by, phone_number });
-    };
-
-    return (
-        <>
-            <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white p-2 rounded">
-                Invite a Lawyer
-            </button>
-
-            <InviteLawyerModal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                onSubmit={handleSubmit}
-            />
-        </>
-    );
-};
-
-export default Page; 
+export default InviteLawyerModal;

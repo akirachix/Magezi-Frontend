@@ -8,19 +8,20 @@ import { useGetUsers } from '@/app/hooks/useGetUsers';
 import UserCard from '@/app/hooks/usersCard/UserCard';
 import useChatMessages from '@/app/hooks/useChatMessages';
 import InviteLawyerModal from '../inviteLawyerModal/page';
+import { UserData } from '../utils/types';
 
-interface UserType {
+type GetUserType = {
     id: string;
     first_name: string;
     role: 'buyer' | 'seller' | 'lawyer';
-}
+};
 
 const ChatRoom: React.FC = () => {
     const { users, loading, error: usersError } = useGetUsers();
     const [inputMessage, setInputMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-    const [availableUsers, setAvailableUsers] = useState<UserType[]>([]);
-    const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+    const [availableUsers, setAvailableUsers] = useState<GetUserType[]>([]);
+    const [selectedUser, setSelectedUser] = useState<GetUserType | null>(null);
     const messagesEndRef = useScrollToBottom<HTMLDivElement>();
     const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
     const [currentUserName, setCurrentUserName] = useState<string | null>(null);
@@ -28,7 +29,6 @@ const ChatRoom: React.FC = () => {
     const [sendingMessage, setSendingMessage] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [inviteModalOpen, setInviteModalOpen] = useState(false);
-
     const { messages, sendMessage } = useChatMessages(currentUserId || '', currentUserRole || '');
 
     useEffect(() => {
@@ -42,8 +42,8 @@ const ChatRoom: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!loading && !usersError) {
-            const filteredUsers: UserType[] = users.filter(user => {
+        if (!loading && !usersError && users) {
+            const filteredUsers: GetUserType[] = users.filter(user => {
                 if (currentUserRole === 'lawyer') {
                     return user.role === 'buyer' || user.role === 'seller';
                 }
@@ -99,7 +99,7 @@ const ChatRoom: React.FC = () => {
         return sender.toLowerCase().includes(searchTerm.toLowerCase()) || content.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    const startConversation = (user: UserType) => {
+    const startConversation = (user: GetUserType) => {
         setSelectedUser(user);
     };
 
@@ -183,7 +183,7 @@ const ChatRoom: React.FC = () => {
                         availableUsers.map((user) => (
                             <UserCard 
                                 key={user.id} 
-                                user={user} 
+                                user={user as Partial<UserData>}
                                 startConversation={() => startConversation(user)} 
                             />
                         ))
@@ -240,6 +240,7 @@ const ChatRoom: React.FC = () => {
 
             {inviteModalOpen && (
                 <InviteLawyerModal 
+                    isOpen={inviteModalOpen}
                     onClose={handleCloseModal} 
                     onSubmit={handleSubmitInvite} 
                 />
@@ -249,8 +250,6 @@ const ChatRoom: React.FC = () => {
 };
 
 export default ChatRoom;
-
-
 
 
 

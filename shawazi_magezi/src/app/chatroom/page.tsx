@@ -9,7 +9,6 @@ import UserCard from "@/app/hooks/usersCard/UserCard";
 import useChatMessages from "@/app/hooks/useChatMessages";
 import InviteLawyerModal from "../components/InviteLawyerModal";
 import { UserData } from "../utils/types";
-
 type GetUserType = {
   id: string;
   first_name: string;
@@ -188,6 +187,7 @@ const ChatRoom: React.FC = () => {
   };
 
   return (
+    
     <div className="flex flex-col md:flex-row bg-gray-100 font-jost h-screen">
       <div className="hidden md:flex flex-col w-full md:w-1/4 bg-white border-r border-gray-200 p-4 shadow-md">
         <div className="mb-4">

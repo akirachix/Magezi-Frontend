@@ -1,6 +1,4 @@
-
 const baseUrl = process.env.BASE_URL;
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -67,4 +65,4 @@ export async function GET(request: Request) {
       }
     );
   }
-}
+};

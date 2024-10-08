@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
 import useLandData from "@/app/hooks/useLandData";
@@ -20,21 +18,12 @@ const LandSearch: React.FC = () => {
       setQuery("");
     }
   }, [query]);
-
   const handleClose = useCallback(() => {
     setShowModal(false);
     setShowErrorModal(false);
     setQuery("");
     setParcelNumber("");
   }, []);
-
-  // const handleRetry = useCallback(() => {
-  //   setShowErrorModal(false);
-  //   if (parcelNumber) {
-  //     setQuery(parcelNumber);
-  //     handleSearch();
-  //   }
-  // }, [handleSearch, parcelNumber]);
 
   useEffect(() => {
     if (!loading && parcelNumber) {
@@ -60,7 +49,7 @@ const LandSearch: React.FC = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          className="flex-grow p-2 border rounded-l mb-2 sm:mb-0 sm:rounded-l-none sm:rounded-l border-r-0"
+          className="flex-grow p-2 border rounded-l mb-2 sm:mb-0 sm:rounded-l-none border-r-0"
         />
         <button
           onClick={handleSearch}
@@ -81,7 +70,6 @@ const LandSearch: React.FC = () => {
       {showErrorModal && (
         <SearchErrorModal
           onClose={handleClose}
-          // onRetry={handleRetry}
           message={`The parcel number ${parcelNumber} does not match any land record. Please check the number and try again.`}
         />
       )}

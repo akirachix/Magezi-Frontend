@@ -15,6 +15,12 @@ export interface LandDetails {
   longitude: string;
 }
 
+export interface User{
+    phone_number: string;
+    role: string;
+    password:string;
+
+}
 export interface Transaction {
   date: string;
   status: string;
@@ -44,12 +50,13 @@ export interface UserLogin {
 }
 
 export interface UserData {
+  id:string;
   first_name: string;
   last_name: string;
   phone_number: string;
   password: string;
   confirm_password: string;
-  role: string;
+  role: 'buyer' | 'seller' | 'lawyer';
 }
 
 export interface UserRole {

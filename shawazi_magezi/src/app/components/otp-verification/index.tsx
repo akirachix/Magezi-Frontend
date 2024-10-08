@@ -93,7 +93,7 @@ const OtpVerification = () => {
               redirectUrl = "/lawyer/draft-contract";
               break;
             case "buyer":
-              redirectUrl = "/buyer/land-display";
+              redirectUrl = "/land-display";
               break;
             case "seller":
               redirectUrl = "/seller-page";

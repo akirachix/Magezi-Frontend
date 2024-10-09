@@ -8,7 +8,7 @@ import { useGetUsers } from "@/app/hooks/useGetUsers";
 import UserCard from "@/app/hooks/usersCard/UserCard";
 import useChatMessages from "@/app/hooks/useChatMessages";
 import InviteLawyerModal from "../components/InviteLawyerModal";
-import { UserData } from "../utils/types";
+import { UserDatas } from "../utils/types";
 type GetUserType = {
   id: string;
   first_name: string;
@@ -134,7 +134,7 @@ const ChatRoom: React.FC = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/send_invitation`,
+        `${process.env.BASE_URL}/api/send_invitation`,
         {
           method: "POST",
           headers: {
@@ -205,7 +205,7 @@ const ChatRoom: React.FC = () => {
             availableUsers.map((user) => (
               <UserCard
                 key={user.id}
-                user={user as Partial<UserData>}
+                user={user as Partial<UserDatas>}
                 startConversation={() => startConversation(user)}
               />
             ))

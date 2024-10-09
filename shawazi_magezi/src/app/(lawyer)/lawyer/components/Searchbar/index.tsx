@@ -150,10 +150,3 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
 };
 
 export default SideBar;
-
-
-
-
-
-
-

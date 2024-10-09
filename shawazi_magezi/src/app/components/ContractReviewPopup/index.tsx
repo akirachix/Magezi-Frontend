@@ -3,15 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, CheckCircle } from 'lucide-react';
-import { AgreementFormData } from '@/app/utils/types';
+import { AgreementFormData, ContractReviewPopupProps } from '@/app/utils/types';
 
-interface ContractReviewPopupProps {
-  onClose: () => void;
-  onAgreementUpdate: () => void;
-  onSubmit: (response: { buyer_agreed?: boolean; seller_agreed?: boolean; }) => Promise<void>;
-  agreement: AgreementFormData;
-  userRole: 'buyer' | 'seller' | 'lawyer';
-}
 
 const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
   agreement,
@@ -44,12 +37,12 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
         seller_agreed: userRole === 'seller' ? agreed : undefined,
       });
 
-      onAgreementUpdate(); // Notify parent of agreement update
+      onAgreementUpdate(); 
       setSuccessMessage(agreed ? 'Contract agreement successful!' : 'You have disagreed with the contract.');
 
       setTimeout(() => {
         onClose();
-        router.push(userRole === 'buyer' ? '/Buyer_agree' : userRole === 'seller' ? '/Seller_agree' : '/Lawyer_agree');
+        router.push(userRole === 'buyer' ? '/buyer/buyer_agree' : userRole === 'seller' ? '/seller/seller_agree' : '/Lawyer_agree');
       }, 1000);
     } catch {
       setError('An unexpected error occurred. Please try again.');

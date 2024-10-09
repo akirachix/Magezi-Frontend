@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, Settings, Shield } from 'lucide-react';
 import Image from 'next/image';
-// import Sidebar from '../../Sidebar';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

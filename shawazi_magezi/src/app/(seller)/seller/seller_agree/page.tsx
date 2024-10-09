@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { AgreementFormData } from "@/app/utils/types";
+import { AgreementFormData, UserRole } from "@/app/utils/types";
 import ContractReviewPopup from "@/app/components/ContractReviewPopup";
-// import ContractReviewPopup from "../components/ContractReviewPopup";
 
 interface ResponseType {
   buyer_agreed?: boolean;
@@ -65,9 +64,8 @@ const SellerPage: React.FC = () => {
 
   const handleSubmit = async (response: ResponseType): Promise<void> => {
     try {
-      // Implement your logic for handling the response here if needed
-      console.log(response); // This line can be used to log the response
-      await fetchSellerAgreements(); // Refresh after submission
+      console.log(response);
+      await fetchSellerAgreements();
     } catch (error) {
       console.error("Error submitting response:", error);
       setError("Failed to submit response. Please try again.");
@@ -173,8 +171,8 @@ const SellerPage: React.FC = () => {
           onClose={handleClosePopup}
           onAgreementUpdate={fetchSellerAgreements}
           agreement={recentAgreement}
-          userRole="seller"
-          onSubmit={handleSubmit} 
+          userRole={"seller" as UserRole}
+          onSubmit={handleSubmit}
         />
       )}
     </div>

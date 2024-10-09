@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { AgreementFormData } from "@/app/utils/types";
+import { AgreementFormData, UserRole } from "@/app/utils/types";
 import ContractReviewPopup from "@/app/components/ContractReviewPopup";
+
 
 const BuyerAgreed: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [recentAgreement, setRecentAgreement] = useState<AgreementFormData | null>(null);
+  const [recentAgreement, setRecentAgreement] =
+    useState<AgreementFormData | null>(null);
 
   const fetchBuyerAgreements = useCallback(async () => {
     try {
@@ -18,7 +20,7 @@ const BuyerAgreed: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data: AgreementFormData[] = await response.json();
-      
+
       if (data.length > 0) {
         const largestIdAgreement = data.reduce((prev, current) =>
           prev.agreement_id > current.agreement_id ? prev : current
@@ -27,7 +29,7 @@ const BuyerAgreed: React.FC = () => {
       } else {
         setRecentAgreement(null);
       }
-      
+
       setLastRefresh(new Date());
     } catch (error) {
       console.error("Error fetching buyer agreements:", error);
@@ -128,9 +130,9 @@ const BuyerAgreed: React.FC = () => {
           onClose={handleClosePopup}
           onAgreementUpdate={handleAgreementUpdate}
           agreement={recentAgreement}
-          userRole="buyer"
+          userRole={"buyer" as UserRole}
           onSubmit={async (response) => {
-            console.log(response); 
+            console.log(response);
           }}
         />
       )}

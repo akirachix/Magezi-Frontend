@@ -150,7 +150,7 @@ export async function PATCH(request: NextRequest) {
       try {
         errorData = await response.json();
       } catch {
-        errorData = await response.text();  // Removed the unused 'e' variable
+        errorData = await response.text();  
       }
       console.error(`Failed to update agreement. Status: ${response.status}, Error:`, errorData);
       return NextResponse.json({ error: 'Error updating agreement in backend', details: errorData }, { status: response.status });

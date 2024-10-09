@@ -76,7 +76,7 @@ export interface Term {
   text: string;
   date_created?: string;
   created_by?: string;
-  id?: number;  
+  id?: number | string;  
   effectiveDate?: string; 
   description: string;
   value: string;
@@ -84,7 +84,6 @@ export interface Term {
 
 export interface AgreementFormData {
   terms: [];
-  // terms: Term[];
   agreement_id: number;
   parcel_number: string;
   seller: string;
@@ -134,18 +133,20 @@ export interface AgreementType {
 }
 
 export interface ContractReviewPopupProps {
+  
   onClose: () => void;
-  onAgreementUpdate?: () => void;
-  agreement: AgreementType;
+  onAgreementUpdate: () => void;
   onSubmit: (response: { buyer_agreed?: boolean; seller_agreed?: boolean }) => Promise<void>; 
-  userRole: 'buyer' | 'seller' | 'lawyer'; 
   latestTerm?: Term;
+  agreement: AgreementFormData;
+  userRole: UserRole;
+     
+
 }
 
 export interface Transaction {
   id: number;
   agreement_id: number;
-  // amount: number;
   date: string;
   description?: string;
 }
@@ -156,12 +157,15 @@ export interface APIResponse<T> {
   error?: string;
 }
 
+
 export enum UserRole {
+  EMPTY = "", 
   BUYER = 'buyer',
   SELLER = 'seller',
   LAWYER = 'lawyer',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
 }
+
 
 export enum AgreementStatus {
   PENDING = 'pending',

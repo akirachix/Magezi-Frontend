@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import * as yup from "yup";
 
-// Define the AgreementFormData type
+
 type AgreementFormData = {
   parcel_number: string;
   date_created: string;
@@ -18,7 +18,7 @@ type AgreementFormData = {
   total_amount_made: number;
 };
 
-// Validation schema
+
 const agreementSchema = yup.object().shape({
   parcel_number: yup.string().required("Parcel number is required"),
   date_created: yup

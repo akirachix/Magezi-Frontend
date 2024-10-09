@@ -6,7 +6,6 @@ import { LandDetails } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import SideBar from "@/app/components/SideBarPwa";
 
-
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
 
@@ -49,34 +48,26 @@ function LandDetailsList() {
   };
 
   const mapContainerStyle = {
-    width: "100%",
+    width: "110%",
     height: "250px",
-  };
-
-  const handleInterestClick = (land: LandDetails) => {
-    const notificationData = {
-      message: `A buyer is interested in ${land.location_name}!`,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
-    alert("Notification sent to seller!");
   };
 
   return (
     <div
-      className={`relative ${isLargeScreen ? "ml-64" : ""}md:ml-60 lg:ml-64 xl:ml-72`}
+      className={`relative ${
+        isLargeScreen ? "ml-64" : ""
+      }md:ml-60 lg:ml-64 xl:ml-72`}
     >
       <div className="pt-20 transition-all duration-300">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
           <div className="bg-[#D0F1A1] p-6 rounded-lg mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#562B00] mb-6">
-              Hello Zee, Welcome to Shawazi
+              Hello, Welcome to Shawazi
             </h1>
             <p className="mb-4 text-lg sm:text-xl">
               Please feel free to carry out your land search
             </p>
             <div className="mr-12">
-              
             </div>
           </div>
           <div className="mb-4 flex justify-between items-center">
@@ -109,7 +100,7 @@ function LandDetailsList() {
               ? currentItems.map((land: LandDetails) => (
                   <div
                     key={land.land_details_id}
-                    className="border rounded-lg p-4 shadow-lg"
+                    className="border border-gray-300 rounded-lg p-4 shadow-lg"
                   >
                     {land.latitude && land.longitude ? (
                       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY!}>
@@ -144,10 +135,7 @@ function LandDetailsList() {
                       <span className="font-semibold">Address:</span>{" "}
                       {land.address}
                     </p>
-                    <button
-                      onClick={() => handleInterestClick(land)}
-                      className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700"
-                    >
+                    <button className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700">
                       Interested
                     </button>
                   </div>
@@ -188,10 +176,9 @@ function LandDetailsList() {
         </div>
       </div>
 
-      <SideBar userRole="buyer" />
+      <SideBar userRole={""} />
     </div>
   );
 }
 
 export default LandDetailsList;
-

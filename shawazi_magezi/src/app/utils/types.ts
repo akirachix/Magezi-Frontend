@@ -72,6 +72,15 @@ declare module 'cookie' {
   const Cookies: Cookies; 
 }
 
+// cookies-next.d.ts
+import 'cookies-next';
+
+declare module 'cookies-next' {
+    interface OptionsType {
+        maxAge?: number; // Add maxAge to the OptionsType
+    }
+}
+
 export interface Term {
   text: string;
   date_created?: string;

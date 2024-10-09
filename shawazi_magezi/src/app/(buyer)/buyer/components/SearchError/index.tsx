@@ -2,7 +2,6 @@ import React from "react";
 
 interface SearchErrorModalProps {
   onClose: () => void;
-  // onRetry: () => void;
   message: string;
 }
 

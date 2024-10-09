@@ -131,7 +131,7 @@ const Signup = () => {
             <input
               id="phone_number"
               {...register('phone_number')}
-              className="w-full border text-[16px] md:text-[20px] px-3 py-3 border-2 border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-foreground"
+              className="w-full text-[16px] md:text-[20px] px-3 py-3 border-2 border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-foreground"
               placeholder="+254XXXXXXXX"
             />
             {errors.phone_number && <p className="mt-1 text-xs text-border-color">{errors.phone_number.message}</p>}
@@ -190,9 +190,9 @@ const Signup = () => {
               className={`w-full border text-[16px] md:text-[20px] ${errors.role ? 'border-border-color' : 'border-foreground'} border-2 rounded-md shadow-sm p-3 focus:outline-none focus:ring-1 focus:ring-foreground`}
             >
               <option value="">Select a role</option>
-              <option value="seller">Seller</option>
-              <option value="buyer">Buyer</option>
-              <option value="lawyer">Lawyer</option>
+              <option value="seller">seller</option>
+              <option value="buyer">buyer</option>
+              <option value="lawyer">lawyer</option>
             </select>
             {errors.role && <p className="mt-1 text-xs text-border-color">{errors.role.message}</p>}
           </div>

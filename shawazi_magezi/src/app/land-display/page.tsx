@@ -22,6 +22,7 @@ function LandDetailsList() {
       const width = window.innerWidth;
       setIsLargeScreen(width >= 1280 || width === 1024);
     };
+    
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);

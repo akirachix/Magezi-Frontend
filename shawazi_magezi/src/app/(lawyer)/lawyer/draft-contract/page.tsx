@@ -38,7 +38,6 @@ const WelcomeSection = () => {
     fetchUserData();
   }, []);
 
-  // Log userData to avoid linting error
   console.log(userData);
 
   const handleAgreementView = () => {

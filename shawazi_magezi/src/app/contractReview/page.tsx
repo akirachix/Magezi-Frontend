@@ -1,8 +1,6 @@
-// src/app/contractReview/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
 import { X, CheckCircle } from 'lucide-react';
 import { AgreementFormData } from '@/app/utils/types';
 import router from 'next/router';
@@ -133,17 +131,15 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
   );
 };
 
-// Main component for the contract review page
 const ContractReviewPage: React.FC = () => {
   const [agreement, setAgreement] = useState<AgreementFormData | null>(null);
-  const [userRole] = useState<'buyer' | 'seller' | 'lawyer'>('buyer'); // Example role
+  const [userRole] = useState<'buyer' | 'seller' | 'lawyer'>('buyer'); 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
 
   useEffect(() => {
-    // Simulate fetching agreement data
     const fetchAgreementData = async () => {
-      const response = await fetch('/api/agreements'); // Adjust endpoint as needed
+      const response = await fetch('/api/agreements'); 
       const data: AgreementFormData = await response.json();
       setAgreement(data);
     };
@@ -152,7 +148,6 @@ const ContractReviewPage: React.FC = () => {
   }, []);
 
   const handleAgreementUpdate = () => {
-    // Logic to handle agreement update (e.g., refetch data)
   };
 
   return (

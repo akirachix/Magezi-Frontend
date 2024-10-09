@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
+import { setCookie } from "cookies-next";
 import * as yup from "yup";
-
 
 type AgreementFormData = {
   parcel_number: string;
@@ -17,7 +17,6 @@ type AgreementFormData = {
   remaining_amount: number;
   total_amount_made: number;
 };
-
 
 const agreementSchema = yup.object().shape({
   parcel_number: yup.string().required("Parcel number is required"),
@@ -67,6 +66,10 @@ const CreateAgreement: React.FC = () => {
   } = useForm<AgreementFormData>({
     resolver: yupResolver(agreementSchema),
   });
+
+  useEffect(() => {
+    setCookie("userRole", "lawyer", { maxAge: 3600 }); 
+  }, []);
 
   const onSubmit = async (data: AgreementFormData) => {
     const transformedData = {
@@ -119,7 +122,7 @@ const CreateAgreement: React.FC = () => {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="text-center py-4">
@@ -194,6 +197,5 @@ const CreateAgreement: React.FC = () => {
 export default CreateAgreement;
 
 function useNewAgreements(): { loading: boolean; error: { message: string } | null } {
-  return { loading: false, error: null }; 
+  return { loading: false, error: null };
 }
-

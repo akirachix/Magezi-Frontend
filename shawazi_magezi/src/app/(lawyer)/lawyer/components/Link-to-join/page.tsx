@@ -33,7 +33,7 @@ const ContractDrafting: React.FC = () => {
           </label>
         </div>
 
-        <Link href="/Agreements">
+        <Link href="/lawyer/components/Agreements">
           <button 
             className="bg-green-500 text-white py-2 px-8 md:py-3 md:px-24 rounded hover:bg-opacity-90 transition duration-300"
           >

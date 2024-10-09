@@ -64,13 +64,12 @@ export interface UserDatas {
 declare module 'cookie' {
   interface Cookies {
     get(name: string): string | undefined;
-    getJSON<T>(name: string): T | undefined; // Changed any to a generic type
-    set(name: string, value: string | object, options?: Record<string, unknown>): void; // Specified type
-    remove(name: string, options?: Record<string, unknown>): void; // Specified type
+    getJSON<T>(name: string): T | undefined; 
+    set(name: string, value: string | object, options?: Record<string, unknown>): void; 
+    remove(name: string, options?: Record<string, unknown>): void; 
   }
 
-  const Cookies: Cookies;
-  export = Cookies; 
+  const Cookies: Cookies; 
 }
 
 export interface Term {
@@ -78,10 +77,14 @@ export interface Term {
   date_created?: string;
   created_by?: string;
   id?: number;  
+  effectiveDate?: string; 
+  description: string;
+  value: string;
 }
 
-export interface FormData {
-  terms: Term[];
+export interface AgreementFormData {
+  terms: [];
+  // terms: Term[];
   agreement_id: number;
   parcel_number: string;
   seller: string;
@@ -102,10 +105,11 @@ export interface FormData {
   agreement_hash: string;
   previous_hash: string;
   transactions_history: string;
+  agreement: string; 
 }
 
 export interface AgreementType {
-  agreement_id: Key | null | undefined;
+  agreement_id: string | null | undefined; 
   id?: number;
   parcel_number: string;
   agreed_amount: number;
@@ -133,6 +137,7 @@ export interface ContractReviewPopupProps {
   onClose: () => void;
   onAgreementUpdate?: () => void;
   agreement: AgreementType;
+  onSubmit: (response: { buyer_agreed?: boolean; seller_agreed?: boolean }) => Promise<void>; 
   userRole: 'buyer' | 'seller' | 'lawyer'; 
   latestTerm?: Term;
 }
@@ -140,7 +145,7 @@ export interface ContractReviewPopupProps {
 export interface Transaction {
   id: number;
   agreement_id: number;
-  amount: number;
+  // amount: number;
   date: string;
   description?: string;
 }
@@ -156,7 +161,6 @@ export enum UserRole {
   SELLER = 'seller',
   LAWYER = 'lawyer',
   ADMIN = 'admin'
-  
 }
 
 export enum AgreementStatus {
@@ -222,7 +226,7 @@ export interface AuditLogEntry {
   action: string;
   entity_type: 'agreement' | 'transaction' | 'user';
   entity_id: number;
-  changes: Record<string, unknown>; // Changed any to unknown for safer typing
+  changes: Record<string, unknown>; 
   timestamp: string;
   ip_address?: string;
 }
@@ -257,7 +261,6 @@ export interface Settings {
 
 export type RequiredProperties<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export type OptionalProperties<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
 export type ReadonlyProperties<T> = {
   readonly [P in keyof T]: T[P];
 };

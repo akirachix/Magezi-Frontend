@@ -1,21 +1,30 @@
 "use client";
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import * as yup from "yup";
-import { FormData } from "@/app/utils/types";
-import { useNewAgreements } from "@/app/hooks/userNewAgreenments";
-import SideBar from "@/app/components/SideBarPwa";
 
+// Define the AgreementFormData type
+type AgreementFormData = {
+  parcel_number: string;
+  date_created: string;
+  contract_duration: number;
+  agreed_amount: number;
+  installment_schedule: number;
+  penalties_interest_rate: number;
+  down_payment: number;
+  remaining_amount: number;
+  total_amount_made: number;
+};
 
+// Validation schema
 const agreementSchema = yup.object().shape({
   parcel_number: yup.string().required("Parcel number is required"),
   date_created: yup
-    .date()
+    .string()
     .required("Date created is required")
-    .typeError("Invalid date format"),
+    .matches(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format, expected YYYY-MM-DD"),
   contract_duration: yup
     .number()
     .required("Contract duration is required")
@@ -48,53 +57,51 @@ const agreementSchema = yup.object().shape({
 
 const CreateAgreement: React.FC = () => {
   const router = useRouter();
-  const { loading, error } = useNewAgreements(); // Corrected hook usage
+  const { loading, error } = useNewAgreements();
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<AgreementFormData>({
     resolver: yupResolver(agreementSchema),
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: AgreementFormData) => {
+    const transformedData = {
+      ...data,
+      date_created: data.date_created.toString().split("T")[0],
+    };
     setSubmitting(true);
     setSubmitError(null);
-
     try {
       const response = await fetch("/api/agreements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(transformedData),
       });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({
           error: "Failed to parse error response",
         }));
-
         console.error("Failed to create agreement:", errorData);
         const errorMessages =
           Object.values(errorData).flat().join(", ") ||
           "Failed to create agreement";
         throw new Error(errorMessages);
       }
-
       const newAgreement = await response.json();
       localStorage.setItem("recentAgreement", JSON.stringify(newAgreement));
-
-      router.push("/AgreementNext");
+      router.push("/agreementNext");
     } catch (error) {
       if (error instanceof Error) {
         console.error("Failed to submit agreement:", error.message);
         setSubmitError(
           error.message ||
-            "An unexpected error occurred. Please try again later."
+          "An unexpected error occurred. Please try again later."
         );
       } else {
         console.error("An unknown error occurred:", error);
@@ -112,7 +119,7 @@ const CreateAgreement: React.FC = () => {
       </div>
     );
   }
-
+  
   if (error) {
     return (
       <div className="text-center py-4">
@@ -130,22 +137,10 @@ const CreateAgreement: React.FC = () => {
   const formFields = [
     { label: "Parcel Number", name: "parcel_number", type: "text" },
     { label: "Date Created", name: "date_created", type: "date" },
-    {
-      label: "Contract Duration (in months)",
-      name: "contract_duration",
-      type: "number",
-    },
+    { label: "Contract Duration (in months)", name: "contract_duration", type: "number" },
     { label: "Agreed Amount", name: "agreed_amount", type: "number" },
-    {
-      label: "Installment Schedule (in months)",
-      name: "installment_schedule",
-      type: "number",
-    },
-    {
-      label: "Penalties Interest Rate (%)",
-      name: "penalties_interest_rate",
-      type: "number",
-    },
+    { label: "Installment Schedule (in months)", name: "installment_schedule", type: "number" },
+    { label: "Penalties Interest Rate (%)", name: "penalties_interest_rate", type: "number" },
     { label: "Down Payment", name: "down_payment", type: "number" },
     { label: "Remaining Amount", name: "remaining_amount", type: "number" },
     { label: "Total Amount Made", name: "total_amount_made", type: "number" },
@@ -158,23 +153,21 @@ const CreateAgreement: React.FC = () => {
       </h1>
       {submitError && <div className="text-red-500 mb-4">{submitError}</div>}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <SideBar userRole={""} />
         {formFields.map(({ label, name, type }, index) => (
           <div className="mb-4" key={index}>
             <label className="block text-sm font-medium mb-1">{label}</label>
             <input
               type={type}
-              {...register(name as keyof FormData)}
+              {...register(name as keyof AgreementFormData)}
               className="border border-gray-300 rounded-lg w-full p-2"
             />
-            {errors[name as keyof FormData] && (
+            {errors[name as keyof AgreementFormData] && (
               <p className="text-red-500">
-                {errors[name as keyof FormData]?.message}
+                {errors[name as keyof AgreementFormData]?.message}
               </p>
             )}
           </div>
         ))}
-
         <div className="flex space-x-2 mt-6">
           <button
             type="submit"
@@ -185,11 +178,10 @@ const CreateAgreement: React.FC = () => {
           >
             {submitting ? "Creating..." : "Create Agreement"}
           </button>
-
           <button
             type="button"
             className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-opacity-90 transition duration-300"
-            onClick={() => router.push("/AgreementNext")}
+            onClick={() => router.push("/agreementNext")}
           >
             Next Page
           </button>
@@ -201,4 +193,7 @@ const CreateAgreement: React.FC = () => {
 
 export default CreateAgreement;
 
+function useNewAgreements(): { loading: boolean; error: { message: string } | null } {
+  return { loading: false, error: null }; 
+}
 

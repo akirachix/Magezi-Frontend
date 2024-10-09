@@ -3,21 +3,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { AgreementFormData } from "@/app/utils/types";
 import ContractReviewPopup from "@/app/components/ContractReviewPopup";
-// import ContractReviewPopup from "../components/ContractReviewPopup";
 
-interface ResponseType {
-  buyer_agreed?: boolean;
-  seller_agreed?: boolean;
-}
-
-const SellerPage: React.FC = () => {
-  const [agreements, setAgreements] = useState<AgreementFormData[]>([]);
+const BuyerAgreed: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [recentAgreement, setRecentAgreement] = useState<AgreementFormData | null>(null);
 
-  const fetchSellerAgreements = useCallback(async () => {
+  const fetchBuyerAgreements = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/agreements/");
@@ -25,34 +18,34 @@ const SellerPage: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data: AgreementFormData[] = await response.json();
-
+      
       if (data.length > 0) {
         const largestIdAgreement = data.reduce((prev, current) =>
           prev.agreement_id > current.agreement_id ? prev : current
         );
-        setAgreements([largestIdAgreement]);
+        setRecentAgreement(largestIdAgreement);
       } else {
-        setAgreements([]);
+        setRecentAgreement(null);
       }
+      
       setLastRefresh(new Date());
     } catch (error) {
-      console.error("Error fetching seller agreements:", error);
-      setError("Failed to fetch agreements. Please try again later.");
+      console.error("Error fetching buyer agreements:", error);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchSellerAgreements();
-    const intervalId = setInterval(fetchSellerAgreements, 30000);
+    fetchBuyerAgreements();
+    const intervalId = setInterval(() => {
+      fetchBuyerAgreements();
+    }, 30000);
     return () => clearInterval(intervalId);
-  }, [fetchSellerAgreements]);
+  }, [fetchBuyerAgreements]);
 
-  const recentAgreement = agreements.length > 0 ? agreements[0] : null;
-
-  const handleRefresh = () => {
-    fetchSellerAgreements();
+  const handleAgreementUpdate = () => {
+    fetchBuyerAgreements();
   };
 
   const handleShowPopup = () => {
@@ -61,17 +54,6 @@ const SellerPage: React.FC = () => {
 
   const handleClosePopup = () => {
     setShowPopup(false);
-  };
-
-  const handleSubmit = async (response: ResponseType): Promise<void> => {
-    try {
-      // Implement your logic for handling the response here if needed
-      console.log(response); // This line can be used to log the response
-      await fetchSellerAgreements(); // Refresh after submission
-    } catch (error) {
-      console.error("Error submitting response:", error);
-      setError("Failed to submit response. Please try again.");
-    }
   };
 
   if (loading) {
@@ -84,28 +66,8 @@ const SellerPage: React.FC = () => {
 
   return (
     <div className="p-6 max-w-2xl mx-auto bg-white rounded-xl shadow-md">
-      <h1 className="text-3xl font-bold mb-6 text-primary">Seller Dashboard</h1>
-
+      <h1 className="text-3xl font-bold mb-6 text-primary">Buyer Dashboard</h1>
       <div className="bg-gray-100 p-6 rounded-lg shadow-inner">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Your Most Recent Listing</h2>
-          <button
-            onClick={handleRefresh}
-            className="px-3 py-1 text-sm bg-primary text-white rounded hover:bg-indigo-600 transition duration-300"
-          >
-            Refresh
-          </button>
-        </div>
-
-        {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-
         {recentAgreement ? (
           <div className="space-y-3">
             <p>
@@ -113,7 +75,7 @@ const SellerPage: React.FC = () => {
               {recentAgreement.parcel_number || "N/A"}
             </p>
             <p>
-              <strong className="text-gray-700">Listed Price:</strong> Ksh{" "}
+              <strong className="text-gray-700">Listed Price:</strong> Ksh
               {recentAgreement.agreed_amount?.toLocaleString() || "N/A"}
             </p>
             <p>
@@ -121,19 +83,19 @@ const SellerPage: React.FC = () => {
               {recentAgreement.contract_duration} months
             </p>
             <p>
-              <strong className="text-gray-700">Down Payment:</strong> Ksh{" "}
+              <strong className="text-gray-700">Down Payment:</strong> Ksh
               {recentAgreement.down_payment?.toLocaleString() || "N/A"}
             </p>
             <p>
               <strong className="text-gray-700">Status:</strong>
               <span
                 className={`ml-2 px-2 py-1 rounded ${
-                  recentAgreement.seller_agreed
+                  recentAgreement.buyer_agreed
                     ? "bg-green-200 text-green-800"
                     : "bg-yellow-200 text-yellow-800"
                 }`}
               >
-                {recentAgreement.seller_agreed ? "Agreed" : "Pending"}
+                {recentAgreement.buyer_agreed ? "Agreed" : "Pending"}
               </span>
             </p>
             <p>
@@ -143,23 +105,16 @@ const SellerPage: React.FC = () => {
 
             <button
               onClick={handleShowPopup}
-              className="mt-4 w-full px-4 py-2 bg-primary text-white rounded hover:bg-customGreen transition duration-300 ease-in-out"
-              disabled={Boolean(recentAgreement.seller_agreed)}
+              className="mt-4 w-full px-4 py-2 bg-hover text-white rounded hover:bg-customGreen transition duration-300 ease-in-out"
             >
-              {recentAgreement.seller_agreed
+              {recentAgreement.buyer_agreed
                 ? "Agreement Already Reviewed"
-                : "Review and Agree"}
+                : "Review Agreement"}
             </button>
           </div>
         ) : (
           <div className="text-center py-8">
             <p className="text-gray-600 italic mb-4">No listings found.</p>
-            <button
-              onClick={handleRefresh}
-              className="px-4 py-2 bg-primary text-white rounded hover:bg-indigo-600 transition duration-300"
-            >
-              Check for New Listings
-            </button>
           </div>
         )}
       </div>
@@ -171,14 +126,16 @@ const SellerPage: React.FC = () => {
       {showPopup && recentAgreement && (
         <ContractReviewPopup
           onClose={handleClosePopup}
-          onAgreementUpdate={fetchSellerAgreements}
+          onAgreementUpdate={handleAgreementUpdate}
           agreement={recentAgreement}
-          userRole="seller"
-          onSubmit={handleSubmit} 
+          userRole="buyer"
+          onSubmit={async (response) => {
+            console.log(response); 
+          }}
         />
       )}
     </div>
   );
 };
 
-export default SellerPage;
+export default BuyerAgreed;

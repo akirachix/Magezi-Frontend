@@ -1,27 +1,14 @@
-import { useEffect, useState } from 'react';
-import { FormData } from '../utils/types';
-import { fetchData } from '../utils/newpostAgreements';
-
-export const useNewAgreements = () => {
-  const [data, setData] = useState<FormData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const getAgreements = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchData();
-        console.log({ response });
-        setData(response.agreements);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getAgreements();
-  }, []);
-
-  return { data, loading, error };
+const baseUrl = '/api/agreements';
+export const fetchData = async () => {
+  try {
+    const url =  `${baseUrl}`
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching agreements:', (error as Error).message);
+    throw error;
+  }
 };

@@ -1,8 +1,8 @@
 import React from "react";
-import { UserData } from "@/app/utils/types";
+import { UserDatas } from "@/app/utils/types";
 
 interface UserCardDetails {
-    user: Partial<UserData>;
+    user: Partial<UserDatas>;
     startConversation: () => void; 
 }
 

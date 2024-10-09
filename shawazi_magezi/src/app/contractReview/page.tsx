@@ -1,45 +1,31 @@
+// src/app/contractReview/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { X, CheckCircle } from 'lucide-react';
-
-interface Agreement {
-  agreement_id: number;
-  date_created: string;
-  contract_duration: number;
-  agreed_amount: number;
-  installment_schedule: string;
-  penalties_interest_rate: number;
-  down_payment: number;
-  remaining_amount: number;
-  total_amount_made: number;
-  buyer_agreed: boolean;
-  seller_agreed: boolean;
-}
+import { AgreementFormData } from '@/app/utils/types';
+import router from 'next/router';
 
 interface ContractReviewPopupProps {
   onClose: () => void;
-  agreement: Agreement | null; // Allowing null if the agreement is not yet loaded
+  onAgreementUpdate: () => void;
+  agreement: AgreementFormData;
   userRole: 'buyer' | 'seller' | 'lawyer';
 }
 
 const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
-  onClose,
   agreement,
+  onClose,
+  onAgreementUpdate,
   userRole,
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [localAgreement, setLocalAgreement] = useState<Agreement | null>(null); // Allowing null initially
-  const router = useRouter();
+  const [localAgreement, setLocalAgreement] = useState<AgreementFormData>(agreement);
 
   useEffect(() => {
-    if (agreement) {
-      setLocalAgreement(agreement);
-    } else {
-      setError('Agreement data is not available.'); // Handle the case where agreement is null
-    }
+    setLocalAgreement(agreement);
   }, [agreement]);
 
   const handleAgree = async (agreed: boolean) => {
@@ -65,11 +51,9 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
 
       if (response.ok) {
         const updatedAgreement = await response.json();
-
+        onAgreementUpdate();
         setLocalAgreement(updatedAgreement);
-
         setSuccessMessage(agreed ? 'Contract agreement successful!' : 'You have disagreed with the contract.');
-
         setTimeout(() => {
           onClose();
           router.push(userRole === 'buyer' ? '/Buyer_agree' : userRole === 'seller' ? '/Seller_agree' : '/Lawyer_agree');
@@ -82,19 +66,6 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
       setError('An unexpected error occurred. Please try again.');
     }
   };
-
-  // Conditional rendering based on localAgreement
-  if (!localAgreement) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-md border border-gray-200">
-          <div className="p-6">
-            <p className="text-red-500">Loading agreement details...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -162,15 +133,46 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
   );
 };
 
-export default ContractReviewPopup;
+// Main component for the contract review page
+const ContractReviewPage: React.FC = () => {
+  const [agreement, setAgreement] = useState<AgreementFormData | null>(null);
+  const [userRole] = useState<'buyer' | 'seller' | 'lawyer'>('buyer'); // Example role
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
 
+  useEffect(() => {
+    // Simulate fetching agreement data
+    const fetchAgreementData = async () => {
+      const response = await fetch('/api/agreements'); // Adjust endpoint as needed
+      const data: AgreementFormData = await response.json();
+      setAgreement(data);
+    };
 
+    fetchAgreementData();
+  }, []);
 
+  const handleAgreementUpdate = () => {
+    // Logic to handle agreement update (e.g., refetch data)
+  };
 
+  return (
+    <div>
+      <h1>Contract Review Page</h1>
+      <button onClick={() => setIsPopupOpen(true)}>Review Agreement</button>
 
+      {isPopupOpen && agreement && (
+        <ContractReviewPopup
+          agreement={agreement}
+          userRole={userRole}
+          onClose={() => setIsPopupOpen(false)}
+          onAgreementUpdate={handleAgreementUpdate}
+        />
+      )}
+    </div>
+  );
+};
 
-
+export default ContractReviewPage;
 
 
 

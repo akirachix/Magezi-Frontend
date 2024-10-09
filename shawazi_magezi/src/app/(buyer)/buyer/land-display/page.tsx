@@ -5,7 +5,7 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import SideBar from "@/app/components/SideBarPwa";
-import LandSearch from "../components/Searchbar";
+
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
@@ -76,7 +76,7 @@ function LandDetailsList() {
               Please feel free to carry out your land search
             </p>
             <div className="mr-12">
-              <LandSearch />
+              
             </div>
           </div>
           <div className="mb-4 flex justify-between items-center">

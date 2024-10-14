@@ -14,3 +14,51 @@ export interface LandDetails {
   latitude: string;
   longitude: string;
 }
+
+export interface User{
+    phone_number: string;
+    role: string;
+    password:string;
+
+}
+export interface Transaction {
+  date: string;
+  status: string;
+  amount: string;
+}
+
+export interface UserProfile {
+  id: number;
+  phone_number: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  date_joined: string;
+  role: string;
+  permissions: string[];
+}
+
+export interface User {
+  phone_number: string;
+  role: string;
+  password: string;
+}
+
+export interface UserLogin {
+  phone_number: string;
+  password: string;
+}
+
+export interface UserData {
+  id:string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  password: string;
+  confirm_password: string;
+  role: 'buyer' | 'seller' | 'lawyer';
+}
+
+export interface UserRole {
+  userRole: "buyer" | "seller" | "lawyer";
+}

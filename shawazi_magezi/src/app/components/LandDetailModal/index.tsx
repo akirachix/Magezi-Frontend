@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
 import { MdClose } from "react-icons/md";
 import { LandDetails } from "@/app/utils/types";
+import { cookies } from "next/headers";
 
 interface LandDetailsModalProps {
   land: LandDetails | null;

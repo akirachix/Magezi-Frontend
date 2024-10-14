@@ -172,7 +172,7 @@ const TermsAndConditions: React.FC = () => {
         <div className="mb-6 p-6 border rounded gap-x-10">
           <h2 className="text-lg font-semibold">Agreement Details</h2>
           <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
-            <p className="flex-1">
+            <p className="flex-1 text-white ">
               <strong>Parcel Number:</strong> {agreement.parcel_number}
             </p>
           </div>

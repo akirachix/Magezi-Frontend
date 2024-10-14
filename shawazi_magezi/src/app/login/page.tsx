@@ -234,7 +234,7 @@ const Login = () => {
                     setCookie('userRole', loginResponse.user.role, { maxAge: 60 * 60 * 24 });
                 }
 
-                router.push(`/components/otp-verification?phone_number=${encodeURIComponent(data.phone_number)}`);
+                router.push(`/otp-verification?phone_number=${encodeURIComponent(data.phone_number)}`);
             } else {
                 setError('Login failed. Please check your credentials.');
             }

@@ -107,15 +107,12 @@ import React, { useState, useCallback, useEffect } from "react";
 import useLandData from "@/app/hooks/useLandData";
 import LandDetailsModal from "../LandDetailModal";
 import SearchErrorModal from "../SearchError";
-
 const LandSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
   const [parcelNumber, setParcelNumber] = useState<string>("");
-
   const { land, loading, error } = useLandData(parcelNumber);
-
   const handleSearch = useCallback(() => {
     if (query.trim()) {
       setParcelNumber(query.trim());
@@ -128,11 +125,10 @@ const LandSearch: React.FC = () => {
     setQuery("");
     setParcelNumber("");
   }, []);
-
   useEffect(() => {
     if (!loading && parcelNumber) {
       if (land) {
-        setShowModal(true); 
+        setShowModal(true);
         setShowErrorModal(false);
       } else if (error) {
         setShowErrorModal(true);
@@ -140,7 +136,6 @@ const LandSearch: React.FC = () => {
       }
     }
   }, [land, loading, error, parcelNumber]);
-
   return (
     <div className="container mx-auto p-4 ml-4 mr-6 md:ml-6 lg:ml-8">
       <h1 className="text-xl md:text-2xl font-bold mb-4 text-[#562B00]">
@@ -163,14 +158,12 @@ const LandSearch: React.FC = () => {
           {loading ? "Searching..." : "Search"}
         </button>
       </div>
-
       {showModal && land && (
-        <LandDetailsModal 
-          land={land} 
+        <LandDetailsModal
+          land={land}
           onClose={handleClose}
         />
       )}
-
       {showErrorModal && (
         <SearchErrorModal
           onClose={handleClose}
@@ -180,6 +173,28 @@ const LandSearch: React.FC = () => {
     </div>
   );
 };
-
 export default LandSearch;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

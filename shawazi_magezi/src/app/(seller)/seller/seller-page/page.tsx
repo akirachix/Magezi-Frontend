@@ -392,18 +392,9 @@
 "use client"
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
-import SideBar from "../components/SideBarPwa";
-import SellerNotifications from "../components/NotificationsBell";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"; // Import for the Google Maps API
-import { Transaction } from "../utils/types";
-
-interface LandDetail {
-  id: number;
-  owner_name: string;
-  parcel_number: string;
-  latitude: number;
-  longitude: number;
-}
+import SideBar from "@/app/components/SideBarPwa";
+import SellerNotifications from "@/app/components/NotificationsBell";
+import { Transaction } from "@/app/utils/types"; 
 
 const SellerPage: FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);

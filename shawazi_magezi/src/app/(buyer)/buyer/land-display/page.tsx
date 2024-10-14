@@ -1,12 +1,11 @@
 "use client";
 import { SetStateAction, useEffect, useState } from "react";
-import useDisplayLand from "../hooks/useDisplayLand";
+import useDisplayLand from "@/app/hooks/useDisplayLand";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { LandDetails } from "../utils/types";
+import { LandDetails } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
-import SideBar from "../components/SideBarPwa";
+import SideBar from "@/app/components/SideBarPwa";
 import LandSearch from "../components/Searchbar";
-
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
@@ -51,7 +50,7 @@ function LandDetailsList() {
   };
 
   const mapContainerStyle = {
-    width: "100%",
+    width: "110%",
     height: "250px",
   };
 
@@ -61,8 +60,9 @@ function LandDetailsList() {
         timestamp: new Date().toISOString(),
     };
     localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
-    alert("Notification sent to seller!"); 
+    alert("Notification sent to seller!");
 };
+ 
 
   return (
     <div
@@ -74,13 +74,13 @@ function LandDetailsList() {
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
           <div className="bg-[#D0F1A1] p-6 rounded-lg mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#562B00] mb-6">
-              Hello Zee, Welcome to Shawazi
+              Hello, Welcome to Shawazi
             </h1>
             <p className="mb-4 text-lg sm:text-xl">
               Please feel free to carry out your land search
             </p>
+
             <div className="mr-12">
-             
               <LandSearch/>
             </div>
           </div>
@@ -114,7 +114,7 @@ function LandDetailsList() {
               ? currentItems.map((land: LandDetails) => (
                   <div
                     key={land.land_details_id}
-                    className="border rounded-lg p-4 shadow-lg"
+                    className="border border-gray-300 rounded-lg p-4 shadow-lg"
                   >
                     {land.latitude && land.longitude ? (
                       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY!}>
@@ -196,3 +196,4 @@ function LandDetailsList() {
 }
 
 export default LandDetailsList;
+

@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { fetchUsers } from "../../utils/getUsers";
 import { UserDatas } from "../../utils/types";
-
 const OtpVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
@@ -23,7 +22,6 @@ const OtpVerification = () => {
     } else {
       setError("Phone number not found. Please log in again.");
     }
-
     const cachedUsers = Cookies.get("users");
     if (cachedUsers) {
       setUsers(JSON.parse(cachedUsers));
@@ -35,14 +33,12 @@ const OtpVerification = () => {
     try {
       const fetchedUsers = await fetchUsers();
       setUsers(fetchedUsers);
-
       Cookies.set("users", JSON.stringify(fetchedUsers), { expires: 1 / 24 });
     } catch (error) {
       console.error("Error fetching users:", error);
       setError("Failed to fetch users. Please try again.");
     }
   };
-
   const handleOtpChange = (index: number, value: string) => {
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -132,15 +128,15 @@ const OtpVerification = () => {
   };
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center items-center relative overflow-hidden">
-      <div className="border-2 border-primary rounded-lg p-12 mx-auto w-[90%] md:w-[60%] lg:w-[40%] bg-white shadow-md">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">
+      <div className="border-2 border-primary rounded-lg p-4 sm:p-6 md:p-8 lg:p-12 mx-auto w-[90%] sm:w-[85%] md:w-[80%] lg:w-[50%] bg-white shadow-md">
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-primary mb-4">
           Verify Code
         </h2>
-        <p className="text-center mb-6">
+        <p className="text-center mb-3 text-sm sm:text-base">
           Please enter the verification code sent to your phone number
         </p>
-        <form onSubmit={handleSubmit} className="space-y-9">
-          <div className="flex justify-center space-x-6 mb-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex justify-center space-x-2 mb-4">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -152,7 +148,7 @@ const OtpVerification = () => {
                 value={digit}
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-16 text-center text-3xl border-2 border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-6 sm:w-8 md:w-10 h-12 text-center text-2xl border-2 border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 required
               />
             ))}
@@ -160,7 +156,7 @@ const OtpVerification = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           <button
             type="submit"
-            className={`w-full bg-primary text-white py-4 px-4 rounded-md text-xl ${
+            className={`w-full bg-primary text-white py-2 sm:py-3 md:py-4 rounded-md text-md sm:text-lg ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={loading}
@@ -169,7 +165,8 @@ const OtpVerification = () => {
           </button>
         </form>
       </div>
-      <div className="mt-8 w-[90%] md:w-[60%] lg:w-[40%]">
+      <div className="mt-4 w-[90%] md:w-[80%] lg:w-[50%]">
+        {/* The user list section can be uncommented if needed */}
         {/* <h3 className="text-2xl font-bold mb-4">All Users</h3>
         <ul className="list-disc pl-5">
           {users.map((user, index) => (

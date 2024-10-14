@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 export interface LandDetails {
   land_details_id: number;
   parcel_number: string;
@@ -50,6 +51,7 @@ export interface UserLogin {
 }
 
 export interface UserDatas {
+  name: ReactNode;
   id:string;
   first_name: string;
   last_name: string;

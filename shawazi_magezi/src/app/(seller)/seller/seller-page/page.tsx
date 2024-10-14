@@ -3,13 +3,16 @@
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import SideBar from "@/app/components/SideBarPwa";
-import SellerNotifications from "@/app/components/NotificationsBell";
 import { Transaction } from "@/app/utils/types"; 
+// import NotificationBell from "@/app/components/NotificationBell";
+// import Notifications from "@/app/components/NotificationBell";
+import SellerNotifications from "@/app/components/NotificationBell";
 
 const SellerPage: FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
   const [errorTransactions, setErrorTransactions] = useState<string | null>(null);
+  // const [sellerPhoneNumber, setSellerPhoneNumber] = useState<string>("");
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -27,7 +30,22 @@ const SellerPage: FC = () => {
         setIsLoadingTransactions(false);
       }
     };
+
+    // const fetchUserData = async () => {
+    //   try {
+    //     const response = await fetch("https://shawazi-6941c000049b.herokuapp.com/api/users/"); // Adjust the endpoint as necessary
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch user data");
+    //     }
+    //     const data = await response.json();
+    //     setSellerPhoneNumber(data.phoneNumber); // Adjust according to your data structure
+    //   } catch (error) {https://shawazi-6941c000049b.herokuapp.com  
+    //     console.error(error);
+    //   }
+    // };
+
     fetchTransactions();
+    // fetchUserData();
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -41,7 +59,7 @@ const SellerPage: FC = () => {
 
       <div className="flex-1 p-6">
         <div className="flex justify-end mb-4">
-          <SellerNotifications />
+          <SellerNotifications/>
         </div>
 
         <header className="mb-8">

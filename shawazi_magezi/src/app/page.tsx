@@ -8,8 +8,8 @@ import Head from "next/head";
 
 const Home = () => {
     useEffect(() => {
-        setCookie("userRole", "", { maxAge: 60 * 60 * 24 * 7 }); 
-        setCookie("userName", "", { maxAge: 60 * 60 * 24 * 7 }); 
+        setCookie("userRole", "buyer", { maxAge: 60 * 60 * 24 * 7 }); 
+        setCookie("userName", "Shawazi", { maxAge: 60 * 60 * 24 * 7 }); 
     }, []);
 
     return (

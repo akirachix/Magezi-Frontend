@@ -90,7 +90,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
   
   const baseMenuItems: MenuItem[] = [
     { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
-    { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
+    { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom' },
     { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: routes.contract },
     { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
   ];

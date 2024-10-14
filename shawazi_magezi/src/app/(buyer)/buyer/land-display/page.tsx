@@ -1,21 +1,43 @@
-"use client";
+'use client'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { SetStateAction, useEffect, useState } from "react";
 import useDisplayLand from "@/app/hooks/useDisplayLand";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { LandDetails } from "@/app/utils/types";
+import { LandDetails, UserDatas } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import SideBar from "@/app/components/SideBarPwa";
 import LandSearch from "../components/Searchbar";
+import { getCookie } from "cookies-next";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
 
 function LandDetailsList() {
-  const [pks] = useState(["1", "38", "37", "36", "3", "34", "35"]);
-  const { landDetailsList, loading, error } = useDisplayLand(pks);
+  const [landIds] = useState([
+    "117",
+    "116",
+    "115",
+    "114",
+    "104",
+    "103",
+    "21",
+    "100",
+    "16",
+    "25",
+    "64",
+    "99",
+    "97",
+    "118",
+    "119"
+  ]);
+  const { landDetailsList, loading, error } = useDisplayLand(landIds);
   const [layoutMode, setLayoutMode] = useState("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,21 +75,76 @@ function LandDetailsList() {
     height: "250px",
   };
 
-  const handleInterestClick = (land: LandDetails) => {
-    const notificationData = {
-        message: `A buyer is interested in ${land.location_name}!`,
+  const handleInterestClick = async (land: LandDetails) => {
+    setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: true }));
+
+    try {
+      const userPhone = getCookie("userPhone");
+      if (!userPhone) {
+        toast.error("User is not logged in!");
+        return;
+      }
+
+      const response = await fetch(`${BASE_URL}/api/users/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data.");
+      }
+
+      const users: UserDatas[] = await response.json();
+      const currentUser = users.find((user) => user.phone_number === userPhone);
+      if (!currentUser) {
+        toast.error("User not found!");
+        return;
+      }
+
+      if (!currentUser.first_name || !currentUser.last_name) {
+        toast.error("Invalid buyer data!");
+        return;
+      }
+
+      const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
+      const notificationData = {
+        message: `A buyer named ${buyerName} is interested in your land in ${land.location_name}!`,
         timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
-    alert("Notification sent to seller!");
-};
- 
+      };
+
+      const postResponse = await fetch(
+        `${BASE_URL}/api/notify-seller/${land.land_details_id}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notificationData),
+        }
+      );
+
+      if (!postResponse.ok) {
+        const errorMessage = await postResponse.text();
+        console.error("Error response:", errorMessage);
+        throw new Error("Failed to send notification.");
+      }
+
+      toast.success("Notification sent to seller");
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("This land is already under consideration by another buyer");
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: false }));
+    }
+  };
 
   return (
     <div
       className={`relative ${
         isLargeScreen ? "ml-64" : ""
-      }md:ml-60 lg:ml-64 xl:ml-72`}
+      } md:ml-60 lg:ml-64 xl:ml-72`}
     >
       <div className="pt-20 transition-all duration-300">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
@@ -78,9 +155,8 @@ function LandDetailsList() {
             <p className="mb-4 text-lg sm:text-xl">
               Please feel free to carry out your land search
             </p>
-
             <div className="mr-12">
-              <LandSearch/>
+              <LandSearch />
             </div>
           </div>
           <div className="mb-4 flex justify-between items-center">
@@ -148,9 +224,13 @@ function LandDetailsList() {
                       <span className="font-semibold">Address:</span>{" "}
                       {land.address}
                     </p>
-                    <button onClick={() => handleInterestClick(land)} className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700">
+                    <button 
+                      onClick={() => handleInterestClick(land)} 
+                      className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700"
+                    >
                       Interested
                     </button>
+                    {loadingStates[land.land_details_id] && <p>Loading...</p>} 
                   </div>
                 ))
               : !loading && (
@@ -188,11 +268,11 @@ function LandDetailsList() {
           </div>
         </div>
       </div>
-
-      <SideBar userRole={""} />
+      <ToastContainer />
+      <SideBar userRole={''}/>
     </div>
   );
 }
 
-export default LandDetailsList;
 
+export default LandDetailsList;

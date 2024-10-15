@@ -61,24 +61,15 @@ const OtpVerification = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
       const isVerified = await verifyOtp(otp.join(""));
-      console.log("Users at submit:", users);  // Log the users to see if they are fetched
-      if (users.length === 0) {
-        setError("Failed to load users. Please try again.");
-        setLoading(false);
-        return;
-      }
       if (isVerified && phoneNumber) {
-        const cleanPhoneNumber = (phone: string) => phone.replace(/\D/g, "");
-        console.log("Phone number to compare:", cleanPhoneNumber(phoneNumber));  // Log the cleaned phone number
-        const currentUser = users.find(
-          (user: any) => {
-            console.log("Checking user phone:", cleanPhoneNumber(user.phone_number), "with", cleanPhoneNumber(phoneNumber));
-            return cleanPhoneNumber(user.phone_number) === cleanPhoneNumber(phoneNumber);
-          }
-        );
-        console.log("Current user:", currentUser);  // Log the result of the search
+          const cleanPhoneNumber = (phone: string) => phone.replace(/\D/g, "");
+          const currentUser = users.find(
+              (user: any) => cleanPhoneNumber(user.phone_number) === cleanPhoneNumber(phoneNumber)
+          );
+
         if (currentUser) {
           let redirectUrl = "/";
           switch (currentUser.role) {

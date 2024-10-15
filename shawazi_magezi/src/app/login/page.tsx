@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { useState, useEffect } from "react";
 import { useForm } from 'react-hook-form';
@@ -50,6 +50,7 @@ const Login = () => {
             const loginResponse = await loginUser(data);
 
             if (loginResponse.message && loginResponse.message.includes('success')) {
+
                 setCookie('userPhone', data.phone_number, { maxAge: 60 * 60 * 24 });
                 setCookie('isLoggedIn', 'true', { maxAge: 60 * 60 * 24 });
 

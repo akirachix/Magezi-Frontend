@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -53,7 +53,7 @@ const Signup = () => {
   const onSubmit = async (data: UserSignup) => {
     setLoading(true);
     setErrorMessage('');
-    
+
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -69,8 +69,6 @@ const Signup = () => {
         setCookie('last_name', responseData.last_name, { maxAge: 60 * 60 * 24 });
         setCookie('phone_number', responseData.phone_number, { maxAge: 60 * 60 * 24 });
         setCookie('user_role', responseData.role, { maxAge: 60 * 60 * 24 });
-
-        
 
         alert("Account created successfully! Redirecting to login...");
         setTimeout(() => { router.push("/login"); }, 2000);
@@ -90,12 +88,11 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-jost justify-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-60 h-60 bg-foreground rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/2 translate-y-1/5"></div>
-      <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/4 translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-foreground rounded-full translate-x-1/5 translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/9 mr-[9%] translate-y-[80%]"></div>
-
+                  <div className="absolute top-0 left-0 w-60 h-60 bg-foreground rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/2 translate-y-1/5"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-foreground rounded-full translate-x-1/5 translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/9 mr-[9%] translate-y-[80%]"></div>
+            <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto z-10 bg-white p-6 sm:p-8 rounded-lg"></div>
       <div className="w-full md:w-[40%] mx-auto z-10 bg-white p-6 md:p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-primary mb-6 md:mb-8">Sign Up</h2>
         {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
@@ -144,16 +141,16 @@ const Signup = () => {
             <div className="relative">
               <input
                 id="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 {...register('password')}
                 className={`w-full border text-[16px] md:text-[20px] ${errors.password ? 'border-border-color' : 'border-foreground'} border-2 rounded-md shadow-sm p-3 focus:outline-none focus:ring-1 focus:ring-foreground`}
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                className="absolute right-3 top-3 text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <FaEyeSlash className="h-5 w-5 text-primary" /> : <FaEye className="h-5 w-5 text-primary" />}
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
             {errors.password && <p className="mt-1 text-xs text-border-color">{errors.password.message}</p>}
@@ -166,15 +163,16 @@ const Signup = () => {
             <div className="relative">
               <input
                 id="confirm_password"
-                type={showConfirmPassword ? "text" : "password"}
+                type={showConfirmPassword ? 'text' : 'password'}
                 {...register('confirm_password')}
                 className={`w-full border text-[16px] md:text-[20px] ${errors.confirm_password ? 'border-border-color' : 'border-foreground'} border-2 rounded-md shadow-sm p-3 focus:outline-none focus:ring-1 focus:ring-foreground`}
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                {showConfirmPassword ? <FaEyeSlash className="h-5 w-5 text-primary" /> : <FaEye className="h-5 w-5 text-primary" />}
+                className="absolute right-3 top-3 text-gray-500"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
             {errors.confirm_password && <p className="mt-1 text-xs text-border-color">{errors.confirm_password.message}</p>}
@@ -187,34 +185,35 @@ const Signup = () => {
             <select
               id="role"
               {...register('role')}
-              className={`w-full border text-[16px] md:text-[20px] ${errors.role ? 'border-border-color' : 'border-foreground'} border-2 rounded-md shadow-sm p-3 focus:outline-none focus:ring-1 focus:ring-foreground`}
+              className="w-full border text-[16px] md:text-[20px] border-2 border-foreground rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-foreground"
             >
-              <option value="">Select a role</option>
-              <option value="seller">Seller</option>
-              <option value="buyer">Buyer</option>
-              <option value="lawyer">Lawyer</option>
+              <option value="" disabled>Select your role</option>
+              <option value="buyer">buyer</option>
+              <option value="seller">seller</option>
+              <option value="lawyer">lawyer</option>
             </select>
             {errors.role && <p className="mt-1 text-xs text-border-color">{errors.role.message}</p>}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 text-lg md:text-xl text-white bg-primary rounded-md hover:bg-secondary transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {loading ? 'Signing Up...' : 'Sign Up'}
-          </button>
-        </form>
-        <div className="mt-8 text-center text-lg sm:text-xl">
+          <div className="flex flex-col items-center">
+            <button
+              type="submit"
+              className={`w-full bg-primary text-white text-lg md:text-xl font-semibold rounded-md py-2 transition duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading}
+            >
+              {loading ? 'Creating Account...' : 'Sign Up'}
+            </button>
+            <div className="mt-8 text-center text-lg sm:text-xl">
           <span className="text-primary">Already have an account? </span>
             <Link href="./login/" className="font-medium text-foreground hover:text-secondary hover:underline">
                 Log In
             </Link>
-        </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
 export default Signup;
-

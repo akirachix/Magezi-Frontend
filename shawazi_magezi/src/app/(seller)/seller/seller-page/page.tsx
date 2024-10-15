@@ -389,34 +389,68 @@
 
 
 
-"use client"
+
+
+
+"use client";
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import SideBar from "@/app/components/SideBarPwa";
 import SellerNotifications from "@/app/components/NotificationsBell";
-import { Transaction } from "@/app/utils/types"; 
+import { Transaction, LandDetails } from "@/app/utils/types"; 
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import Cookies from 'js-cookie';
 
 const SellerPage: FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [landDetails, setLandDetails] = useState<LandDetail[]>([]);
+  const [landDetails, setLandDetails] = useState<LandDetails[]>([]);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
   const [isLoadingLandDetails, setIsLoadingLandDetails] = useState(true);
   const [errorTransactions, setErrorTransactions] = useState<string | null>(null);
   const [errorLandDetails, setErrorLandDetails] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
   
-  // Assuming seller_id is available on this page
-  const seller_id = 1; // Replace with actual seller_id from the page's context or API
+  useEffect(() => {
+    const existingUserId = Cookies.get('user_id');
+    const existingUserRole = Cookies.get('user_role'); // Assuming you store the role in cookies
   
-  // Fetch transactions
+    if (existingUserRole === 'seller' && existingUserId) {
+      setUserId(parseInt(existingUserId));
+    } else {
+      // Logic to fetch the user role and ID if not found in cookies
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch('/api/getUserData'); // Replace with your actual API endpoint
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+          const data = await response.json();
+          
+          // Assuming data contains role and id fields
+          if (data.role === 'seller') {
+            Cookies.set('user_id', data.id.toString(), { expires: 30 });
+            Cookies.set('user_role', data.role, { expires: 30 }); // Set role in cookies
+            setUserId(data.id);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      fetchUserData();
+    }
+  }, []);
+
   useEffect(() => {
     const fetchTransactions = async () => {
+      if (!userId) return;
       try {
-        const response = await fetch("/api/transactions");
+        const response = await fetch(`/api/transactions?user_id=${userId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch transactions");
         }
         const data = await response.json();
-        setTransactions(data.slice(0, 5)); // Keep only 5 most recent transactions
+        setTransactions(data.slice(0, 5));
       } catch (error) {
         setErrorTransactions("Failed to load transactions. Please try again later.");
         console.error(error);
@@ -426,22 +460,26 @@ const SellerPage: FC = () => {
     };
 
     fetchTransactions();
-  }, []);
+  }, [userId]);
 
   const fetchLandDetails = async () => {
+    if (!userId) return;
     try {
-      const response = await fetch("https://shawazi-6941c000049b.herokuapp.com/api/land-details/");
+      const response = await fetch(`https://shawazi-6941c000049b.herokuapp.com/api/land-details/?user_id=${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch land details");
       }
       const data = await response.json();
-      const refinedLandDetails = data.map((detail: any) => ({
-        id: detail.id,
-        owner_name: detail.owner_name,
-        parcel_number: detail.parcel_number,
-        latitude: detail.latitude,
-        longitude: detail.longitude,
-      }));
+      const refinedLandDetails = data
+        .filter((detail: any) => detail.seller_id === userId) // Filter by seller_id
+        .map((detail: any) => ({
+          id: detail.id,
+          owner_name: detail.owner_name,
+          parcel_number: detail.parcel_number,
+          latitude: detail.latitude,
+          longitude: detail.longitude,
+          seller_id: detail.seller_id, // Include seller_id in the refined details
+        }));
       setLandDetails(refinedLandDetails);
     } catch (error) {
       setErrorLandDetails("Failed to load land details. Please try again later.");
@@ -452,27 +490,24 @@ const SellerPage: FC = () => {
   };
 
   useEffect(() => {
-    fetchLandDetails();
-  }, []);
+    if (userId) {
+      fetchLandDetails();
+    }
+  }, [userId]);
 
-  // Format date
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Filter land parcels belonging to the seller based on seller_id
-  const sellerLandDetails = landDetails.filter((land) => land.owner_name === `Seller_${seller_id}`);
-
-  // Google Map component to display the land based on latitude and longitude
   const mapContainerStyle = {
     width: "100%",
     height: "300px",
   };
 
   const defaultCenter = {
-    lat: 0, // Default latitude value if no data available
-    lng: 0, // Default longitude value if no data available
+    lat: 0,
+    lng: 0,
   };
 
   return (
@@ -490,7 +525,6 @@ const SellerPage: FC = () => {
           </h2>
         </header>
 
-     
         <section className="grid grid-cols-1 h-[15%] sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <button className="bg-yellow-500 text-[18px] lg:text-[20px] text-white py-6 lg:py-8 px-4 lg:px-6 rounded-md shadow-lg hover:bg-yellow-600 transition-colors">
             Go to chats
@@ -564,22 +598,21 @@ const SellerPage: FC = () => {
           </div>
         </section>
 
-        {/* Seller's Land Parcels */}
         <section>
-          <h3 className="text-lg font-semibold mt-[10%]">Seller's Land Parcels</h3>
+          <h3 className="text-lg font-semibold mt-[10%]">User's Land Parcels</h3>
           {isLoadingLandDetails ? (
             <p>Loading land details...</p>
           ) : errorLandDetails ? (
             <p>Error: {errorLandDetails}</p>
-          ) : sellerLandDetails.length > 0 ? (
-            sellerLandDetails.map((land) => (
+          ) : landDetails.length > 0 ? (
+            landDetails.map((land) => (
               <div key={land.id} className="mb-8">
                 <p className="text-black text-sm md:text-base lg:text-lg">
                   Parcel Number: {land.parcel_number}
                 </p>
 
                 {/* Google Map */}
-                <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+                <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
                   <GoogleMap
                     mapContainerStyle={mapContainerStyle}
                     center={land.latitude && land.longitude ? { lat: land.latitude, lng: land.longitude } : defaultCenter}
@@ -602,6 +635,11 @@ const SellerPage: FC = () => {
 };
 
 export default SellerPage;
+
+
+
+
+
 
 
 

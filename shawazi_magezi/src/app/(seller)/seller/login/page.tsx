@@ -38,12 +38,17 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
-    // Restore phone number from cookies if available
     useEffect(() => {
         const storedPhoneNumber = getCookie('userPhone');
+        const storedFirstName = getCookie('firstName');
+        const storedLastName = getCookie('lastName');
+        const storedUserRole = getCookie('userRole'); 
+
         if (storedPhoneNumber) {
             setValue('phone_number', storedPhoneNumber.toString());
         }
+
+        console.log('Stored User Info:', { storedPhoneNumber, storedFirstName, storedLastName, storedUserRole }); 
     }, [setValue]);
 
     const onSubmit = async (data: UserLogin) => {
@@ -52,29 +57,34 @@ const Login = () => {
 
         try {
             const loginResponse = await loginUser(data);
+            console.log('Login Response:', loginResponse); 
 
             if (loginResponse.message?.includes('success')) {
                 setCookie('userPhone', data.phone_number, { maxAge: 60 * 60 * 24 });
                 setCookie('isLoggedIn', 'true', { maxAge: 60 * 60 * 24 });
 
-                if (loginResponse.user) {
-                    setCookie('firstName', loginResponse.user.first_name, { maxAge: 60 * 60 * 24 });
-                    setCookie('lastName', loginResponse.user.last_name, { maxAge: 60 * 60 * 24 });
-                    setCookie('userRole', loginResponse.user.role, { maxAge: 60 * 60 * 24 });
-                }
+                const { first_name, last_name, role, phone_number } = loginResponse.user;
 
+                setCookie('firstName', first_name, { maxAge: 60 * 60 * 24 });
+                setCookie('lastName', last_name, { maxAge: 60 * 60 * 24 });
+                setCookie('userRole', role, { maxAge: 60 * 60 * 24 }); 
+                setCookie('userPhone', phone_number, { maxAge: 60 * 60 * 24 }); 
+                console.log('User Info:', { first_name, last_name, role, phone_number }); 
+
+               
                 router.push(`/seller/otp-verification?phone_number=${encodeURIComponent(data.phone_number)}`);
             } else {
                 setError('Login failed. Please check your credentials.');
             }
         } catch (error) {
             console.error('Login error:', error);
-            const errorMessage = (error as any)?.response?.data?.message || 'Failed to login. Please try again.'; // Adjust based on your API response structure
+            const errorMessage = (error as any)?.response?.data?.message || 'Failed to login. Please try again.'; 
             setError(errorMessage);
         } finally {
             setLoading(false);
         }
     };
+    
 
     return (
         <div className="min-h-screen bg-white flex flex-col justify-center relative overflow-hidden">

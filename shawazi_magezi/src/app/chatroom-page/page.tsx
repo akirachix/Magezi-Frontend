@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image'; 
 import SideBar from '../components/SideBarPwa';
 
+
 const ChatRoom = () => {
   return (
     <div className="flex flex-col items-center justify-start text-center mb-10 p-4 md:ml-[5%] lg:ml-[3%]"> 
@@ -14,6 +15,7 @@ const ChatRoom = () => {
           <h1 className="text-[28px] font-bold text-primary text-center md:text-[32px] lg:text-[36px]">ChatRoom</h1> 
         </div>
         
+
         <p className="text-primary text-[18px] mb-6 md:text-[20px] lg:text-[22px]">Hello, you have no new messages</p> 
         
         <div className="p-4 mb-6">

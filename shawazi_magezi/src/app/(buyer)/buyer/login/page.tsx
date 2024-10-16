@@ -10,7 +10,7 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import { loginUser } from "@/app/utils/userLogin";
 import { useRouter, usePathname } from "next/navigation";
 import { setCookie, getCookie } from "cookies-next";
-import { UserLogin } from "../utils/types";
+import { UserLogin } from "../../../utils/types";
 import React from "react";
 
 const schema = yup.object().shape({
@@ -76,6 +76,7 @@ const Login = () => {
     try {
       const loginResponse = await loginUser(data);
       if (loginResponse) {
+
         if (rememberMe) {
           localStorage.setItem("rememberedLogin", "true");
           localStorage.setItem("userPhone", data.phone_number);
@@ -93,12 +94,18 @@ const Login = () => {
         setCookie("userRole", userRole || "", { maxAge: 60 * 60 * 24 });
 
         if (loginResponse.user) {
-          setCookie("firstName", loginResponse.user.first_name, { maxAge: 60 * 60 * 24 });
-          setCookie("lastName", loginResponse.user.last_name, { maxAge: 60 * 60 * 24 });
-          setCookie("userRole", loginResponse.user.role, { maxAge: 60 * 60 * 24 });
+          setCookie("firstName", loginResponse.user.first_name, {
+            maxAge: 60 * 60 * 24,
+          });
+          setCookie("lastName", loginResponse.user.last_name, {
+            maxAge: 60 * 60 * 24,
+          });
+          setCookie("userRole", loginResponse.user.role, {
+            maxAge: 60 * 60 * 24,
+          });
         }
 
-        router.push(`/components/Otp-verification`);
+        router.push(`/${userRole}/otp-verification`);
       } else {
         setError("Login failed. Please check your credentials.");
       }
@@ -120,9 +127,9 @@ const Login = () => {
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-foreground rounded-full translate-x-1/5 translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/9 mr-[9%] translate-y-[80%]"></div>
       <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto z-10 bg-white p-6 sm:p-8 rounded-lg">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center text-primary mb-6">
-  Login as {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : "User"}
-</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-primary mb-6">
+          Login
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label

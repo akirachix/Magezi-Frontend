@@ -1,14 +1,15 @@
-'use client'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+"use client";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { SetStateAction, useEffect, useState } from "react";
 import useDisplayLand from "@/app/hooks/useDisplayLand";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails, UserDatas } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
-import SideBar from "@/app/components/SideBarPwa";
 import LandSearch from "../components/Searchbar";
 import { getCookie } from "cookies-next";
+import SideBar from "@/app/components/SideBarPwa";
+
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -28,16 +29,18 @@ function LandDetailsList() {
     "25",
     "64",
     "99",
-    "97",
-    "118",
-    "119"
+    "122",
+    "121",
+    "120",
   ]);
   const { landDetailsList, loading, error } = useDisplayLand(landIds);
   const [layoutMode, setLayoutMode] = useState("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
-  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   useEffect(() => {
     const handleResize = () => {
@@ -131,7 +134,9 @@ function LandDetailsList() {
         throw new Error("Failed to send notification.");
       }
 
-      toast.success("Notification sent to seller");
+      toast.success(
+        "Interest expressed successfully. Notification sent to seller"
+      );
     } catch (error) {
       console.error("Error:", error);
       toast.error("This land is already under consideration by another buyer");
@@ -224,13 +229,13 @@ function LandDetailsList() {
                       <span className="font-semibold">Address:</span>{" "}
                       {land.address}
                     </p>
-                    <button 
-                      onClick={() => handleInterestClick(land)} 
+                    <button
+                      onClick={() => handleInterestClick(land)}
                       className="mt-4 bg-[#508408] text-white w-full py-1.5 rounded transition-colors duration-300 hover:bg-green-700"
                     >
                       Interested
                     </button>
-                    {loadingStates[land.land_details_id] && <p>Loading...</p>} 
+                    {loadingStates[land.land_details_id] && <p>Loading...</p>}
                   </div>
                 ))
               : !loading && (
@@ -269,10 +274,9 @@ function LandDetailsList() {
         </div>
       </div>
       <ToastContainer />
-      <SideBar userRole={''}/>
+      <SideBar userRole={""} />
     </div>
   );
 }
-
 
 export default LandDetailsList;

@@ -6,340 +6,320 @@ import { Send, ChevronDown } from "lucide-react";
 import { useGetUsers } from "@/app/hooks/useGetUsers";
 import UserCard from "@/app/hooks/usersCard/UserCard";
 import useChatMessages from "@/app/hooks/useChatMessages";
-import InviteLawyerModal from "../components/InviteLawyerModal";
 import { UserDatas } from "../utils/types";
+import { Toaster, toast } from "react-hot-toast";
+import { CgProfile } from "react-icons/cg";
+import InviteLawyerModal from "../(lawyer)/lawyer/components/invite-lawyer";
 import SideBar from "../components/SideBarPwa";
+// import SideBar from "../components/SideBarPwa";
 
 type GetUserType = {
-    id: string;
-    first_name: string;
-    role: "buyer" | "seller" | "lawyer";
+  id: string;
+  first_name: string;
+  role: "buyer" | "seller" | "lawyer";
 };
 
-interface MessageType {
-    content: string;
-    sender: string;
-    receiverId: string;
-    timestamp: number;
-}
+type MessageType = {
+  sender: string;
+  content: string;
+  timestamp: number;
+  recipientId: string;
+};
 
-interface ChatMessagesHook {
-    messages: MessageType[];
-    sendMessage: (message: MessageType, receiverId: string) => Promise<void>;
-    setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
-}
+const formatTime = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
 
 const ChatRoom: React.FC = () => {
-    const { users, loading } = useGetUsers();
-    const [inputMessage, setInputMessage] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [availableUsers, setAvailableUsers] = useState<GetUserType[]>([]);
-    const [selectedUser, setSelectedUser] = useState<GetUserType | null>(null);
-    const messagesEndRef = useScrollToBottom<HTMLDivElement>();
-    const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
-    const [currentUserName, setCurrentUserName] = useState<string | null>(null);
-    const [sendingMessage, setSendingMessage] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [inviteModalOpen, setInviteModalOpen] = useState(false);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { messages, sendMessage, setMessages } = useChatMessages(
-        currentUserName || "",
-        currentUserRole || ""
-    ) as unknown as ChatMessagesHook;
+  const { users, loading, error: usersError } = useGetUsers();
+  const [inputMessage, setInputMessage] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [availableUsers, setAvailableUsers] = useState<GetUserType[]>([]);
+  const [selectedUser, setSelectedUser] = useState<GetUserType | null>(null);
+  const messagesEndRef = useScrollToBottom<HTMLDivElement>();
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
+  const [currentUserName, setCurrentUserName] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [sendingMessage, setSendingMessage] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUserListVisible, setIsUserListVisible] = useState<boolean>(false);
+  const { sendMessage } = useChatMessages(
+    currentUserId || "",
+    currentUserRole || ""
+  );
+  const [localMessages, setLocalMessages] = useState<MessageType[]>([]);
 
-    useEffect(() => {
-        const userRole = getCookie("userRole") as string;
-        const userName = getCookie("userName") as string;
-        setCurrentUserRole(userRole);
-        setCurrentUserName(userName);
-    }, []);
+  useEffect(() => {
+    const userRole = getCookie("userRole") as string;
+    const userName = getCookie("userName") as string;
+    const userId = getCookie("userId") as string;
+    setCurrentUserRole(userRole);
+    setCurrentUserName(userName);
+    setCurrentUserId(userId);
+  }, []);
 
-    useEffect(() => {
-        if (!loading && users) {
-            const filteredUsers: GetUserType[] = users.filter((user) => {
-                if (currentUserRole === "lawyer") {
-                    return user.role === "buyer" || user.role === "seller";
-                }
-                if (currentUserRole === "buyer") {
-                    return user.role === "seller";
-                }
-                if (currentUserRole === "seller") {
-                    return user.role === "buyer";
-                }
-                return false;
-            });
-            setAvailableUsers(filteredUsers);
-        }
-    }, [loading, users, currentUserRole]);
-
-    const handleSendMessage = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        if (inputMessage.trim() === "" || !selectedUser || sendingMessage) {
-            setErrorMessage("Cannot send message: Message is empty or no user selected.");
-            return;
-        }
-
-        const messageWithSender: MessageType = {
-            content: inputMessage.trim(),
-            sender: currentUserName || "",
-            receiverId: selectedUser.id,
-            timestamp: Date.now()
-        };
-
-        setSendingMessage(true);
-        setErrorMessage(null); 
-        
-        try {
-            await sendMessage(messageWithSender, selectedUser.id);
-            setMessages((prevMessages: MessageType[]) => [...prevMessages, messageWithSender]);
-            setInputMessage(""); 
-            setErrorMessage(null); 
-        } catch (error: unknown) {
-            console.error(error); // Log the error for debugging
-            if (error instanceof Error) {
-                setErrorMessage(error.message); // Use the error message if it's an instance of Error
-            } else {
-                setErrorMessage("Failed to send message. Please try again.");
-            }
-        } finally {
-            setSendingMessage(false);
-        }
-    };
-
-    const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            await handleSendMessage(e);
-        }
-    };
-
-    const filteredMessages = messages.filter((message) => {
-        const sender = String(message.sender || "");
-        const content = String(message.content || "");
-        return (
-            sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            content.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    });
-
-    const startConversation = (user: GetUserType) => {
-        setSelectedUser(user);
-        setIsDropdownOpen(false);
-    };
-
-    const handleInviteLawyer = () => {
-        setInviteModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setInviteModalOpen(false);
-    };
-
-    const handleSubmitInvite = async (
-        firstName: string,
-        lastName: string,
-        invitedBy: string,
-        phoneNumber: string
-    ) => {
-        const invitationLink = process.env.NEXT_PUBLIC_BASE_URL;
-        const invitationMessage = `Hi ${firstName}, you've been invited to join our platform! Here's the link: ${invitationLink}`;
-        const invitationData = {
-            first_name: firstName,
-            last_name: lastName,
-            invited_by: invitedBy,
-            phone_number: phoneNumber,
-            message: invitationMessage,
-        };
-
-        try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/api/send_invitation`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(invitationData),
-                }
-            );
-            if (!response.ok) {
-                throw new Error("Failed to send invitation");
-            }
-            const result = await response.json();
-            alert(result.message || "Invitation sent successfully!");
-            handleCloseModal();
-        } catch (error) {
-            alert(error instanceof Error ? error.message : 'Something went wrong');
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-full">Loading...</div>
-        );
+  useEffect(() => {
+    const storedMessages = localStorage.getItem("chatMessages");
+    if (storedMessages) {
+      setLocalMessages(JSON.parse(storedMessages));
     }
+  }, []);
 
-    const getUserListTitle = () => {
-        switch (currentUserRole) {
-            case "buyer":
-                return "Available Sellers";
-            case "seller":
-                return "Available Buyers";
-            case "lawyer":
-                return "Available Users";
-            default:
-                return "Users";
+  useEffect(() => {
+    if (!loading && users) {
+      const filteredUsers: GetUserType[] = users.filter((user) => {
+        if (currentUserRole === "lawyer") {
+          return user.role === "buyer" || user.role === "seller";
         }
-    };
-
-    const parseMessageContent = (content: string | { content: string }): string => {
-        if (typeof content === 'string') {
-            try {
-                const parsed = JSON.parse(content);
-                return parsed.content || content;
-            } catch {
-                return content;
-            }
+        if (currentUserRole === "buyer") {
+          return user.role === "seller";
         }
-        return content.content || JSON.stringify(content);
+        if (currentUserRole === "seller") {
+          return user.role === "buyer";
+        }
+        return false;
+      });
+      setAvailableUsers(filteredUsers);
+    }
+  }, [loading, users, currentUserRole]);
+
+  const handleSendMessage = async (
+    e:
+      | React.FormEvent<HTMLFormElement>
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    e.preventDefault();
+    if (inputMessage.trim() === "" || !selectedUser || sendingMessage) {
+      setErrorMessage(
+        "Cannot send message: Message is empty or no user selected."
+      );
+      return;
+    }
+    setSendingMessage(true);
+    setErrorMessage(null);
+    try {
+      const timestamp = Date.now();
+      const messageWithTimestamp: MessageType = {
+        sender: currentUserName!,
+        content: inputMessage,
+        timestamp,
+        recipientId: selectedUser.id,
+      };
+
+      const updatedMessages = [...localMessages, messageWithTimestamp];
+      setLocalMessages(updatedMessages);
+      localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+
+      await sendMessage(inputMessage, selectedUser.id);
+      setInputMessage("");
+    } catch{
+      setErrorMessage("Failed to send message. Please try again.");
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSendMessage(e);
+    }
+  };
+
+  const filteredMessages = selectedUser
+    ? localMessages.filter((message: MessageType) => {
+        return (
+          (message.sender === selectedUser.id ||
+            message.recipientId === selectedUser.id) &&
+          (message.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            message.content.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      })
+    : [];
+
+  const startConversation = (user: GetUserType) => {
+    setSelectedUser(user);
+    setIsUserListVisible(false);
+  };
+
+  const handleInviteLawyerClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleInviteLawyerSubmit = async (
+    firstName: string,
+    lastName: string,
+    invitedBy: string,
+    phoneNumber: string
+  ) => {
+    const invitationData = {
+      first_name: firstName,
+      last_name: lastName,
+      invited_by: invitedBy,
+      phone_number: phoneNumber,
     };
 
-    const formatTimestamp = (timestamp: number): string => {
-        const date = new Date(timestamp);
-        return `${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`; // Format as HH:mm
-    };
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/send_invitation/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invitationData),
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error("Failed to send invitation");
+      }
+
+      toast.success("Invitation sent successfully!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
+    }
+  };
+
+  const getUserListTitle = () => {
+    switch (currentUserRole) {
+      case "buyer":
+        return "Available Sellers";
+      case "seller":
+        return "Available Buyers";
+      case "lawyer":
+        return "Available Users";
+      default:
+        return "Users";
+    }
+  };
+
+  if (loading) {
     return (
-        <div className="flex flex-col md:flex-row bg-gray-100 font-jost h-screen">
-            <SideBar userRole=""/>
-            <div className="hidden md:flex flex-col w-full md:w-1/4 bg-white border-r border-gray-200 p-4 shadow-md">
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search users..."
-                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
-                    />
-                </div>
-                <h2 className="font-semibold mt-4">{getUserListTitle()}</h2>
-                <div className="flex-grow overflow-y-auto mt-2">
-                    {availableUsers.length > 0 ? (
-                        availableUsers.map((user) => (
-                            <UserCard
-                                key={user.id}
-                                user={user as Partial<UserDatas>}
-                                startConversation={() => startConversation(user)}
-                            />
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No users available</p>
-                    )}
-                </div>
-                <div className="flex flex-col items-end mb-2">
-                    <button
-                        onClick={handleInviteLawyer}
-                        className="bg-green-700 text-white p-2 rounded hover:bg-orange-500"
-                    >
-                        Invite Lawyer
-                    </button>
-                </div>
-            </div>
-
-            <div className="flex flex-col w-full md:w-3/4 p-4">
-                <div className="md:hidden mb-4">
-                    <div
-                        className="bg-white p-2 rounded border border-gray-300 flex justify-between items-center cursor-pointer mb-2"
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    >
-                        <span>{selectedUser ? selectedUser.first_name : "Select a user"}</span>
-                        <ChevronDown />
-                    </div>
-                    {isDropdownOpen && (
-                        <div className="absolute z-10 bg-white border border-gray-300 mt-1 w-full rounded shadow-lg">
-                            {availableUsers.map((user) => (
-                                <div
-                                    key={user.id}
-                                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                                    onClick={() => startConversation(user)}
-                                >
-                                    {user.first_name}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <button
-                        onClick={handleInviteLawyer}
-                        className="bg-green-700 text-white p-2 rounded hover:bg-orange-500 w-full"
-                    >
-                        Invite Lawyer
-                    </button>
-                </div>
-
-                <div className="hidden md:block">
-                    <h2 className="text-xl font-semibold mb-2">
-                        {selectedUser
-                            ? `Conversation with ${selectedUser.first_name}`
-                            : "No user selected"}
-                    </h2>
-                </div>
-
-                <div className="flex-grow overflow-y-auto mb-4" ref={messagesEndRef}>
-                    {filteredMessages.length > 0 ? (
-                        filteredMessages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`mb-2 p-2 rounded-lg text-sm max-w-[75%] ${
-                                    message.sender === currentUserName
-                                        ? "bg-green-200 self-end"
-                                        : "bg-gray-300 self-start"
-                                }`}
-                            >
-                                <span className="font-semibold">
-                                    {message.sender === currentUserName
-                                        ? "You"
-                                        : selectedUser?.first_name}
-                                    :
-                                </span>{" "}
-                                {parseMessageContent(message.content)}
-                                <div className="text-xs text-gray-500">
-                                    {formatTimestamp(message.timestamp)} {/* Display timestamp */}
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No messages yet</p>
-                    )}
-                </div>
-
-                <form onSubmit={handleSendMessage} className="flex items-center">
-                    <input
-                        type="text"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Type a message..."
-                        className="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-green-700"
-                    />
-                    <button
-                        type="submit"
-                        className="bg-green-700 text-white p-2 rounded-r hover:bg-green-800"
-                    >
-                        <Send />
-                    </button>
-                </form>
-                {errorMessage && (
-                    <div className="text-red-500 mt-2">{errorMessage}</div>
-                )}
-            </div>
-
-            <InviteLawyerModal
-                isOpen={inviteModalOpen}
-                onClose={handleCloseModal}
-                onSubmit={handleSubmitInvite}
-            />
-        </div>
+      <div className="flex justify-center items-center h-full">Loading...</div>
     );
+  }
+
+  if (usersError) {
+    const errorMessage =
+      typeof usersError === "string" ? usersError : usersError.message;
+    return (
+      <div className="flex justify-center items-center h-full">
+        Error: {errorMessage}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col md:flex-row h-screen bg-gray-100 font-jost">
+       <Toaster position="top-center" reverseOrder={false} />
+      <div className="w-1/4 md:w-1/6 bg-white border-r border-gray-200 shadow-md lg:block hidden">
+        
+      </div>
+
+      <div className="flex-grow flex flex-col md:flex-row">
+        <div className={`w-full md:w-1/4 lg:w-1/3 xl:w-1/4 bg-white p-4 border-r border-gray-200 shadow-md ${isUserListVisible ? 'block' : 'hidden'} lg:block`}>
+          <SideBar userRole={""} />
+          
+          <div className="mb-4">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search users..."
+              className="w-full border-2 p-2 rounded-lg border-hover"
+            />
+          </div>
+          <h2 className="font-semibold mt-4">{getUserListTitle()}</h2>
+          <div className="flex-grow overflow-y-auto mt-2 bg-[#c5daa6]" style={{ maxHeight: '60vh' }}>
+            {availableUsers.length > 0 ? (
+              availableUsers.map((user) => (
+                <UserCard
+                  key={user.id}
+                  user={user as Partial<UserDatas>}
+                  startConversation={() => startConversation(user)}
+                />
+              ))
+            ) : (
+              <p className="text-gray-600">No users available</p>
+            )}
+          </div>
+        </div>
+
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsUserListVisible(!isUserListVisible)}
+            className="flex items-center justify-between w-full bg-white border border-gray-300 p-2 rounded-md">
+            <span>{getUserListTitle()}</span>
+            <ChevronDown className={`transform transition-transform ${isUserListVisible ? "rotate-180" : ""}`} />
+          </button>
+        </div>
+        
+        <div className="chat-area flex flex-grow flex-col p-4 bg-white md:w-3/4 lg:w-3/4">
+          <div className="flex-grow overflow-y-auto bg-white border p-4 rounded shadow-md chat-messages">
+            <h2 className="font-semibold text-2xl mt-12 text-primary ml-0">
+              Chat with {selectedUser ? selectedUser.first_name : "..."}
+            </h2>
+            {filteredMessages.map((message, index) => (
+              <div key={index} className={`my-2 ${message.sender === currentUserName ? "text-right" : "text-left"}`}>
+                <div className="flex items-center justify-end mr-4">
+                  <div className="bg-[#D0F1A1] p-7 rounded-lg shadow-md flex items-center">
+                    <CgProfile className="text-primary mr-2 text-2xl" />
+                    <span className="font-semibold text-xl">{message.sender}:</span>
+                    <span className="text-xl ml-2">{message.content}</span>
+                  </div>
+                  <div className="text-gray-500 text-xs ml-2">{formatTime(message.timestamp)}</div>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="flex mt-4 flex-col sm:flex-row">
+            <form onSubmit={handleSendMessage} className="flex-grow sm:mr-2">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                className="flex-grow border-hover border-2 p-2 rounded-l"
+              />
+            </form>
+            <button
+              type="submit"
+              className="bg-hover text-white hover:bg-green-600 p-2 rounded mt-2 sm:mt-0"
+              onClick={handleSendMessage}
+            >
+              <Send />
+            </button>
+            <button
+              className="ml-2 bg-hover text-white hover:bg-green-600 p-2 rounded mt-2 sm:mt-0"
+              onClick={handleInviteLawyerClick}
+            >
+              Invite Lawyer
+            </button>
+          </div>
+
+          {errorMessage && <div className="text-red-600 mt-2">{errorMessage}</div>}
+        </div>
+      </div>
+
+      <InviteLawyerModal open={isModalOpen} onClose={handleCloseModal} onSubmit={handleInviteLawyerSubmit} />
+    </div>
+  );
 };
 
 export default ChatRoom;

@@ -1,8 +1,35 @@
+"use client"
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getCookie } from 'cookies-next';
 import Image from 'next/image';
-import React from 'react';
 import Link from 'next/link';
 
 const SecureLandTransactions = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const userRole = getCookie('userRole');
+    const userPhone = getCookie('userPhone');
+
+    if (userRole && userPhone) {
+      switch (userRole) {
+        case 'buyer':
+          router.push('/buyer/land-display');
+          break;
+        case 'seller':
+          router.push('/seller/seller-page');
+          break;
+        case 'lawyer':
+          router.push('/lawyer/draft-contract');
+          break;
+        default:
+          break;
+      }
+    }
+  }, [router]);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <div className="mb-0">
@@ -21,16 +48,15 @@ const SecureLandTransactions = () => {
 
       <p className="text-[16px] sm:text-[20px] md:text-[25px] text-black mb-8 mx-4 sm:mx-8 lg:mx-0">
         Streamline your land buying and selling process with our innovative platform.
-        Ensure transaction  <br/>
+        Ensure transaction <br/>
         <span className='block text-center'>is safe, verified, and effortless.</span>
       </p>
 
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-96 mb-8">
-      
-      <Link href="/register">
-        <button className="w-full sm:w-48 px-6 py-2 border-2 border-hover text-hover rounded-lg hover:bg-green-50">
-          Skip
-        </button>
+        <Link href="/register">
+          <button className="w-full sm:w-48 px-6 py-2 border-2 border-hover text-hover rounded-lg hover:bg-green-50">
+            Skip
+          </button>
         </Link>
 
         <Link href="/teaser/teasertwo">

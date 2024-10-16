@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import SideBar from '../components/SideBarPwa';
-const ChatRoom = () => {
+const ChatRoomPage = () => {
   return (
     <div className="flex flex-col items-center justify-start text-center mb-10 p-4 md:ml-[5%] lg:ml-[3%]">
       <SideBar userRole={''} />
@@ -30,8 +30,9 @@ const ChatRoom = () => {
             Start Chat
           </button>
         </Link>
+       
       </div>
     </div>
   );
 };
-export default ChatRoom;
+export default ChatRoomPage;

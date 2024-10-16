@@ -24,14 +24,25 @@ const TermsAndConditions: React.FC = () => {
       setUserRole(existingRole as UserRole);
     }
 
-    const storedAgreement = localStorage.getItem("recentAgreement");
-    if (storedAgreement) {
-      setAgreement(JSON.parse(storedAgreement));
-      setLoading(false);
-    } else {
-      fetchAgreements();
-    }
-  }, []);
+
+  // Check if there's a previously created agreement
+  const storedAgreement = localStorage.getItem("recentAgreement");
+  if (storedAgreement) {
+    setAgreement(JSON.parse(storedAgreement));
+    setLoading(false);
+  } else {
+    setLoading(false); // No agreement found, set loading to false
+  }
+}, []);
+
+  //   const storedAgreement = localStorage.getItem("recentAgreement");
+  //   if (storedAgreement) {
+  //     setAgreement(JSON.parse(storedAgreement));
+  //     setLoading(false);
+  //   } else {
+  //     fetchAgreements();
+  //   }
+  // }, []);
 
   const fetchAgreements = async () => {
     try {

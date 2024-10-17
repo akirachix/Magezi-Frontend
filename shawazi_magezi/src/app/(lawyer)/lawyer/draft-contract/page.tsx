@@ -39,7 +39,6 @@ const WelcomeSection = () => {
 
     fetchUserData();
   }, []);
-  console.log(userData);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white max-w-[100vw] lg:max-w-[80vw] mx-0 lg:ml-32">

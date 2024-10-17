@@ -1,11 +1,12 @@
 "use client"
 
 import React from 'react';
-import AgreementsChart from '../AgreementsChart/page';
-import LandDetailsChart from '../SearchLandCard/page';
-import TransactionsChart from '../TransactionsChart/page';
-import UsersChart from '../UsersChart/page';
-import Sidebar from '../Sidebar';
+
+import LandDetailsChart from '../components/SearchLandCard';
+import TransactionsChart from '../components/TransactionsChart';
+import UsersChart from '../components/UsersChart';
+import Sidebar from '../components/Sidebar';
+import AgreementsChart from '../components/AgreementsChart';
 
 const Dashboard = () => {
   return (

@@ -34,7 +34,7 @@ function LandDetailsList() {
     "146",
     "10"
   ]);
-  
+
   const { landDetailsList, loading, error } = useDisplayLand(landIds);
   const [layoutMode, setLayoutMode] = useState("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,25 +80,30 @@ function LandDetailsList() {
   };
 
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  if (!baseUrl) {
-    throw new Error("BASE_URL is not defined.");
-  }
-
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const handleInterestClick = async (land: LandDetails) => {
     setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: true }));
-    
+  
     try {
-      const userPhone = Cookies.get("userPhone");
+      const userPhone = Cookies.get("userPhone"); 
       if (!userPhone) {
         toast.error("User is not logged in!");
         return;
       }
-
-      const users: UserDatas[] = await fetchUsers(baseUrl);
   
+      const response = await fetch(`${BASE_URL}/api/users/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data.");
+      }
+  
+      const users: UserDatas[] = await response.json();
       const currentUser = users.find((user) => user.phone_number === userPhone);
-      
       if (!currentUser) {
         toast.error("User not found!");
         return;
@@ -114,9 +119,27 @@ function LandDetailsList() {
         message: `A buyer named ${buyerName} is interested in your land in ${land.location_name}!`,
         timestamp: new Date().toISOString(),
       };
+      
+      console.log('Notification Data:', notificationData); 
   
-      await postNotification(land.land_details_id, notificationData, baseUrl);
+      const postResponse = await fetch(
+        `${BASE_URL}/api/notify-seller/${land.land_details_id}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notificationData),
+        }
+      );
   
+      if (!postResponse.ok) {
+        const errorMessage = await postResponse.text();
+        console.error("Error response:", errorMessage);
+        throw new Error("Failed to send notification.");
+      }
+  
+      
       Cookies.set('buyerNotification', JSON.stringify(notificationData), { expires: 7 });
   
       toast.success("Interest expressed successfully. Notification sent to seller.");

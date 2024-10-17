@@ -79,8 +79,8 @@ function LandDetailsList() {
   };
 
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-  if (!BASE_URL) {
+  const BASE_URLs = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!BASE_URLs) {
     throw new Error("BASE_URL is not defined.");
   }
 
@@ -94,7 +94,7 @@ function LandDetailsList() {
         return;
       }
 
-      const users: UserDatas[] = await fetchUsers(BASE_URL);
+      const users: UserDatas[] = await fetchUsers(BASE_URLs);
   
       const currentUser = users.find((user) => user.phone_number === userPhone);
       
@@ -114,7 +114,7 @@ function LandDetailsList() {
         timestamp: new Date().toISOString(),
       };
   
-      await postNotification(land.land_details_id, notificationData, BASE_URL);
+      await postNotification(land.land_details_id, notificationData, BASE_URLs);
   
       Cookies.set('buyerNotification', JSON.stringify(notificationData), { expires: 7 });
   

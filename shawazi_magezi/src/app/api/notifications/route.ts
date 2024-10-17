@@ -1,34 +1,61 @@
-import { NextResponse } from 'next/server';
-import { NotificationData } from "@/app/utils/types";
+import { NextRequest, NextResponse } from 'next/server';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 
-export async function POST(req: Request, { params }: { params: { landId: string } }) {
-  if (!BASE_URL) {
-    console.error('BASE_URL is not defined in the environment variables.');
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-  }
+interface NotificationData {
+  message: string;
+  timestamp: string;
+}
 
-  const notificationData: NotificationData = await req.json();
+interface Notification {
+  id: string;
+  message: string;
+  timestamp: string;
+}
+
+export async function POST(request: NextRequest, { params }: { params: { landId: string } }) {
+  const landId = params.landId;
+  const notificationData: NotificationData = await request.json();
 
   try {
-    const response = await fetch(`${BASE_URL}/api/notify-seller/${params.landId}/`, {
-      method: 'POST',
+    const postResponse = await fetch(`${BASE_URL}/api/notify-seller/${landId}/`, {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(notificationData),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Error sending notification:', errorData.detail || 'Network response was not ok');
-      return NextResponse.json({ error: errorData.detail || 'Network response was not ok' }, { status: response.status });
+    if (!postResponse.ok) {
+      const errorMessage = await postResponse.text();
+      console.error("Error response:", errorMessage);
+      return NextResponse.json({ error: "Failed to send notification." }, { status: 500 });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    console.error("Error sending notification:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const phoneNumber = searchParams.get('phoneNumber');
+
+  if (!phoneNumber) {
+    return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/notifications/${phoneNumber}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch notifications');
+    }
+    const notifications: { notifications: Notification[] } = await response.json();
+    return NextResponse.json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 });
   }
 }

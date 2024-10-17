@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
 import React from 'react';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
 import useParcelNumber from '../../../../hooks/useParcelNumber';
 import { LandPlot } from '@/app/utils/type';
@@ -18,12 +18,11 @@ const LandDetailsChart = () => {
     const location = plot.location_name;
     acc[location] = (acc[location] || 0) + 1;
     return acc;
-  }, {} as Record<string, number>); 
+  }, {} as Record<string, number>);
 
   const data = Object.keys(locationCounts).map(location => ({
-    subject: location,
-    A: locationCounts[location],
-    fullMark: totalLandPlots,
+    location,
+    count: locationCounts[location],
   }));
 
   return (
@@ -35,14 +34,14 @@ const LandDetailsChart = () => {
       <CardContent>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="subject" />
-              <PolarRadiusAxis angle={30} domain={[0, 'auto']} />
-              <Radar name="Land Distribution" dataKey="A" stroke="#E4960E" fill="#508408" fillOpacity={0.6} />
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="location" />
+              <YAxis />
               <Tooltip />
               <Legend />
-            </RadarChart>
+              <Bar dataKey="count" fill="#508408" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
@@ -51,16 +50,3 @@ const LandDetailsChart = () => {
 };
 
 export default LandDetailsChart;
-
-
-
-
-
-
-
-
-
-
-
-
-

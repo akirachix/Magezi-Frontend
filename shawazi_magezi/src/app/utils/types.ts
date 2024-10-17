@@ -279,6 +279,8 @@ export interface UserPermissions {
 }
 
 export interface Notification {
+  createdat: string | number | Date;
+  timestamp: string | number | Date;
   id: number;
   type: 'info' | 'warning' | 'error' | 'success';
   message: string;

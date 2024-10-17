@@ -3,13 +3,11 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Settings, Shield } from "lucide-react";
 import Image from "next/image";
 import { getCookie, setCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import SideBar from "@/app/components/Sidebarpwa";
 
 
 const WelcomeSection = () => {
-  const router = useRouter();
   const [userData, setUserData] = useState({
     username: "",
     userPhone: "",
@@ -44,7 +42,6 @@ const WelcomeSection = () => {
   const handleAgreementView = () => {
     const userRole = getCookie("user_role");
     setCookie("userRole", userRole);
-    router.push("/components/Terms");
   };
 
   return (

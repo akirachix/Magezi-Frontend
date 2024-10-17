@@ -1,13 +1,18 @@
-import { UserDatas, LandDetails } from './types';
+export const postNotifications = async (phoneNumber: string, formData: FormData) => {
+  try {
+      const response = await fetch(`/api/notify-seller/${phoneNumber}/`, {
+          method: 'POST',
+          body: formData,
+      });
 
-export const findCurrentUser = (users: UserDatas[], userPhone: string): UserDatas | undefined => {
-  return users.find((user) => user.phone_number === userPhone);
-};
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to submit notification');
+      }
 
-export const createNotificationData = (currentUser: UserDatas, land: LandDetails) => {
-  const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
-  return {
-    message: `A buyer named ${buyerName} is interested in your land in ${land.location_name}!`,
-    timestamp: new Date().toISOString(),
-  };
+      return await response.json();
+  } catch (error) {
+      console.error('Failed to post notification:', (error as Error).message);
+      throw new Error('Failed to post notification');
+  }
 };

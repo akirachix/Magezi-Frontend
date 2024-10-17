@@ -1,7 +1,8 @@
-"use client"
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
 } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
 import useAgreementsData from '../../../../hooks/useAgreementData';
@@ -50,33 +51,29 @@ const AgreementsProgressChart = () => {
       <CardContent>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={monthlyAgreements} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
-         
+            <AreaChart data={monthlyAgreements} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
-              
               <XAxis dataKey="month" tick={{ fill: '#555', fontSize: 12 }} />
               <YAxis tick={{ fill: '#555', fontSize: 12 }} />
               
-             
               <Tooltip
                 formatter={(value) => [`${value}`, 'Agreements']}
                 labelFormatter={(label) => `Month: ${label}`}
               />
-
               <Legend verticalAlign="top" height={36} />
-
-           
-              <Line
+              
+              <Area
                 type="monotone"
                 dataKey="count"
                 stroke="#E4960E"
+                fillOpacity={0.3}
+                fill="#E4960E"
                 strokeWidth={2}
                 activeDot={{ r: 8 }}
-                dot={{ r: 4, fill: "#E4960E" }}
                 animationDuration={500}
                 animationEasing="ease-in-out"
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </CardContent>

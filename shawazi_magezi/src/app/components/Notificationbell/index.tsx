@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { FaBell } from 'react-icons/fa';
-import Cookies from 'js-cookie';
 
 interface Notification {
   message: string;
@@ -13,41 +12,38 @@ const SellerNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  useEffect(() => {
-    
-    const storedNotifications = Cookies.get('sellerNotifications');
-    if (storedNotifications) {
-      setNotifications(JSON.parse(storedNotifications));
-    }
-
-    const checkForNotifications = () => {
-      const notification = Cookies.get('buyerNotification');
-      if (notification) {
-        const parsedNotification: Notification = JSON.parse(notification);
-        setNotifications((prev) => {
-          const updatedNotifications = [...prev, parsedNotification];
-
-          
-          Cookies.set('sellerNotifications', JSON.stringify(updatedNotifications), { expires: 7 });
-          return updatedNotifications;
-        });
-        
-        
-        Cookies.remove('buyerNotification');
+  
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch('/api/notifications'); 
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications); 
+      } else {
+        console.error('Failed to fetch notifications');
       }
-    };
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
 
-    const intervalId = setInterval(checkForNotifications, 5000);
+ 
+  const clearNotifications = () => {
+    setNotifications([]); 
+  };
+
+  useEffect(() => {
+    fetchNotifications(); 
+
+    const intervalId = setInterval(() => {
+      fetchNotifications(); 
+    }, 5000);
+
     return () => clearInterval(intervalId);
   }, []);
 
   const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
-  };
-
-  const clearNotifications = () => {
-    setNotifications([]);
-    Cookies.remove('sellerNotifications'); 
   };
 
   return (

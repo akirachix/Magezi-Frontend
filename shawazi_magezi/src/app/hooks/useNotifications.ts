@@ -1,53 +1,35 @@
-import { useState } from 'react';
-import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-import { LandDetails } from '../utils/types';
-import { fetchUsers } from '../utils/fetchUsers';
-import { createNotificationData, findCurrentUser } from '../utils/postNotifications';
+import { useEffect, useState } from 'react';
+import { fetchNotifications } from '../utils/getNotifications';
 
+const useNotifications = () => {
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-export const useInterestClick = () => {
-  const [loadingStates, setLoadingStates] = useState<{ [key: number]: boolean }>({});
+    useEffect(() => {
+        const loadNotifications = async () => {
+            const userPhone = Cookies.get("userPhone");
+            if (!userPhone) {
+                setError("User is not logged in!");
+                setIsLoading(false);
+                return;
+            }
 
-  const handleInterestClick = async (land: LandDetails) => {
-    setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: true }));
+            try {
+                const data = await fetchNotifications(userPhone);
+                setNotifications(data ? data.notifications : []);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Unknown error');
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    try {
-      const userPhone = Cookies.get("userPhone");
-      if (!userPhone) {
-        toast.error("User is not logged in!");
-        return;
-      }
+        loadNotifications();
+    }, []);
 
-      const users = await fetchUsers();
-      const currentUser = findCurrentUser(users, userPhone);
-
-      if (!currentUser) {
-        toast.error("User not found!");
-        return;
-      }
-
-      if (!currentUser.first_name || !currentUser.last_name) {
-        toast.error("Invalid buyer data!");
-        return;
-      }
-
-     
-      const notificationData = createNotificationData(currentUser, land);
-      console.log('Notification Data:', notificationData);
-
-      
-      Cookies.set('buyerNotification', JSON.stringify(notificationData), { expires: 7 });
-      toast.success("Interest expressed successfully. Notification sent to seller.");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("This land is already under consideration by another buyer.");
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: false }));
-    }
-  };
-
-  return { handleInterestClick, loadingStates };
+    return { notifications, isLoading, error };
 };
 
-
+export default useNotifications;

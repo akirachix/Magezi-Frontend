@@ -27,7 +27,7 @@ const SeamlessTransactions = () => {
 
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-96 mb-8">
       
-      <Link href="/register">
+      <Link href="./register">
         <button className="w-full sm:w-48 px-6 py-2 border-2 border-hover text-hover rounded-lg hover:bg-green-50">
           Skip
         </button>

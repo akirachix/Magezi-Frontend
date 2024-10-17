@@ -1,13 +1,11 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { MdOutlineSettings } from "react-icons/md";
-import { HiMenu, HiX } from "react-icons/hi"; 
-import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa'; 
-import { BiLogOut } from "react-icons/bi"; 
+import { HiMenu, HiX } from "react-icons/hi";
+import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa';
+import { BiLogOut } from "react-icons/bi";
 
 interface SideBarProps {
   userRole: string;
@@ -39,6 +37,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -48,46 +47,38 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
         setIsOpen(true);
       }
     };
-
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  
   const roleSpecificRoutes: RoleSpecificRoutes = {
     seller: {
       home: '/seller/seller-page',
-      contract: '/AgreementNext',
+      contract: '/agreementNext',
     },
     buyer: {
       home: '/buyer/land-display',
-      contract: '/AgreementNext',
+      contract: '/agreementNext',
     },
     lawyer: {
       home: '/lawyer/draft-contract',
-      contract: '/AgreementNext',
+      contract: '/agreementNext',
     }
   };
 
-  
   const getRoutes = (role: string): { home: string; contract: string } => {
     const validRole = role.toLowerCase() as keyof RoleSpecificRoutes;
     if (validRole in roleSpecificRoutes) {
       return roleSpecificRoutes[validRole];
+    } else {
+      console.error(`Unknown user role: ${role}`);
+      return roleSpecificRoutes.seller;
     }
-    console.error(`Unknown user role: ${role}`);
-    
-    return {
-      home: '/',
-      contract: '/agreementNext',
-    };
   };
 
   const routes = getRoutes(userRole);
 
-  
   const baseMenuItems: MenuItem[] = [
     { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
     { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
@@ -107,11 +98,16 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
     setIsOpen(!isOpen);
   };
 
+  const handleNavigation = (href: string) => {
+    if (href) {
+      router.push(href);
+    }
+  };
   const sidebarContent = (
     <div className="flex flex-col h-full relative">
       <div className="flex items-left justify-between p-4">
         <Image
-          src="/images/shawazilogo.png" 
+          src="/images/shawazilogo.png"
           alt="Shawazi Logo"
           className="w-20 md:w-16 lg:w-14 xl:w-20 mx-auto mb-4 mt-12"
           width={80}
@@ -119,14 +115,13 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
           priority
         />
       </div>
-
       <nav className="flex-grow overflow-y-auto">
         <ul className="space-y-6 px-4 py-8">
           {menuItems.map((item) => (
             <li key={item.name}>
-              <Link
-                href={item.href}
-                className={`flex items-center px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
+              <button
+                onClick={() => handleNavigation(item.href)}
+                className={`flex items-center w-full px-4 py-2 text-primary hover:bg-secondary-light rounded-lg transition-colors duration-200 ${
                   pathname === item.href ? 'bg-orange-100 text-orange-600' : ''
                 }`}
               >
@@ -134,12 +129,11 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
                 <span className="text-sm md:text-base lg:text-2xl font-medium">
                   {item.name}
                 </span>
-              </Link>
+              </button>
             </li>
           ))}
         </ul>
       </nav>
-
       <div className="mt-auto p-4">
         <button
           onClick={() => setShowSettings(!showSettings)}
@@ -152,27 +146,26 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
         </button>
         {showSettings && (
           <div className="mt-2 ml-6">
-            <Link
-              href="/settings"
+            <button
+              onClick={() => handleNavigation('/settings')}
               className="block py-2 text-secondary hover:text-secondary transition-colors duration-200"
             >
               General Settings
-            </Link>
-            <Link
-              href="/logout"
+            </button>
+            <button
+              onClick={() => handleNavigation('/teaser/teasertwo')}
               className="block py-2 text-primary hover:text-red-600 transition-colors duration-200"
             >
               <span className="flex items-center">
                 <BiLogOut className="w-5 h-5 mr-2" />
                 Logout
               </span>
-            </Link>
+            </button>
           </div>
         )}
       </div>
     </div>
   );
-
   return (
     <div className="relative">
       <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
@@ -189,19 +182,15 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
           {userRole ? `${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Portal` : 'Portal'}
         </span>
       </div>
-
       <div
-        className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out 
+        className={`fixed top-0 left-0 h-full bg-white transition-all duration-300 ease-in-out
         ${showSidebar || isOpen ? 'w-64' : 'w-0'} overflow-hidden border-r z-40`}
       >
         {sidebarContent}
       </div>
-
       <div className={`pt-16 ${showSidebar ? 'ml-64' : ''} transition-all duration-300`}>
       </div>
     </div>
   );
 };
-
 export default SideBar;
-

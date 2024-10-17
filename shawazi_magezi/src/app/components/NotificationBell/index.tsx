@@ -1,7 +1,8 @@
-
 'use client';
+
 import { useEffect, useState } from 'react';
 import { FaBell } from 'react-icons/fa';
+import Cookies from 'js-cookie';
 
 interface Notification {
   message: string;
@@ -13,21 +14,26 @@ const SellerNotifications = () => {
   const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
-    const storedNotifications = localStorage.getItem('sellerNotifications');
+    
+    const storedNotifications = Cookies.get('sellerNotifications');
     if (storedNotifications) {
       setNotifications(JSON.parse(storedNotifications));
     }
 
     const checkForNotifications = () => {
-      const notification = localStorage.getItem('buyerNotification');
+      const notification = Cookies.get('buyerNotification');
       if (notification) {
         const parsedNotification: Notification = JSON.parse(notification);
         setNotifications((prev) => {
           const updatedNotifications = [...prev, parsedNotification];
-          localStorage.setItem('sellerNotifications', JSON.stringify(updatedNotifications));
+
+          
+          Cookies.set('sellerNotifications', JSON.stringify(updatedNotifications), { expires: 7 });
           return updatedNotifications;
         });
-        localStorage.removeItem('buyerNotification'); 
+        
+        
+        Cookies.remove('buyerNotification');
       }
     };
 
@@ -41,24 +47,7 @@ const SellerNotifications = () => {
 
   const clearNotifications = () => {
     setNotifications([]);
-    localStorage.removeItem('sellerNotifications'); 
-  };
-
-  const addNotification = (message: string) => {
-    const newNotification: Notification = {
-      message,
-      timestamp: new Date().toISOString(),
-    };
-    setNotifications((prev) => {
-      const updatedNotifications = [...prev, newNotification];
-      localStorage.setItem('sellerNotifications', JSON.stringify(updatedNotifications));
-      return updatedNotifications;
-    });
-  };
-
-  // Simulate a notification for testing/demo purposes
-  const simulateNotification = () => {
-    addNotification('A buyer is interested in your property!');
+    Cookies.remove('sellerNotifications'); 
   };
 
   return (
@@ -71,12 +60,6 @@ const SellerNotifications = () => {
           </span>
         )}
       </button>
-      
-      {/* Button to simulate notification */}
-      <button onClick={simulateNotification} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-        Simulate Notification
-      </button>
-
       {showNotifications && (
         <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg shadow-lg p-2">
           <div className="flex justify-between items-center mb-2">

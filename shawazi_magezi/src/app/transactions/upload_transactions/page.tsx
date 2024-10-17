@@ -232,22 +232,40 @@ const TransactionsPage: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold">Success</h2>
-            <p>{message}</p>
+            <h2 className="text-[30px] font-bold text-center">Success</h2>
+            <Image 
+          src="/images/transactions.png" 
+          alt="Secure Land Transactions"
+          width={450}
+          height={450}
+          className="max-w-full h-auto"  
+        />
+            <p className="text-center">{message}</p>
+            <div className="items-center">
             <button onClick={closeModal} className="mt-4 bg-hover text-white px-4 py-2 rounded hover:bg-secondary">
               Close
             </button>
+            </div>
           </div>
         </div>
       )}
       {isErrorModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold">Error</h2>
-            <p>{message}</p>
+            <h2 className="text-[30px] font-bold text-center">Error</h2>
+            <Image 
+          src="/images/error.png" 
+          alt="Secure Land Transactions"
+          width={450}
+          height={450}
+          className="max-w-full h-auto"  
+        />
+            <p className="text-center">{message}</p>
+            <div className="items-center">
             <button onClick={closeErrorModal} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
               Close
             </button>
+          </div>
           </div>
         </div>
       )}

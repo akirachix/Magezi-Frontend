@@ -9,7 +9,7 @@ import useChatMessages from "@/app/hooks/useChatMessages";
 import { UserDatas } from "../utils/types";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
-import InviteLawyerModal from "../(lawyer)/lawyer/components/invite-lawyer";
+import InviteLawyerModal from "../(lawyer)/lawyer/components/Invite-lawyer";
 import SideBar from "../components/SideBarPwa";
 
 type GetUserType = {

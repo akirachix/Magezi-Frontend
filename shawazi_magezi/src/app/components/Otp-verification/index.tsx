@@ -54,7 +54,7 @@ const OtpVerification = () => {
       if (isVerified) {
         switch (userRole) {
           case "buyer":
-            router.push("/buyer/land-display");
+            router.push('/buyer/land-display');
             break;
           case "seller":
             router.push("/seller/seller-page");

@@ -13,7 +13,6 @@ const LandSearch: React.FC = () => {
   const [parcelNumber, setParcelNumber] = useState<string>("");
   const [searchHistory, setSearchHistory] = useState<Set<string>>(new Set());
 
-  // Reset the land data hook when closing modals
   const { land, loading, error } = useLandData(parcelNumber);
 
   const handleSearch = useCallback(() => {

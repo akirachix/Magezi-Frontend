@@ -11,9 +11,6 @@ import Cookies from 'js-cookie';
 import SideBar from "@/app/components/SideBarPwa";
 import { fetchUsers, postNotification } from "@/app/utils/notifications";
 
-
-
-
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
 
@@ -34,7 +31,8 @@ function LandDetailsList() {
     "122",
     "121",
     "144",
-    "146"
+    "146",
+    "10"
   ]);
   const { landDetailsList, loading, error } = useDisplayLand(landIds);
   const [layoutMode, setLayoutMode] = useState("grid");

@@ -6,6 +6,7 @@ import { MdOutlineSettings } from "react-icons/md";
 import { HiMenu, HiX } from "react-icons/hi";
 import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa';
 import { BiLogOut } from "react-icons/bi";
+import Cookies from 'js-cookie';
 
 interface SideBarProps {
   userRole: string;
@@ -51,6 +52,14 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  useEffect(() => {
+    // Retrieve the role from cookies and redirect based on role
+    const savedUserRole = Cookies.get('userRole');
+    if (savedUserRole && savedUserRole !== userRole) {
+      router.push(getRoutes(savedUserRole).home);
+    }
+  }, [userRole, router]);
 
   const roleSpecificRoutes: RoleSpecificRoutes = {
     seller: {
@@ -103,6 +112,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
       router.push(href);
     }
   };
+
   const sidebarContent = (
     <div className="flex flex-col h-full relative">
       <div className="flex items-left justify-between p-4">
@@ -166,6 +176,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
       </div>
     </div>
   );
+
   return (
     <div className="relative">
       <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
@@ -193,4 +204,5 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
     </div>
   );
 };
+
 export default SideBar;

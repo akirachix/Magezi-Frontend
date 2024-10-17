@@ -2,7 +2,6 @@
 
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
-
 import { Transaction } from "@/app/utils/types"; 
 import SellerNotifications from "@/app/components/NotificationBell";
 import SideBar from "@/app/components/SideBarPwa";

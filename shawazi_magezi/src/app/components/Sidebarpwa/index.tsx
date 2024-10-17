@@ -38,15 +38,15 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
   const roleSpecificRoutes: RoleSpecificRoutes = React.useMemo(() => ({
     seller: {
       home: '/seller/seller-page',
-      contract: '/agreementNext',
+      contract: '/agreementnext',
     },
     buyer: {
       home: '/buyer/land-display',
-      contract: '/agreementNext',
+      contract: '/agreementnext',
     },
     lawyer: {
       home: '/lawyer/draft-contract',
-      contract: '/agreementNext',
+      contract: '/agreementnext',
     }
   }), []);
   const getRoutes = useCallback((role: string): { home: string; contract: string } => {

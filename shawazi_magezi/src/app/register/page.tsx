@@ -76,7 +76,6 @@ const Signup = () => {
           toast.error(errorData.message || 'Failed to fetch users.');
         }
 
-        toast.success("Redirecting to login...");
         router.push("/login");
 
       } else {

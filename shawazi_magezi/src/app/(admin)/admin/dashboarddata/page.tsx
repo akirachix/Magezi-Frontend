@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import LandDetailsChart from '../components/SearchLandCard';
-import TransactionsChart from '../components/TransactionsChart';
-import UsersChart from '../components/UsersChart';
+import LandDetailsChart from '../components/Searchlandcard';
+import TransactionsChart from '../components/Transactionschart';
+import UsersChart from '../components/Userschart';
 import Sidebar from '../components/Sidebar';
-import AgreementsChart from '../components/AgreementsChart';
+import AgreementsChart from '../components/Agreementschart';
 
 const Dashboard = () => {
   return (

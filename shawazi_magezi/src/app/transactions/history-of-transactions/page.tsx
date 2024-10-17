@@ -6,18 +6,16 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
 import SideBar from '@/app/components/Sidebarpwa';
 
-// Define the structure of a transaction
 interface Transaction {
   date: string;
   status: string;
-  amount: string | number; // Adjust the type based on your actual data
+  amount: string | number;
 }
 
 const Transactionss = () => {
   const { transactions, isLoading, error } = useTransactions();
   const [filterStatus, setFilterStatus] = useState<string>("");
 
-  // Ensure transactions are properly typed
   const filteredTransactions: Transaction[] = transactions.filter((transaction: Transaction) => {
     const statusMatch = !filterStatus || transaction.status.toLowerCase() === filterStatus.toLowerCase();
     return statusMatch;

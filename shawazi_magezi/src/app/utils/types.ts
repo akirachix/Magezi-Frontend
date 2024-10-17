@@ -137,30 +137,6 @@ declare module 'cookie' {
   const Cookies: Cookies; 
 }
 
-// // cookies-next.d.ts
-// import 'cookies-next';
-
-// declare module 'cookies-next' {
-//     interface OptionsType {
-//         maxAge?: number; // Add maxAge to the OptionsType
-//     }
-
-//   export function set(arg0: string, arg1: any, arg2: { expires: number; }) {
-//     throw new Error("Function not implemented.");
-//   }
-
-//   export function set(arg0: string, role: any, arg2: { expires: number; }) {
-//     throw new Error("Function not implemented.");
-//   }
-
-//   export function get(arg0: string) {
-//     throw new Error("Function not implemented.");
-//   }
-
-//   export function get(arg0: string) {
-//     throw new Error("Function not implemented.");
-//   }
-// }
 
 export interface Term {
   text: string;

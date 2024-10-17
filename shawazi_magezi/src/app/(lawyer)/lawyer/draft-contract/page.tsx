@@ -5,7 +5,7 @@ import Image from "next/image";
 import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import SideBar from "@/app/components/SideBarPwa";
+import SideBar from "@/app/components/Sidebarpwa";
 
 
 const WelcomeSection = () => {
@@ -54,7 +54,7 @@ const WelcomeSection = () => {
         <h1 className="text-3xl md:text-4xl lg:text-4xl font-semibold text-gray-800 mt-6 md:mt-10 mb-6 md:mb-8">
           Welcome to The Shawazi Application
         </h1>
-        <div className="flex flex-col md:flex-row mt-4 md:mt-6 items-center md:items-start gap-10 md:gap-20 lg:gap-32">
+        <div className="flex flex-col ml-20 md:flex-row mt-4 md:mt-6 items-center md:items-start gap-10 md:gap-20 lg:gap-32">
           <div className="w-full md:w-1/2 flex justify-center">
             <Image
               src="/media/low.png"
@@ -89,7 +89,7 @@ const WelcomeSection = () => {
           <Link href="/lawyer/components/Link-to-join">
             <button
               onClick={handleAgreementView}
-              className="bg-[#508408] text-white px-16 md:px-32 py-3 mt-10 md:mt-20 rounded-md text-lg hover:bg-opacity-90 transition duration-300 shadow-md"
+              className="bg-foreground  text-white px-16 md:px-32 py-3 mt-10 md:mt-20 rounded-md text-lg hover:bg-primary transition duration-300 shadow-md"
             >
               View Agreement
             </button>

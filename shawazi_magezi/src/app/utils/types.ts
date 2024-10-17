@@ -1,4 +1,60 @@
 import { ReactNode } from 'react';
+import { setCookie as setNextCookie, getCookie as getNextCookie } from 'cookies-next';
+
+export const setCookie = (name: string, value: string, options = {}) => {
+  setNextCookie(name, value, { ...options, maxAge: 60 * 60 * 24 });
+};
+
+export const getCookie = (name: string) => {
+  return getNextCookie(name);
+};
+
+export const removeCookie = (name: string) => {
+  setNextCookie(name, '', { maxAge: -1 });
+};
+
+export const getUserRole = () => {
+  return getCookie('role') as string | undefined;
+};
+
+export const setUserData = (userData: {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+}) => {
+  setCookie('first_name', userData.first_name);
+  setCookie('last_name', userData.last_name);
+  setCookie('phone_number', userData.phone_number);
+  setCookie('role', userData.role);
+};
+
+export const clearUserData = () => {
+  removeCookie('first_name');
+  removeCookie('last_name');
+  removeCookie('phone_number');
+  removeCookie('role');
+  removeCookie('isLoggedIn');
+};
+
+export const setUsers = (users: UserSignup[]) => {
+  setCookie('users', JSON.stringify(users));
+};
+
+export const getUsers = (): UserSignup[] => {
+  const usersString = getCookie('users');
+  return usersString ? JSON.parse(usersString) : [];
+};
+
+export interface UserSignup {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  password: string;
+  confirm_password: string;
+  role: string;
+}
+
 export interface LandDetails {
   land_details_id: number;
   parcel_number: string;
@@ -28,6 +84,12 @@ export interface Transaction {
   amount: string;
 }
 
+export interface NotificationData {
+  message: string;
+  timestamp: string;
+  type:string
+}
+
 export interface UserProfile {
   id: number;
   phone_number: string;
@@ -46,6 +108,7 @@ export interface User {
 }
 
 export interface UserLogin {
+
   phone_number: string;
   password: string;
 }
@@ -74,14 +137,30 @@ declare module 'cookie' {
   const Cookies: Cookies; 
 }
 
-// cookies-next.d.ts
-import 'cookies-next';
+// // cookies-next.d.ts
+// import 'cookies-next';
 
-declare module 'cookies-next' {
-    interface OptionsType {
-        maxAge?: number; // Add maxAge to the OptionsType
-    }
-}
+// declare module 'cookies-next' {
+//     interface OptionsType {
+//         maxAge?: number; // Add maxAge to the OptionsType
+//     }
+
+//   export function set(arg0: string, arg1: any, arg2: { expires: number; }) {
+//     throw new Error("Function not implemented.");
+//   }
+
+//   export function set(arg0: string, role: any, arg2: { expires: number; }) {
+//     throw new Error("Function not implemented.");
+//   }
+
+//   export function get(arg0: string) {
+//     throw new Error("Function not implemented.");
+//   }
+
+//   export function get(arg0: string) {
+//     throw new Error("Function not implemented.");
+//   }
+// }
 
 export interface Term {
   text: string;

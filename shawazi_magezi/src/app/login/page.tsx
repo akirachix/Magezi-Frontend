@@ -8,36 +8,19 @@ import Link from "next/link";
 import { FaEye, FaEyeSlash, FaPhoneAlt } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { loginUser } from "@/app/utils/userLogin";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { setCookie, getCookie } from "cookies-next";
 import { UserLogin } from "../utils/types";
-import React from "react";
 
 const schema = yup.object().shape({
-  phone_number: yup
-    .string()
-    .matches(
-      /^(?:\+254|254)\d{9}$/,
-      "Phone number must start with +254 or 254 followed by 9 digits"
-    )
-    .required("Phone number is required"),
-  password: yup
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .matches(/[A-Z]/, "Password must contain an uppercase letter")
-    .matches(/\d/, "Password must contain a number")
-    .matches(/[@$!%*?&#]/, "Password must contain a special character")
-    .required("Password is required"),
+  phone_number: yup.string().required("Phone number is required"),
+  password: yup.string().required("Password is required"),
 });
 
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<UserLogin>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<UserLogin>({
     resolver: yupResolver(schema),
+    mode: 'onChange',
   });
 
   const [loading, setLoading] = useState(false);
@@ -45,65 +28,49 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
-
-  const extractRoleFromPath = (path: string) => {
-    const match = path.match(/\/(buyer|seller|lawyer)\/login/);
-    return match ? match[1] : null;
-  };
-
-  const userRole = extractRoleFromPath(pathname);
 
   useEffect(() => {
-    const rememberedLogin = localStorage.getItem("rememberedLogin");
-    if (rememberedLogin === "true") {
-      const storedPhoneNumber = localStorage.getItem("userPhone");
-      const storedLoginData = localStorage.getItem("loginData");
-      if (storedPhoneNumber && storedLoginData) {
-        router.push(`/${userRole}/land-display`);
-      }
-    } else {
-      const storedPhoneNumber = getCookie("userPhone");
-      if (storedPhoneNumber) {
-        setValue("phone_number", storedPhoneNumber.toString());
-      }
+    const storedPhoneNumber = getCookie("phone_number");
+
+    if (storedPhoneNumber) {
+      setValue("phone_number", storedPhoneNumber.toString());
     }
-  }, [setValue, router, userRole]);
+  }, [setValue]);
 
   const onSubmit = async (data: UserLogin) => {
     setLoading(true);
     setError("");
+
     try {
       const loginResponse = await loginUser(data);
       if (loginResponse) {
+        const { message, first_name, last_name, role } = loginResponse;
+
+        sessionStorage.setItem("tempLoginData", JSON.stringify({
+          phone_number: data.phone_number,
+          first_name,
+          last_name,
+          role,
+        }));
+
+        console.log("Login successful:", { message, first_name, last_name, role });
+
+        setCookie("phone_number", data.phone_number, { maxAge: 60 * 60 * 24 });
+        setCookie("isLoggedIn", "true", { maxAge: 60 * 60 * 24 });
+
         if (rememberMe) {
           localStorage.setItem("rememberedLogin", "true");
-          localStorage.setItem("userPhone", data.phone_number);
-          localStorage.setItem("loginData", JSON.stringify(loginResponse));
-          localStorage.setItem("userRole", userRole || "");
+          localStorage.setItem("phone_number", data.phone_number);
         } else {
           localStorage.removeItem("rememberedLogin");
-          localStorage.removeItem("userPhone");
-          localStorage.removeItem("loginData");
-          localStorage.removeItem("userRole");
+          localStorage.removeItem("phone_number");
         }
 
-        setCookie("userPhone", data.phone_number, { maxAge: 60 * 60 * 24 });
-        setCookie("isLoggedIn", "true", { maxAge: 60 * 60 * 24 });
-        setCookie("userRole", userRole || "", { maxAge: 60 * 60 * 24 });
-
-        if (loginResponse.user) {
-          setCookie("firstName", loginResponse.user.first_name, { maxAge: 60 * 60 * 24 });
-          setCookie("lastName", loginResponse.user.last_name, { maxAge: 60 * 60 * 24 });
-          setCookie("userRole", loginResponse.user.role, { maxAge: 60 * 60 * 24 });
-        }
-
-        router.push(`/components/Otp-verification`);
+        router.push('/otp-verification');
       } else {
         setError("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error("Login error:", error);
       const errorMessage =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
         "Failed to login. Please try again.";
@@ -120,9 +87,9 @@ const Login = () => {
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-foreground rounded-full translate-x-1/5 translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/9 mr-[9%] translate-y-[80%]"></div>
       <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto z-10 bg-white p-6 sm:p-8 rounded-lg">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center text-primary mb-6">
-  Login as {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : "User"}
-</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-primary mb-6">
+          Login
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label
@@ -187,24 +154,24 @@ const Login = () => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="mr-2"
               />
-              Remember Me
+              Remember me
             </label>
           </div>
+          {error && <p className="mt-2 text-red-500">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-primary text-white py-3 sm:py-4 rounded-md shadow-md font-medium hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-foreground"
+            className="w-full bg-primary text-white text-lg sm:text-xl font-medium py-2 sm:py-3 rounded-md shadow-md"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Login"}
+            {loading ? "Logging in..." : "Login"}
           </button>
-          {error && <p className="mt-2 text-xs text-red-500 text-center">{error}</p>}
-          <p className="text-sm text-center">
-            Don&apos;t have an account?{" "}
-            <Link href={`/register`} className="text-primary font-medium hover:underline">
-                Register
-            </Link>
-          </p>
         </form>
+        <div className="mt-4 text-center">
+           Don&#39;t have an account?{" "}
+          <Link href="/register" className="text-primary underline">
+            Sign up 
+          </Link>
+        </div>
       </div>
     </div>
   );

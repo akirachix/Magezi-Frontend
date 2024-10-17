@@ -58,6 +58,7 @@ const Signup = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+
       if (response.ok) {
         setCookie('first_name', data.first_name, { maxAge: 60 * 60 * 24 });
         setCookie('last_name', data.last_name, { maxAge: 60 * 60 * 24 });
@@ -66,7 +67,17 @@ const Signup = () => {
 
         toast.success("Account created successfully! Redirecting...");
 
-        redirectToRolePage(data.role);
+        const usersResponse = await fetch('/api/users'); 
+        if (usersResponse.ok) {
+          const users = await usersResponse.json();
+          console.log('Fetched users:', users); 
+        } else {
+          const errorData = await usersResponse.json();
+          toast.error(errorData.message || 'Failed to fetch users.');
+        }
+
+        router.push("/login");
+
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || 'Signup failed. Please try again.');
@@ -77,22 +88,6 @@ const Signup = () => {
       toast.error('An error occurred during signup. Please check your network connection and try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const redirectToRolePage = (role: string) => {
-    switch (role) {
-      case 'buyer':
-        router.push("/buyer/login");
-        break;
-      case 'lawyer':
-        router.push("/lawyer/login");
-        break;
-      case 'seller':
-        router.push("/seller/login");
-        break;
-      default:
-        break;
     }
   };
 

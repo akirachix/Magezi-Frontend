@@ -15,11 +15,9 @@ export const loginUser = async (data: UserLogin) => {
             throw new Error(errorData.message || "Login failed. Please check your credentials.");
         }
 
-        const responseData = await response.json();
-        return responseData;
+        return await response.json();
 
     } catch (error) {
-        console.error("Login error:", error);
         throw error; 
     }
 };

@@ -7,18 +7,17 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails, UserDatas } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import LandSearch from "../components/Searchbar";
-import { getCookie } from "cookies-next";
-import SideBar from "@/app/components/SideBarPwa";
+import Cookies from 'js-cookie';
+import SideBar from "@/app/components/Sidebarpwa";
 
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
 
+
 function LandDetailsList() {
   const [landIds] = useState([
-    "117",
-    "116",
+    "147",
+    "148",
     "115",
     "114",
     "104",
@@ -31,13 +30,15 @@ function LandDetailsList() {
     "99",
     "122",
     "121",
-    "120",
+    "144",
+    "146",
+    "10"
   ]);
+
   const { landDetailsList, loading, error } = useDisplayLand(landIds);
   const [layoutMode, setLayoutMode] = useState("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
-
   const [loadingStates, setLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
@@ -74,49 +75,44 @@ function LandDetailsList() {
   };
 
   const mapContainerStyle = {
-    width: "110%",
+    width: "100%",
     height: "250px",
   };
 
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const handleInterestClick = async (land: LandDetails) => {
     setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: true }));
-
     try {
-      const userPhone = getCookie("userPhone");
+      const userPhone = Cookies.get("userPhone");
       if (!userPhone) {
         toast.error("User is not logged in!");
         return;
       }
-
       const response = await fetch(`${BASE_URL}/api/users/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
       if (!response.ok) {
         throw new Error("Failed to fetch user data.");
       }
-
       const users: UserDatas[] = await response.json();
       const currentUser = users.find((user) => user.phone_number === userPhone);
       if (!currentUser) {
         toast.error("User not found!");
         return;
       }
-
       if (!currentUser.first_name || !currentUser.last_name) {
         toast.error("Invalid buyer data!");
         return;
       }
-
       const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
       const notificationData = {
         message: `A buyer named ${buyerName} is interested in your land in ${land.location_name}!`,
         timestamp: new Date().toISOString(),
       };
-
+      console.log('Notification Data:', notificationData);
       const postResponse = await fetch(
         `${BASE_URL}/api/notify-seller/${land.land_details_id}/`,
         {
@@ -127,24 +123,20 @@ function LandDetailsList() {
           body: JSON.stringify(notificationData),
         }
       );
-
       if (!postResponse.ok) {
         const errorMessage = await postResponse.text();
         console.error("Error response:", errorMessage);
         throw new Error("Failed to send notification.");
       }
-
-      toast.success(
-        "Interest expressed successfully. Notification sent to seller"
-      );
+      Cookies.set('buyerNotification', JSON.stringify(notificationData), { expires: 7 });
+      toast.success("Interest expressed successfully. Notification sent to seller.");
     } catch (error) {
       console.error("Error:", error);
-      toast.error("This land is already under consideration by another buyer");
+      toast.error("This land is already under consideration by another buyer.");
     } finally {
       setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: false }));
     }
   };
-
   return (
     <div
       className={`relative ${

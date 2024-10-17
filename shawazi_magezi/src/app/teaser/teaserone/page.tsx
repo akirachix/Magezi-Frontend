@@ -1,17 +1,21 @@
 "use client"
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import Image from 'next/image';
 import Link from 'next/link';
 
 const SecureLandTransactions = () => {
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const userRole = getCookie('userRole');
-    const userPhone = getCookie('userPhone');
+    const userRole = getCookie('role');
+    const userPhone = getCookie('phone_number');
+    const splashTimeout = setTimeout(() => {
+      setIsSplashVisible(false);
+    }, 2000);
 
     if (userRole && userPhone) {
       switch (userRole) {
@@ -28,8 +32,23 @@ const SecureLandTransactions = () => {
           break;
       }
     }
+    return () => clearTimeout(splashTimeout);
   }, [router]);
 
+  if (isSplashVisible) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Image
+          src="/images/shawazilogo.png"
+          alt="Splash Screen"
+          width={250}
+          height={300}
+          className="max-w-full h-auto sm:w-30 sm:h-30 md:w-60 md:h-60 lg:w-70 lg:h-70"
+        />
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <div className="mb-0">
@@ -76,3 +95,4 @@ const SecureLandTransactions = () => {
 };
 
 export default SecureLandTransactions;
+

@@ -2,16 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { getCookie } from "cookies-next";
 import { useScrollToBottom } from "../hooks/useScrollToBottom";
-import { Send, ChevronDown } from "lucide-react";
+import { Send, ChevronDown, Menu } from "lucide-react";
 import { useGetUsers } from "@/app/hooks/useGetUsers";
 import UserCard from "@/app/hooks/usersCard/UserCard";
 import useChatMessages from "@/app/hooks/useChatMessages";
 import { UserDatas } from "../utils/types";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
-import InviteLawyerModal from "../(lawyer)/lawyer/components/invite-lawyer";
-import SideBar from "../components/SideBarPwa";
-// import SideBar from "../components/SideBarPwa";
+import InviteLawyerModal from "../(lawyer)/lawyer/components/Invite-lawyer";
+import SideBar from "../components/Sidebarpwa";
 
 type GetUserType = {
   id: string;
@@ -47,6 +46,7 @@ const ChatRoom: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserListVisible, setIsUserListVisible] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const { sendMessage } = useChatMessages(
     currentUserId || "",
     currentUserRole || ""
@@ -87,6 +87,7 @@ const ChatRoom: React.FC = () => {
     }
   }, [loading, users, currentUserRole]);
 
+
   const handleSendMessage = async (
     e:
       | React.FormEvent<HTMLFormElement>
@@ -117,7 +118,7 @@ const ChatRoom: React.FC = () => {
 
       await sendMessage(inputMessage, selectedUser.id);
       setInputMessage("");
-    } catch{
+    } catch {
       setErrorMessage("Failed to send message. Please try again.");
     } finally {
       setSendingMessage(false);
@@ -184,7 +185,7 @@ const ChatRoom: React.FC = () => {
         throw new Error("Failed to send invitation");
       }
 
-      toast.success("Invitation sent successfully!");
+      toast.success("Invitation sent successfully!"); 
       handleCloseModal();
     } catch (error) {
       toast.error(
@@ -224,15 +225,35 @@ const ChatRoom: React.FC = () => {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-100 font-jost">
-       <Toaster position="top-center" reverseOrder={false} />
-      <div className="w-1/4 md:w-1/6 bg-white border-r border-gray-200 shadow-md lg:block hidden">
-        
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="w-1/4 md:w-1/5 bg-white border-r border-gray-200 shadow-md hidden lg:block">
+        <SideBar userRole={""} />
+      </div>
+
+      <div className="lg:hidden">
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-4 text-gray-500 focus:outline-none focus:text-gray-700"
+        >
+          <Menu size={24} />
+        </button>
+        {isSidebarOpen && (
+          <div className="fixed inset-0 z-50 bg-white">
+            <div className="p-4">
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="mb-4 text-gray-500 focus:outline-none focus:text-gray-700"
+              >
+                Close
+              </button>
+              <SideBar userRole={""} />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex-grow flex flex-col md:flex-row">
-        <div className={`w-full md:w-1/4 lg:w-1/3 xl:w-1/4 bg-white p-4 border-r border-gray-200 shadow-md ${isUserListVisible ? 'block' : 'hidden'} lg:block`}>
-          <SideBar userRole={""} />
-          
+        <div className={`w-full md:w-1/4 lg:w-1/3 xl:w-1/4 bg-white p-4 border-r border-gray-200 shadow-md hidden lg:block`}>
           <div className="mb-4">
             <input
               type="text"
@@ -258,13 +279,35 @@ const ChatRoom: React.FC = () => {
           </div>
         </div>
 
-        <div className="md:hidden">
-          <button
-            onClick={() => setIsUserListVisible(!isUserListVisible)}
-            className="flex items-center justify-between w-full bg-white border border-gray-300 p-2 rounded-md">
-            <span>{getUserListTitle()}</span>
-            <ChevronDown className={`transform transition-transform ${isUserListVisible ? "rotate-180" : ""}`} />
-          </button>
+        <div className="lg:hidden w-full p-4">
+          <div className="relative">
+            <button
+              onClick={() => setIsUserListVisible(!isUserListVisible)}
+              className="flex items-center justify-between w-full bg-white border border-gray-300 p-2 rounded-md"
+            >
+              <span>{selectedUser ? selectedUser.first_name : getUserListTitle()}</span>
+              <ChevronDown className={`transform transition-transform ${isUserListVisible ? "rotate-180" : ""}`} />
+            </button>
+            {isUserListVisible && (
+              <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                {availableUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      startConversation(user);
+                      setIsUserListVisible(false);
+                    }}
+                  >
+                    <UserCard
+                      user={user as Partial<UserDatas>}
+                      startConversation={() => {}}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="chat-area flex flex-grow flex-col p-4 bg-white md:w-3/4 lg:w-3/4">
@@ -287,26 +330,25 @@ const ChatRoom: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="flex mt-4 flex-col sm:flex-row">
-            <form onSubmit={handleSendMessage} className="flex-grow sm:mr-2">
+          <div className="mt-4">
+            <form onSubmit={handleSendMessage} className="flex w-full">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-grow border-hover border-2 p-2 rounded-l"
+                className="border-hover border-2 p-2 rounded-l w-3/4"
               />
+              <button
+                type="submit"
+                className="bg-hover text-white hover:bg-green-600 p-2 rounded-r w-1/4"
+              >
+                <Send />
+              </button>
             </form>
             <button
-              type="submit"
-              className="bg-hover text-white hover:bg-green-600 p-2 rounded mt-2 sm:mt-0"
-              onClick={handleSendMessage}
-            >
-              <Send />
-            </button>
-            <button
-              className="ml-2 bg-hover text-white hover:bg-green-600 p-2 rounded mt-2 sm:mt-0"
+              className="w-full mt-2 bg-hover text-white hover:bg-green-600 p-2 rounded"
               onClick={handleInviteLawyerClick}
             >
               Invite Lawyer

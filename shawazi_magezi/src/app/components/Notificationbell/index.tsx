@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { FaBell } from 'react-icons/fa';
+import Cookies from 'js-cookie';
 
 interface Notification {
   message: string;
@@ -11,14 +12,25 @@ interface Notification {
 const SellerNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
 
-  
+  useEffect(() => {
+    const userPhone = Cookies.get("userPhone");
+    setPhoneNumber(userPhone || null);
+  }, []);
+
   const fetchNotifications = async () => {
+    if (!phoneNumber) {
+      console.error('Phone number not available');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/notifications'); 
+      const response = await fetch(`/api/notifications/${phoneNumber}`);
+      
       if (response.ok) {
         const data = await response.json();
-        setNotifications(data.notifications); 
+        setNotifications(data.notifications);
       } else {
         console.error('Failed to fetch notifications');
       }
@@ -27,24 +39,29 @@ const SellerNotifications = () => {
     }
   };
 
- 
   const clearNotifications = () => {
-    setNotifications([]); 
+    setNotifications([]);
   };
 
   useEffect(() => {
-    fetchNotifications(); 
+    if (phoneNumber) {
+      fetchNotifications();
 
-    const intervalId = setInterval(() => {
-      fetchNotifications(); 
-    }, 5000);
+      const intervalId = setInterval(() => {
+        fetchNotifications();
+      }, 5000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+      return () => clearInterval(intervalId);
+    }
+  }, [phoneNumber]);
 
   const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
   };
+
+  if (!phoneNumber) {
+    return null;
+  }
 
   return (
     <div className="relative">

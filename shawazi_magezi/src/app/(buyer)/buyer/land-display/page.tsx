@@ -13,6 +13,7 @@ import SideBar from "@/app/components/Sidebarpwa";
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
 
+
 function LandDetailsList() {
   const [landIds] = useState([
     "147",
@@ -78,49 +79,40 @@ function LandDetailsList() {
     height: "250px",
   };
 
-
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const handleInterestClick = async (land: LandDetails) => {
     setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: true }));
-  
     try {
-      const userPhone = Cookies.get("userPhone"); 
+      const userPhone = Cookies.get("userPhone");
       if (!userPhone) {
         toast.error("User is not logged in!");
         return;
       }
-  
       const response = await fetch(`${BASE_URL}/api/users/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-  
       if (!response.ok) {
         throw new Error("Failed to fetch user data.");
       }
-  
       const users: UserDatas[] = await response.json();
       const currentUser = users.find((user) => user.phone_number === userPhone);
       if (!currentUser) {
         toast.error("User not found!");
         return;
       }
-  
       if (!currentUser.first_name || !currentUser.last_name) {
         toast.error("Invalid buyer data!");
         return;
       }
-  
       const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
       const notificationData = {
         message: `A buyer named ${buyerName} is interested in your land in ${land.location_name}!`,
         timestamp: new Date().toISOString(),
       };
-      
-      console.log('Notification Data:', notificationData); 
-  
+      console.log('Notification Data:', notificationData);
       const postResponse = await fetch(
         `${BASE_URL}/api/notify-seller/${land.land_details_id}/`,
         {
@@ -131,16 +123,12 @@ function LandDetailsList() {
           body: JSON.stringify(notificationData),
         }
       );
-  
       if (!postResponse.ok) {
         const errorMessage = await postResponse.text();
         console.error("Error response:", errorMessage);
         throw new Error("Failed to send notification.");
       }
-  
-      
       Cookies.set('buyerNotification', JSON.stringify(notificationData), { expires: 7 });
-  
       toast.success("Interest expressed successfully. Notification sent to seller.");
     } catch (error) {
       console.error("Error:", error);
@@ -149,8 +137,6 @@ function LandDetailsList() {
       setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: false }));
     }
   };
- 
-
   return (
     <div
       className={`relative ${

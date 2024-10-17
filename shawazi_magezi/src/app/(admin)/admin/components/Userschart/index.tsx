@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
-import useUsersData from '../../hooks/useUsersData';
+import useUsersData from '../../../../hooks/useUsersData';
 
 interface User {
   id: number;

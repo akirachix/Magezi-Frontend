@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
-import useTransactionsData from '../../hooks/useTransactions';
+import useTransactionsData from '../../../../hooks/useTransactionsChart';
 
 interface Transaction {
   id: number; 

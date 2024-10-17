@@ -1,6 +1,6 @@
-export const fetchAgreements = async () => {
+export const fetchParcelNumber = async () => {
   try {
-    const response = await fetch('/admin/api/agreements', {
+    const response = await fetch('/api/land-details', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -14,28 +14,8 @@ export const fetchAgreements = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error in fetchAgreements:', error);
+    console.error('Error in fetchParcelNumber:', error);
     throw error;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

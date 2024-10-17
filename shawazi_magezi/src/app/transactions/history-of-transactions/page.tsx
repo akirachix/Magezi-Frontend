@@ -6,11 +6,19 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
 import SideBar from '@/app/components/Sidebarpwa';
 
+// Define the structure of a transaction
+interface Transaction {
+  date: string;
+  status: string;
+  amount: string | number; // Adjust the type based on your actual data
+}
+
 const Transactionss = () => {
   const { transactions, isLoading, error } = useTransactions();
-  const [filterStatus, setFilterStatus] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("");
 
-  const filteredTransactions = transactions.filter((transaction) => {
+  // Ensure transactions are properly typed
+  const filteredTransactions: Transaction[] = transactions.filter((transaction: Transaction) => {
     const statusMatch = !filterStatus || transaction.status.toLowerCase() === filterStatus.toLowerCase();
     return statusMatch;
   });
@@ -20,10 +28,7 @@ const Transactionss = () => {
   };
 
   return (
-    
     <div className="flex flex-col items-center mt-[-50px] p-6 min-h-screen bg-white ml-0 md:ml-48">
-     
-
       <header className="flex justify-center items-center p-4 w-full max-w-5xl bg-white">
         <h1 className="text-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
           Transactions
@@ -75,7 +80,7 @@ const Transactionss = () => {
                 </td>
               </tr>
             ) : filteredTransactions.length > 0 ? (
-              filteredTransactions.map((transaction, idx) => (
+              filteredTransactions.map((transaction: Transaction, idx: number) => (
                 <tr key={idx} className="border-b border-primary bg-white">
                   <td className="p-2 text-sm sm:text-base md:text-lg lg:text-xl">
                     {formatDate(transaction.date)}
@@ -109,11 +114,9 @@ const Transactionss = () => {
             )}
           </tbody>
         </table>
-        
       </div>
 
       <SideBar userRole={""} />
-
     </div>
   );
 };

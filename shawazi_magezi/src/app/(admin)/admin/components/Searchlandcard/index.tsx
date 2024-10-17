@@ -3,9 +3,8 @@
 import React from 'react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
-import useParcelNumber from '../../hooks/useParcelNumber';
-import { LandPlot } from '../../utils/types';
-
+import useParcelNumber from '../../../../hooks/useParcelNumber';
+import { LandPlot } from '@/app/utils/type';
 
 const LandDetailsChart = () => {
   const { landPlotsData, loading, error } = useParcelNumber();

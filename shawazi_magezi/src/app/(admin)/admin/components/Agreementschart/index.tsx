@@ -4,7 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
 } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
-import useAgreementsData from '../../hooks/useAgreementData';
+import useAgreementsData from '../../../../hooks/useAgreementData';
 import dayjs from 'dayjs'; 
 import advancedFormat from 'dayjs/plugin/advancedFormat'; 
 dayjs.extend(advancedFormat); 

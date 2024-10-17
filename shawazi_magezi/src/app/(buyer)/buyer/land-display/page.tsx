@@ -34,6 +34,7 @@ function LandDetailsList() {
     "146",
     "10"
   ]);
+  
   const { landDetailsList, loading, error } = useDisplayLand(landIds);
   const [layoutMode, setLayoutMode] = useState("grid");
   const [currentPage, setCurrentPage] = useState(1);

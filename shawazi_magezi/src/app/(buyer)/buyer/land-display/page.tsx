@@ -74,7 +74,7 @@ function LandDetailsList() {
   };
 
   const mapContainerStyle = {
-    width: "110%",
+    width: "100%",
     height: "250px",
   };
 

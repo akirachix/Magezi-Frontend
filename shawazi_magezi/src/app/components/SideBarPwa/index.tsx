@@ -54,7 +54,7 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
   }, []);
 
   useEffect(() => {
-    // Retrieve the role from cookies and redirect based on role
+   
     const savedUserRole = Cookies.get('userRole');
     if (savedUserRole && savedUserRole !== userRole) {
       router.push(getRoutes(savedUserRole).home);

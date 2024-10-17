@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { fetchTransaction } from '../utils/fetchTransaction';
 
 interface Transaction {
+  buyer: boolean;
     name: string;
     date: string; 
     status: string;

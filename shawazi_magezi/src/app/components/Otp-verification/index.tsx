@@ -1,47 +1,30 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import Cookies from "js-cookie";
-import { fetchUsers } from "../../utils/getUsers";
-import { UserDatas } from "../../utils/types";
+import { getCookie } from "cookies-next";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [users, setUsers] = useState<UserDatas[]>([]);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
-  const searchParams = useSearchParams();
+
   useEffect(() => {
-    const phone = searchParams.get("phone_number");
-    console.log("Phone number from query params:", phone);
-    if (phone) {
-      setPhoneNumber(phone);
-    } else {
-      setError("Phone number not found. Please log in again.");
-    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const roleFromUrl = urlParams.get("role");
 
-    const cachedUsers = Cookies.get("users");
-    if (cachedUsers) {
-      setUsers(JSON.parse(cachedUsers));
+    if (roleFromUrl) {
+      setUserRole(roleFromUrl);
     } else {
-      fetchAllUsers();
+      const roleCookie = getCookie("role");
+      if (roleCookie) {
+        setUserRole(roleCookie.toString());
+      }
     }
-  }, [searchParams]);
-  const fetchAllUsers = async () => {
-    try {
-      const fetchedUsers = await fetchUsers();
-      setUsers(fetchedUsers);
-
-      Cookies.set("users", JSON.stringify(fetchedUsers), { expires: 1 / 24 });
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setError("Failed to fetch users. Please try again.");
-    }
-  };
+  }, [router]);
 
   const handleOtpChange = (index: number, value: string) => {
     const newOtp = [...otp];
@@ -51,6 +34,7 @@ const OtpVerification = () => {
       inputRefs.current[index + 1]?.focus();
     }
   };
+
   const handleKeyDown = (
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>
@@ -59,62 +43,33 @@ const OtpVerification = () => {
       inputRefs.current[index - 1]?.focus();
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
       const isVerified = await verifyOtp(otp.join(""));
-      console.log("Users at submit:", users);
-      if (users.length === 0) {
-        setError("Failed to load users. Please try again.");
-        setLoading(false);
-        return;
-      }
-      if (isVerified && phoneNumber) {
-        const cleanPhoneNumber = (phone: string) => phone.replace(/\D/g, "");
-        console.log("Phone number to compare:", cleanPhoneNumber(phoneNumber));
-        const currentUser = users.find((user: UserDatas) => {
-          console.log(
-            "Checking user phone:",
-            cleanPhoneNumber(user.phone_number),
-            "with",
-            cleanPhoneNumber(phoneNumber)
-          );
-          return (
-            cleanPhoneNumber(user.phone_number) ===
-            cleanPhoneNumber(phoneNumber)
-          );
-        });
-        console.log("Current user:", currentUser);
-        if (currentUser) {
-          let redirectUrl = "/";
-          switch (currentUser.role) {
-            case "lawyer":
-              redirectUrl = "/lawyer/draft-contract";
-              break;
-            case "buyer":
-              redirectUrl = "/buyer/land-display";
-              break;
-            case "seller":
-              redirectUrl = "/seller/seller-page";
-              break;
-            default:
-              console.error("Unknown user role:", currentUser.role);
-              setError(
-                "Unable to determine user role. Please try logging in again."
-              );
-              setLoading(false);
-              return;
-          }
-          console.log("Redirecting to:", redirectUrl);
-          router.push(redirectUrl);
-        } else {
-          setError("User not found. Please try logging in again.");
+      if (isVerified) {
+        switch (userRole) {
+          case "buyer":
+            router.push('/buyer/land-display');
+            break;
+          case "seller":
+            router.push("/seller/seller-page");
+            break;
+          case "lawyer":
+            router.push("/lawyer/draft-contract");
+            break;
+          default:
+            setError("Invalid user role. Please log in again.");
+            router.push("/login");
         }
       } else {
-        setError("Invalid OTP or phone number not found. Please try again.");
+        setError("Invalid OTP. Please try again.");
       }
+
     } catch (err) {
       console.error("Error during OTP verification:", err);
       setError("Failed to verify OTP. Please try again.");
@@ -122,25 +77,26 @@ const OtpVerification = () => {
       setLoading(false);
     }
   };
+
   const verifyOtp = async (otpString: string) => {
     console.log("Verifying OTP:", otpString);
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(true);
+        resolve(true); 
       }, 1000);
     });
   };
+
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center items-center relative overflow-hidden">
-      <div className="border-2 border-primary rounded-lg p-12 mx-auto w-[90%] md:w-[60%] lg:w-[40%] bg-white shadow-md">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">
-          Verify Code
-        </h2>
-        <p className="text-center mb-6">
-          Please enter the verification code sent to your phone number
+      <div className="border-2 border-primary rounded-lg p-6 sm:p-8 md:p-12 mx-auto w-[90%] md:w-[60%] lg:w-[40%] bg-white shadow-md">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-primary mb-6">Verify Code</h2>
+        <p className="text-center mb-4 sm:mb-6">
+          Please enter the verification code sent to your phone number.
+          {userRole && <span className="block mt-2">Verifying as: {userRole}</span>}
         </p>
-        <form onSubmit={handleSubmit} className="space-y-9">
-          <div className="flex justify-center space-x-6 mb-6">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-9">
+          <div className="flex justify-center space-x-4 sm:space-x-6 mb-4 sm:mb-6">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -152,7 +108,7 @@ const OtpVerification = () => {
                 value={digit}
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-16 text-center text-3xl border-2 border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-10 h-12 sm:w-12 sm:h-16 text-center text-2xl sm:text-3xl border-2 border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 required
               />
             ))}
@@ -160,26 +116,15 @@ const OtpVerification = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           <button
             type="submit"
-            className={`w-full bg-primary text-white py-4 px-4 rounded-md text-xl ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`w-full bg-primary text-white py-3 sm:py-4 px-4 rounded-md text-lg sm:text-xl ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             disabled={loading}
           >
             {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
       </div>
-      <div className="mt-8 w-[90%] md:w-[60%] lg:w-[40%]">
-        {/* <h3 className="text-2xl font-bold mb-4">All Users</h3>
-        <ul className="list-disc pl-5">
-          {users.map((user, index) => (
-            <li key={index} className="mb-2">
-              {user.name} - {user.phone_number} ({user.role})
-            </li>
-          ))}
-        </ul> */}
-      </div>
     </div>
   );
 };
+
 export default OtpVerification;

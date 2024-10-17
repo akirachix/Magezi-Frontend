@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { AgreementFormData, UserRole } from "@/app/utils/types";
-import ContractReviewPopup from "@/app/components/ContractReviewPopup";
+import ContractReviewPopup from "@/app/components/Contractreviewpop";
 
 
 const BuyerAgreed: React.FC = () => {

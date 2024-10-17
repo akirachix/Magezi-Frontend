@@ -5,10 +5,12 @@ import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
 import { MdClose } from "react-icons/md";
 import { LandDetails } from "@/app/utils/types";
 
+
 interface LandDetailsModalProps {
   land: LandDetails | null;
   onClose: () => void;
 }
+ 
 
 const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) => {
   useEffect(() => {
@@ -29,14 +31,9 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
     return dateStr ? new Date(dateStr).toLocaleDateString() : "N/A";
   };
 
-  const handleInterestClick = (land: LandDetails) => {
-    const notificationData = {
-        message: `A buyer is interested in ${land.location_name}!`,
-        timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("buyerNotification", JSON.stringify(notificationData));
-    alert("Notification sent to seller!"); 
-};
+  
+  
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -74,7 +71,9 @@ const LandDetailsModal: React.FC<LandDetailsModalProps> = ({ land, onClose }) =>
           <p><strong>Address:</strong> {land.address || "N/A"}</p>
           <p><strong>National ID:</strong> {land.national_id || "N/A"}</p>
         </div>
-        <button onClick={() => handleInterestClick(land)} className="bg-foreground hover:bg-primary text-white font-bold py-2 px-4 rounded mt-4">
+        <button 
+        
+        className="bg-foreground hover:bg-primary text-white font-bold py-2 px-4 rounded mt-4">
           Interested
         </button>
       </div>

@@ -8,10 +8,15 @@ interface Message {
   sender: string;
   receiverId: string;
   role: string;
-  timestamp: string;
+  timestamp: number;
 }
 
-const useChatMessages = (currentUserId: string, currentUserRole: string) => {
+interface ChatMessagesHook {
+  messages: Message[];
+  sendMessage: (content: string, receiverId: string) => Promise<void>;
+}
+
+const useChatMessages = (currentUserId: string, currentUserRole: string): ChatMessagesHook => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -26,11 +31,18 @@ const useChatMessages = (currentUserId: string, currentUserRole: string) => {
 
     const channel = pusher.subscribe('chat-channel');
     channel.bind('new-message', (data: Message) => {
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages, data];
-        localStorage.setItem('messages', JSON.stringify(updatedMessages));
-        return updatedMessages;
-      });
+      if (!data.sender) {
+        console.error(`Received message with invalid sender:`, data);
+      } else {
+        setMessages((prevMessages) => {
+          if (!prevMessages.some(msg => msg.id === data.id)) {
+            const updatedMessages = [...prevMessages, data];
+            localStorage.setItem('messages', JSON.stringify(updatedMessages));
+            return updatedMessages;
+          }
+          return prevMessages;
+        });
+      }
     });
 
     return () => {
@@ -40,14 +52,16 @@ const useChatMessages = (currentUserId: string, currentUserRole: string) => {
     };
   }, []);
 
-  const sendMessage = async (content: string, receiverId: string) => {
+  const sendMessage = async (content: string, receiverId: string): Promise<void> => {
+    console.log('Sending message:', { currentUserId, currentUserRole });
+
     const newMessage: Message = {
       id: uuidv4(),
       content,
-      sender: currentUserId,
+      sender: currentUserId, 
       receiverId,
-      role: currentUserRole,
-      timestamp: new Date().toISOString(),
+      role: currentUserRole,  
+      timestamp: Date.now(),
     };
 
     try {
@@ -60,7 +74,8 @@ const useChatMessages = (currentUserId: string, currentUserRole: string) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Error sending message: ${response.statusText}`);
+        const errorDetails = await response.text();
+        throw new Error(`Error sending message: ${response.statusText}. Details: ${errorDetails}`);
       }
 
       setMessages((prevMessages) => {
@@ -71,17 +86,12 @@ const useChatMessages = (currentUserId: string, currentUserRole: string) => {
 
     } catch (error) {
       console.error('Error sending message:', error);
-      throw error; 
+      throw error;
     }
   };
 
-  return {
-    messages,
-    sendMessage,
-  };
+  return { messages, sendMessage };
 };
 
 export default useChatMessages;
-
-
 

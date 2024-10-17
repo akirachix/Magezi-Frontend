@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,6 +9,8 @@ import { IoPersonSharp } from "react-icons/io5";
 import { FaEye, FaEyeSlash, FaPhoneAlt } from 'react-icons/fa';
 import { RiLockPasswordFill } from "react-icons/ri";
 import { setCookie } from 'cookies-next';
+import toast, { Toaster } from "react-hot-toast";
+import 'react-toastify/dist/ReactToastify.css';
 
 interface UserSignup {
   first_name: string;
@@ -35,7 +36,7 @@ const schema = yup.object().shape({
   confirm_password: yup.string()
     .oneOf([yup.ref('password')], 'Passwords must match')
     .required('Confirm password is required'),
-  role: yup.string().required('Role is required'), 
+  role: yup.string().required('Role is required'),
 });
 
 const Signup = () => {
@@ -43,8 +44,6 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
   const { register, handleSubmit, formState: { errors } } = useForm<UserSignup>({
     resolver: yupResolver(schema),
     mode: 'onChange',
@@ -52,8 +51,7 @@ const Signup = () => {
 
   const onSubmit = async (data: UserSignup) => {
     setLoading(true);
-    setErrorMessage('');
-    
+
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -62,27 +60,32 @@ const Signup = () => {
       });
 
       if (response.ok) {
-        const responseData = await response.json();
+        setCookie('first_name', data.first_name, { maxAge: 60 * 60 * 24 });
+        setCookie('last_name', data.last_name, { maxAge: 60 * 60 * 24 });
+        setCookie('phone_number', data.phone_number, { maxAge: 60 * 60 * 24 });
+        setCookie('role', data.role, { maxAge: 60 * 60 * 24 });
 
-        // Set cookies with a 24-hour expiration
-        setCookie('first_name', responseData.first_name, { maxAge: 60 * 60 * 24 });
-        setCookie('last_name', responseData.last_name, { maxAge: 60 * 60 * 24 });
-        setCookie('phone_number', responseData.phone_number, { maxAge: 60 * 60 * 24 });
-        setCookie('user_role', responseData.role, { maxAge: 60 * 60 * 24 });
+        toast.success("Account created successfully! Redirecting...");
 
-        
+        const usersResponse = await fetch('/api/users'); 
+        if (usersResponse.ok) {
+          const users = await usersResponse.json();
+          console.log('Fetched users:', users); 
+        } else {
+          const errorData = await usersResponse.json();
+          toast.error(errorData.message || 'Failed to fetch users.');
+        }
 
-        alert("Account created successfully! Redirecting to login...");
-        setTimeout(() => { router.push("/login"); }, 2000);
+        router.push("/login");
+
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Signup failed. Please try again.');
+        toast.error(errorData.message || 'Signup failed. Please try again.');
         console.error('Backend error:', errorData);
       }
-      
     } catch (error) {
       console.error('Sign-up error:', error);
-      setErrorMessage('An error occurred during signup. Please try again.');
+      toast.error('An error occurred during signup. Please check your network connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -90,15 +93,14 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-jost justify-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-60 h-60 bg-foreground rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+      <Toaster />
+      <div className="absolute top-0 left-0 w-60 h-60 bg-foreground rounded-full -translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/2 translate-y-1/5"></div>
       <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/4 translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-foreground rounded-full translate-x-1/5 translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-60 h-60 bg-foreground rounded-full translate-x-1/9 mr-[9%] translate-y-[80%]"></div>
-
       <div className="w-full md:w-[40%] mx-auto z-10 bg-white p-6 md:p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-primary mb-6 md:mb-8">Sign Up</h2>
-        {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
           <div>
             <label htmlFor="first_name" className="block text-lg md:text-xl font-medium text-primary mb-1">
@@ -111,7 +113,6 @@ const Signup = () => {
             />
             {errors.first_name && <p className="mt-1 text-xs text-border-color">{errors.first_name.message}</p>}
           </div>
-
           <div>
             <label htmlFor="last_name" className="block text-lg md:text-xl font-medium text-primary mb-1">
               <IoPersonSharp className="inline w-6 h-6 mr-2" /> Last Name:
@@ -123,7 +124,6 @@ const Signup = () => {
             />
             {errors.last_name && <p className="mt-1 text-xs text-border-color">{errors.last_name.message}</p>}
           </div>
-
           <div>
             <label htmlFor="phone_number" className="block text-lg md:text-xl font-medium text-primary mb-1">
               <FaPhoneAlt className="inline w-4 h-4 mr-2" /> Phone Number:
@@ -136,7 +136,6 @@ const Signup = () => {
             />
             {errors.phone_number && <p className="mt-1 text-xs text-border-color">{errors.phone_number.message}</p>}
           </div>
-
           <div>
             <label htmlFor="password" className="flex items-center text-lg md:text-xl font-medium text-primary mb-1">
               <RiLockPasswordFill className="w-6 h-6 mr-2" /> Password:
@@ -158,7 +157,6 @@ const Signup = () => {
             </div>
             {errors.password && <p className="mt-1 text-xs text-border-color">{errors.password.message}</p>}
           </div>
-
           <div>
             <label htmlFor="confirm_password" className="flex items-center text-lg md:text-xl font-medium text-primary mb-1">
               <RiLockPasswordFill className="w-6 h-6 mr-2" /> Confirm Password:
@@ -173,13 +171,13 @@ const Signup = () => {
               <button
                 type="button"
                 className="absolute inset-y-0 right-0 flex items-center pr-3"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
                 {showConfirmPassword ? <FaEyeSlash className="h-5 w-5 text-primary" /> : <FaEye className="h-5 w-5 text-primary" />}
               </button>
             </div>
             {errors.confirm_password && <p className="mt-1 text-xs text-border-color">{errors.confirm_password.message}</p>}
           </div>
-
           <div>
             <label htmlFor="role" className="block text-lg md:text-xl font-medium text-primary mb-1">
               Role:
@@ -189,32 +187,28 @@ const Signup = () => {
               {...register('role')}
               className={`w-full border text-[16px] md:text-[20px] ${errors.role ? 'border-border-color' : 'border-foreground'} border-2 rounded-md shadow-sm p-3 focus:outline-none focus:ring-1 focus:ring-foreground`}
             >
-              <option value="">Select a role</option>
-              <option value="seller">seller</option>
-              <option value="buyer">buyer</option>
-              <option value="lawyer">lawyer</option>
+              <option value="">Select your role</option>
+              <option value="buyer">Buyer</option>
+              <option value="lawyer">Lawyer</option>
+              <option value="seller">Seller</option>
             </select>
             {errors.role && <p className="mt-1 text-xs text-border-color">{errors.role.message}</p>}
           </div>
-
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 text-lg md:text-xl text-white bg-primary rounded-md hover:bg-secondary transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full bg-primary text-white py-3 rounded-md font-semibold hover:bg-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            {loading ? 'Signing Up...' : 'Sign Up'}
+            {loading ? 'Creating...' : 'Create Account'}
           </button>
         </form>
-        <div className="mt-8 text-center text-lg sm:text-xl">
-          <span className="text-primary">Already have an account? </span>
-            <Link href="./login/" className="font-medium text-foreground hover:text-secondary hover:underline">
-                Log In
-            </Link>
-        </div>
+        <p className="mt-4 text-center text-gray-600">
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary font-semibold">Login</Link>
+        </p>
       </div>
     </div>
   );
 };
 
 export default Signup;
-

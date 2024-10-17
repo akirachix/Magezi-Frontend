@@ -16,7 +16,7 @@ export const useLandData = (parcelNumber: string) => {
       try {
 
         const data = await fetchLandDetails(parcelNumber);
-        setLandDetails(data);  
+setLandDetails(data);  
 
       } catch (err: unknown) {
         if (err instanceof Error) {

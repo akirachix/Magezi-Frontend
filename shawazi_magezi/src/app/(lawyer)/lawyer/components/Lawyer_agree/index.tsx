@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { AgreementFormData, UserRole } from "@/app/utils/types";
-import ContractReviewPopup from "../components/ContractReviewPopup";
+import ContractReviewPopup from "@/app/components/Contractreviewpop";
+
 
 const LawyerPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);

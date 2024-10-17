@@ -4,7 +4,6 @@ import React from 'react';
 
 import LandDetailsChart from '../components/Searchlandcard';
 import TransactionsChart from '../components/Transactionschart';
-import UsersChart from '../components/Userschart';
 import Sidebar from '../components/Sidebar';
 import AgreementsChart from '../components/Agreementschart';
 
@@ -17,7 +16,6 @@ const Dashboard = () => {
       <AgreementsChart />
       <LandDetailsChart />
       <TransactionsChart />
-      <UsersChart />
     </div>
   );
 };

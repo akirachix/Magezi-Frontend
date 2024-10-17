@@ -10,7 +10,7 @@ import { UserDatas } from "../utils/types";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
 import InviteLawyerModal from "../(lawyer)/lawyer/components/Invite-lawyer";
-import SideBar from "../components/SideBarPwa";
+import SideBar from "../components/Sidebarpwa";
 
 type GetUserType = {
   id: string;

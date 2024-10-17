@@ -2,8 +2,8 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import useLandData from "@/app/hooks/useLandData";
-import LandDetailsModal from "../LandDetailModal";
-import SearchErrorModal from "../SearchError";
+import LandDetailsModal from "../Landdetailsmodal";
+import SearchErrorModal from "../Searcherror";
 import { Loader2 } from "lucide-react";
 
 const LandSearch: React.FC = () => {

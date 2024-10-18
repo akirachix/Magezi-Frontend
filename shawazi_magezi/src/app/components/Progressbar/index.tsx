@@ -9,7 +9,7 @@ interface Step {
 }
 
 const steps: Step[] = [
-  { label: 'Land Search', completed: true, path: '/land-search' },
+  { label: 'Land Search', completed: true, path: '/land-display' },
   { label: 'Agreement', completed: true, path: '/agreement' },
   { label: 'Contract', completed: true, path: '/contract' },
   { label: 'Transaction', completed: true, path: '/transaction' },

@@ -6,6 +6,8 @@ import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import SideBar from "@/app/components/Sidebarpwa";
+// import Lawyer_
+
 
 
 const WelcomeSection = () => {
@@ -49,7 +51,7 @@ const WelcomeSection = () => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white max-w-[100vw] lg:max-w-[80vw] mx-0 lg:ml-32">
-      <SideBar userRole={""} />
+      <SideBar />
       <div className="flex flex-col flex-grow p-4 md:p-8 text-center">
         <h1 className="text-3xl md:text-4xl lg:text-4xl font-semibold text-gray-800 mt-6 md:mt-10 mb-6 md:mb-8">
           Welcome to The Shawazi Application

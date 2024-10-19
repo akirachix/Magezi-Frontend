@@ -6,7 +6,7 @@ import SideBar from '../components/Sidebarpwa';
 const ChatRoomPage = () => {
   return (
     <div className="flex flex-col items-center justify-start text-center mb-10 p-4 md:ml-[5%] lg:ml-[3%]">
-      <SideBar userRole={''} />
+      <SideBar />
       <div>
         <div className="items-center mb-[5%]">
           <h1 className="text-[28px] font-bold text-primary text-center md:text-[32px] lg:text-[36px]">ChatRoom</h1>

@@ -227,7 +227,7 @@ const ChatRoom: React.FC = () => {
     <div className="flex flex-col md:flex-row h-screen bg-gray-100 font-jost">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="w-1/4 md:w-1/5 bg-white border-r border-gray-200 shadow-md hidden lg:block">
-        <SideBar userRole={""} />
+        <SideBar  />
       </div>
 
       <div className="lg:hidden">
@@ -246,7 +246,7 @@ const ChatRoom: React.FC = () => {
               >
                 Close
               </button>
-              <SideBar userRole={""} />
+              <SideBar />
             </div>
           </div>
         )}

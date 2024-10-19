@@ -8,7 +8,7 @@ import { LandDetails, UserDatas } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import LandSearch from "../components/Searchbar";
 import Cookies from 'js-cookie';
-import SideBar from "@/app/components/Sidebarpwa";
+import BuyerSideBar from "../components/Buyer_sidebar";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
@@ -266,7 +266,7 @@ function LandDetailsList() {
         </div>
       </div>
       <ToastContainer />
-      <SideBar userRole={""} />
+      <BuyerSideBar userRole={""}/>
     </div>
   );
 }

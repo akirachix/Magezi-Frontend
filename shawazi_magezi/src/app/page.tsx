@@ -1,5 +1,5 @@
 "use client";
-import SecureLandTransactions from "./teaser/teaserone/page";
+// import SecureLandTransactions from "./teaser/teaserone/page";
 import Head from "next/head";
 
 
@@ -13,7 +13,7 @@ const Home = () => {
             </Head>
             <main>
                 
-                <SecureLandTransactions />
+                {/* <SecureLandTransactions /> */}
             </main>
         </div>
     );

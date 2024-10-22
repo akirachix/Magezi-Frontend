@@ -41,7 +41,7 @@ const SecureLandTransactions = () => {
         <Image
           src="/images/shawazilogo.png"
           alt="Splash Screen"
-          width={250}
+          width={350}
           height={300}
           className="max-w-full h-auto sm:w-30 sm:h-30 md:w-60 md:h-60 lg:w-70 lg:h-70"
         />
@@ -55,8 +55,8 @@ const SecureLandTransactions = () => {
         <Image 
           src="/images/transactions.png" 
           alt="Secure Land Transactions"
-          width={450}
-          height={450}
+          width={750}
+          height={750}
           className="max-w-full h-auto"  
         />
       </div>

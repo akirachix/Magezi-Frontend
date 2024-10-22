@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader } from '../Ui';
-import useTransactionsData from '../../hooks/useTransactions';
+import useTransactionsData from '@/app/hooks/useTransactionsChart';
 
 interface Transaction {
   id: number; 
@@ -35,7 +35,8 @@ const TransactionsChart = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Card className="w-full h-[400px]">
+   <div id="transactions-chart" className="w-full h-[400px]">
+     <Card className="w-full h-[400px]">
       <CardHeader>
         <h2 className="text-xl font-bold">Transactions Overview</h2>
         <p className="text-sm text-gray-500">
@@ -67,8 +68,8 @@ const TransactionsChart = () => {
         </div>
       </CardContent>
     </Card>
+   </div>
   );
 };
 
 export default TransactionsChart;
-

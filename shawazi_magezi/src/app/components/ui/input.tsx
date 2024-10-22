@@ -1,5 +1,5 @@
-import React from 'react';
+import React, { FC, InputHTMLAttributes } from 'react';
 
-export const Input = (props: React.JSX.IntrinsicAttributes & React.ClassAttributes<HTMLInputElement> & React.InputHTMLAttributes<HTMLInputElement>) => {
-    return <input {...props} />;
+export const Input: FC<InputHTMLAttributes<HTMLInputElement>> = (props) => {
+  return <input {...props} />;
 };

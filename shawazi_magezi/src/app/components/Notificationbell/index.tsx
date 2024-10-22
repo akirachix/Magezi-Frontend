@@ -12,9 +12,9 @@ interface Notification {
 const SellerNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  
 
   useEffect(() => {
-    
     const storedNotifications = Cookies.get('sellerNotifications');
     if (storedNotifications) {
       setNotifications(JSON.parse(storedNotifications));
@@ -47,8 +47,9 @@ const SellerNotifications = () => {
 
   const clearNotifications = () => {
     setNotifications([]);
-    Cookies.remove('sellerNotifications'); 
   };
+
+  
 
   return (
     <div className="relative">

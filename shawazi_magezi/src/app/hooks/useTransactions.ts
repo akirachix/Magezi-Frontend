@@ -1,19 +1,18 @@
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react'; // Import ReactNode
 import { fetchTransaction } from '../utils/fetchTransaction';
 
 interface Transaction {
+  code: ReactNode; // Keep the type as ReactNode if code represents a JSX element, otherwise change to string if it's just a text
   buyer: boolean;
-    name: string;
-    date: string; 
-    status: string;
-    amount: number; 
-    buyerUploaded?:boolean;
-    sellerUploaded?:boolean
-    buyerImageUrl?: string; 
+  name: string;
+  date: string; 
+  status: string;
+  amount: number; 
+  buyerUploaded?: boolean;
+  sellerUploaded?: boolean;
+  buyerImageUrl?: string; 
   sellerImageUrl?: string; 
 }
-  
 
 const useTransactions = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);

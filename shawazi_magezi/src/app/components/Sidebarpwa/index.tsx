@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { MdOutlineSettings } from "react-icons/md";
@@ -7,17 +7,14 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { FaHome, FaUser, FaComments, FaFileContract, FaMoneyCheck } from 'react-icons/fa';
 import { BiLogOut } from "react-icons/bi";
 import Cookies from 'js-cookie';
-
 interface SideBarProps {
   userRole: string;
 }
-
 interface MenuItem {
   name: string;
   icon: JSX.Element;
   href: string;
 }
-
 interface RoleSpecificRoutes {
   seller: {
     home: string;
@@ -32,14 +29,35 @@ interface RoleSpecificRoutes {
     contract: string;
   };
 }
-
 const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-
+  const roleSpecificRoutes: RoleSpecificRoutes = React.useMemo(() => ({
+    seller: {
+      home: '/seller/seller-page',
+      contract: '/agreementnext',
+    },
+    buyer: {
+      home: '/buyer/land-display',
+      contract: '/agreementnext',
+    },
+    lawyer: {
+      home: '/lawyer/draft-contract',
+      contract: '/agreementnext',
+    }
+  }), []);
+  const getRoutes = useCallback((role: string): { home: string; contract: string } => {
+    const validRole = role.toLowerCase() as keyof RoleSpecificRoutes;
+    if (validRole in roleSpecificRoutes) {
+      return roleSpecificRoutes[validRole];
+    } else {
+      console.error(`Unknown user role: ${role}`);
+      return roleSpecificRoutes.seller;
+    }
+  }, [roleSpecificRoutes]);
   useEffect(() => {
     const checkScreenSize = () => {
       const width = window.innerWidth;
@@ -52,67 +70,33 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-
   useEffect(() => {
-   
     const savedUserRole = Cookies.get('userRole');
     if (savedUserRole && savedUserRole !== userRole) {
       router.push(getRoutes(savedUserRole).home);
     }
-  }, [userRole, router]);
-
-  const roleSpecificRoutes: RoleSpecificRoutes = {
-    seller: {
-      home: '/seller/seller-page',
-      contract: '/agreementNext',
-    },
-    buyer: {
-      home: '/buyer/land-display',
-      contract: '/agreementNext',
-    },
-    lawyer: {
-      home: '/lawyer/draft-contract',
-      contract: '/agreementNext',
-    }
-  };
-
-  const getRoutes = (role: string): { home: string; contract: string } => {
-    const validRole = role.toLowerCase() as keyof RoleSpecificRoutes;
-    if (validRole in roleSpecificRoutes) {
-      return roleSpecificRoutes[validRole];
-    } else {
-      console.error(`Unknown user role: ${role}`);
-      return roleSpecificRoutes.seller;
-    }
-  };
-
+  }, [userRole, router, getRoutes]);
   const routes = getRoutes(userRole);
-
   const baseMenuItems: MenuItem[] = [
     { name: 'Profile', icon: <FaUser className="w-5 h-5 mr-2" />, href: '/profile' },
     { name: 'ChatRoom', icon: <FaComments className="w-5 h-5 mr-2" />, href: '/chatroom-page' },
     { name: 'Contract', icon: <FaFileContract className="w-5 h-5 mr-2" />, href: routes.contract },
     { name: 'Transactions', icon: <FaMoneyCheck className="w-5 h-5 mr-2" />, href: '/transactions/transactions' },
   ];
-
   const getRoleSpecificItems = (): MenuItem[] => {
     return [
       { name: 'Home', icon: <FaHome className="w-5 h-5 mr-2" />, href: routes.home },
     ];
   };
-
   const menuItems = [...getRoleSpecificItems(), ...baseMenuItems];
-
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
   const handleNavigation = (href: string) => {
     if (href) {
       router.push(href);
     }
   };
-
   const sidebarContent = (
     <div className="flex flex-col h-full relative">
       <div className="flex items-left justify-between p-4">
@@ -176,7 +160,6 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
       </div>
     </div>
   );
-
   return (
     <div className="relative">
       <div className={`fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50 ${showSidebar ? 'ml-64' : ''}`}>
@@ -204,5 +187,4 @@ const SideBar: React.FC<SideBarProps> = ({ userRole }) => {
     </div>
   );
 };
-
 export default SideBar;

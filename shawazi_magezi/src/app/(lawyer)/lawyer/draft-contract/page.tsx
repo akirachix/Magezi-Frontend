@@ -5,7 +5,7 @@ import Image from "next/image";
 import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import SideBar from "@/app/components/SideBarPwa";
+import SideBar from "@/app/components/Sidebarpwa";
 
 
 const WelcomeSection = () => {

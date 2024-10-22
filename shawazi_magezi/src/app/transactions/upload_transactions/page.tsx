@@ -8,7 +8,7 @@ import { postTransaction } from "@/app/utils/postTransaction";
 import { fetchTransaction } from "@/app/utils/fetchTransaction";
 import { formatDate } from "@/app/utils/formatDate";
 import Cookies from "js-cookie"; 
-import SideBarPwa from "@/app/components/SideBarPwa";
+import SideBarPwa from "@/app/components/Sidebarpwa";
 
 interface Transaction {
   name: string;

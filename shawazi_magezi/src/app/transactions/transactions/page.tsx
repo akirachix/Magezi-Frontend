@@ -4,7 +4,7 @@ import Link from "next/link";
 import useTransactions from "@/app/hooks/useTransactions";
 
 import ProgressBar from "@/app/components/Progressbar";
-import SideBarPwa from "@/app/components/SideBarPwa";
+import SideBarPwa from "@/app/components/Sidebarpwa";
 
 const TransactionsDisplay = () => {
   const { transactions, isLoading, error } = useTransactions();

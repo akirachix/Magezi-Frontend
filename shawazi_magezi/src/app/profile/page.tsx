@@ -7,7 +7,7 @@ import { IoPersonSharp } from "react-icons/io5";
 import { MdDelete, MdClose } from "react-icons/md";
 import { AiFillCamera } from "react-icons/ai";
 import Modal from "react-modal";
-import SideBar from "../components/SideBarPwa";
+import SideBar from "../components/Sidebarpwa";
 import Image from 'next/image'; 
 
 const Profile = () => {

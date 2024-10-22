@@ -9,8 +9,8 @@ import useChatMessages from "@/app/hooks/useChatMessages";
 import { UserDatas } from "../utils/types";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
-import InviteLawyerModal from "../(lawyer)/lawyer/components/invite-lawyer";
-import SideBar from "../components/SideBarPwa";
+import InviteLawyerModal from "../(lawyer)/lawyer/components/Invite-lawyer";
+// import SideBar from "../components/Sidebarpwa";
 
 type GetUserType = {
   id: string;
@@ -54,7 +54,7 @@ const ChatRoom: React.FC = () => {
   const [localMessages, setLocalMessages] = useState<MessageType[]>([]);
 
   useEffect(() => {
-    const userRole = getCookie("userRole") as string;
+    const userRole = getCookie("role") as string;
     const userName = getCookie("userName") as string;
     const userId = getCookie("userId") as string;
     setCurrentUserRole(userRole);
@@ -131,17 +131,16 @@ const ChatRoom: React.FC = () => {
       handleSendMessage(e);
     }
   };
-
-  const filteredMessages = selectedUser
-    ? localMessages.filter((message: MessageType) => {
-        return (
-          (message.sender === selectedUser.id ||
-            message.recipientId === selectedUser.id) &&
-          (message.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            message.content.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-      })
-    : [];
+ const filteredMessages = selectedUser
+  ? localMessages.filter((message: MessageType) => {
+      return (
+        (message.sender === selectedUser.id ||
+          message.recipientId === selectedUser.id) &&
+        (message.sender?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          message.content?.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    })
+  : [];
 
   const startConversation = (user: GetUserType) => {
     setSelectedUser(user);
@@ -227,7 +226,7 @@ const ChatRoom: React.FC = () => {
     <div className="flex flex-col md:flex-row h-screen bg-gray-100 font-jost">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="w-1/4 md:w-1/5 bg-white border-r border-gray-200 shadow-md hidden lg:block">
-        <SideBar userRole={""} />
+        {/* <SideBar userRole={""} /> */}
       </div>
 
       <div className="lg:hidden">
@@ -246,7 +245,7 @@ const ChatRoom: React.FC = () => {
               >
                 Close
               </button>
-              <SideBar userRole={""} />
+              {/* <SideBar userRole={""} /> */}
             </div>
           </div>
         )}

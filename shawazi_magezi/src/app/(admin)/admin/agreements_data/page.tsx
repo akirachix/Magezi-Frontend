@@ -6,7 +6,7 @@ import useAgreementsData from "@/app/hooks/useAgreementData";
 import Sidebar from "../components/Sidebar";
 import AgreementsProgressChart from "../components/Agreementschart";
 
-// Raw data interface matching what comes from the API
+
 interface RawAgreementData {
   agreement_id?: string;
   title?: string;
@@ -23,7 +23,7 @@ interface RawAgreementData {
   totalContracts?: number;
 }
 
-// Processed Agreement interface with required fields
+
 interface Agreement {
   agreement_id: string;
   title: string;
@@ -36,7 +36,6 @@ interface Agreement {
   total_amount_made: number;
 }
 
-// Type guard to check if a raw agreement has all required fields
 function isValidAgreement(raw: RawAgreementData): raw is RawAgreementData & Required<Pick<RawAgreementData, 
   'agreement_id' | 'title' | 'last_updated' | 'id' | 'contract_duration' | 
   'agreed_amount' | 'installment_schedule' | 'penalties_interest_rate' | 'total_amount_made'
@@ -54,7 +53,7 @@ function isValidAgreement(raw: RawAgreementData): raw is RawAgreementData & Requ
   );
 }
 
-// Function to transform valid raw agreement data into processed Agreement
+
 function transformAgreement(raw: RawAgreementData & Required<Pick<RawAgreementData, 
   'agreement_id' | 'title' | 'last_updated' | 'id' | 'contract_duration' | 
   'agreed_amount' | 'installment_schedule' | 'penalties_interest_rate' | 'total_amount_made'
@@ -72,7 +71,7 @@ function transformAgreement(raw: RawAgreementData & Required<Pick<RawAgreementDa
   };
 }
 
-// Search filter function with type safety
+
 function matchesSearch(agreement: RawAgreementData, searchTerm: string): boolean {
   if (!searchTerm) return true;
   if (!agreement.agreement_id) return false;
@@ -89,7 +88,7 @@ const AgreementsTable: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
   if (!agreementsData) return <div>No data available</div>;
 
-  // Filter and transform the data
+
   const filteredAgreements: Agreement[] = (agreementsData as RawAgreementData[])
     .filter(agreement => matchesSearch(agreement, searchTerm))
     .filter(isValidAgreement)

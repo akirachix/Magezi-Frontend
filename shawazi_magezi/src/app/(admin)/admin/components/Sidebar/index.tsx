@@ -41,8 +41,8 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveChart }) => {
 
     const menuItems: MenuItem[] = [
         { name: 'Dashboard', icon: <IoStatsChartSharp className="w-8 h-8 mr-2" />, href: '/admin/dashboarddata' },
-        { name: 'Agreements', icon: <LiaFileContractSolid className="w-8 h-8 mr-2" />, href: '/admin/agreement_data' },
-        { name: 'Land Plots', icon: <LuUsers2 className="w-8 h-8 mr-2" />, href: '/admin/Land_locations' },
+        { name: 'Agreements', icon: <LiaFileContractSolid className="w-8 h-8 mr-2" />, href: '/admin/agreements_data' },
+        { name: 'Land Plots', icon: <LuUsers2 className="w-8 h-8 mr-2" />, href: '/admin/land_locations' },
     ];
 
     const toggleMenu = () => {

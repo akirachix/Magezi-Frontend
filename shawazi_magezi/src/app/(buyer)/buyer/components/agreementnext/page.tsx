@@ -5,8 +5,7 @@ import { AgreementFormData, Term, UserRole } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import BuyerSidebar from "../buyerSidebar";
 import ContractReviewPopup from "@/app/components/Contractreviewpop";
-// import SideBar from "../components/Sidebarpwa";
-// import ContractReviewPopup from "../components/Contractreviewpop";
+
 const TermsAndConditions: React.FC = () => {
   const [agreement, setAgreement] = useState<AgreementFormData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -14,7 +13,6 @@ const TermsAndConditions: React.FC = () => {
   const [checkedTerms, setCheckedTerms] = useState<Record<string, boolean>>({});
   const [showPopup, setShowPopup] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(UserRole.EMPTY);
-  // const [showLawyerView, setShowLawyerView] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const existingRole = getCookie("userRole");

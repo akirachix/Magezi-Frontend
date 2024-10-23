@@ -41,9 +41,6 @@ const SellerPage: FC = () => {
   };
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      <div className="lg:fixed lg:left-0 lg:top-0 lg:h-full mr-42 lg:w-64">
-        {/* <SellerSidebar /> */}
-      </div>
       <SellerSidebar />
       <div className="flex-1 lg:ml-[16rem] mr-1 p-4 sm:p-6 lg:p-8">
         <div className="flex justify-end mb-4">

@@ -1,5 +1,6 @@
 
 
+
 'use client';
 
 import React, { useState } from 'react';
@@ -76,7 +77,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
         <div className="mt-auto p-4">
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="flex items-center w-full mt-[100%] px-4 py-2 text-primary hover:bg-orange-100 rounded-lg transition-colors"
+            className="flex items-center w-full mt-[110%] px-4 py-2 text-primary hover:bg-orange-100 rounded-lg transition-colors"
           >
             <MdOutlineSettings className="w-6 h-6 mr-4" />
             <span className="text-sm md:text-base lg:text-lg font-medium">

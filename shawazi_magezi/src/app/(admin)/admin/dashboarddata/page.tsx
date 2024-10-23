@@ -39,30 +39,3 @@ export default Dashboard;
 
 
 
-
-
-// "use client"
-
-// import React from 'react';
-
-// import LandDetailsChart from '../components/Searchlandcard';
-// import TransactionsChart from '../components/Transactionschart';
-// import Sidebar from '../components/Sidebar';
-// import UsersStats from '../components/UsersChart';
-
-// const Dashboard = () => {
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-10 p-4 ml-80 mt-10 mr-20">
-//       <UsersStats/>
-    
-//       <Sidebar setActiveChart={() => {}} />
-// <TransactionsChart/>
-//       <LandDetailsChart />
-     
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-

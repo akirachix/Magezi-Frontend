@@ -83,7 +83,19 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
               Settings
             </span>
           </button>
-       
+          {showSettings && (
+            <div className="mt-2 ml-6">
+              <button
+                onClick={() => handleNavigation('/teaser/teaserone')}
+                className="block py-2 text-primary hover:text-red-600 transition-colors"
+              >
+                <span className="flex items-center">
+                  <BiLogOut className="w-5 h-5 mr-2" />
+                  Logout
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -23,7 +23,6 @@ const SecureTransactions = () => {
       <p className="text-base sm:text-lg md:text-xl lg:text-[18px] text-black mb-8 mx-4 sm:mx-8 lg:mx-0 text-center">
       We provide clear and open processes in land acquisition by fostering trust and accountability for all stakeholders.
         <br />
-        <span className="block">is safe, verified, and effortless.</span>
       </p>
 
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-8">

@@ -151,49 +151,59 @@ const CreateAgreement: React.FC = () => {
   ];
 
   return (
-    <div className="flex">
-    <LawyerSidebar />
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
-      <h1 className="text-2xl font-bold text-center mb-6 text-brown-700">
-        Create Agreement
-      </h1>
-      {submitError && <div className="text-red-500 mb-4">{submitError}</div>}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {formFields.map(({ label, name, type }, index) => (
-          <div className="mb-4" key={index}>
-            <label className="block text-sm font-medium mb-1">{label}</label>
-            <input
-              type={type}
-              {...register(name as keyof AgreementFormData)}
-              className="border border-gray-300 rounded-lg w-full p-2"
-            />
-            {errors[name as keyof AgreementFormData] && (
-              <p className="text-red-500">
-                {errors[name as keyof AgreementFormData]?.message}
-              </p>
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+      <LawyerSidebar />
+      <div className="flex-1 p-4">
+        <div className="max-w-4xl mx-auto w-full">
+          <div className="bg-white rounded-lg shadow-xl p-6 md:p-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 text-brown-700">
+              Create Agreement
+            </h1>
+            {submitError && (
+              <div className="text-red-500 mb-6 text-center">{submitError}</div>
             )}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {formFields.map(({ label, name, type }, index) => (
+                  <div key={index} className="flex flex-col">
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                      {label}
+                    </label>
+                    <input
+                      type={type}
+                      {...register(name as keyof AgreementFormData)}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                    />
+                    {errors[name as keyof AgreementFormData] && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors[name as keyof AgreementFormData]?.message}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={`flex-1 bg-[#508408] text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition duration-300 text-center ${
+                    submitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {submitting ? "Creating..." : "Create Agreement"}
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 bg-transparent text-foreground border-foreground border-2 hover:bg-foreground  hover:text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 text-center"
+                  onClick={() => router.push("/lawyer/components/agreementnext")}
+                >
+                  Next Page
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
-        <div className="flex space-x-2 mt-6">
-          <button
-            type="submit"
-            disabled={submitting}
-            className={`flex-1 bg-[#508408] text-white font-bold py-2 rounded-lg hover:bg-green-700 transition duration-300 ${
-              submitting ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {submitting ? "Creating..." : "Create Agreement"}
-          </button>
-          <button
-            type="button"
-            className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-opacity-90 transition duration-300"
-            onClick={() => router.push("/lawyer/components/agreementnext")}
-          >
-            Next Page
-          </button>
         </div>
-      </form>
-    </div>
+      </div>
     </div>
   );
 };

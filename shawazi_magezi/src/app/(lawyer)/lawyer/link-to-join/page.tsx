@@ -6,44 +6,54 @@ import Link from 'next/link';
 
 const ContractDrafting: React.FC = () => {
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-white p-4 md:pl-10 md:p-8 lg:pl-2 lg:p-1 ml-[10%]">
-    <div className="flex-1 flex items-center justify-center">
-        <div className="relative w-full h-64 md:h-96 mb-20">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+      <div className="flex-1 flex items-center justify-center md:justify-start lg:justify-center px-4 md:px-6 lg:px-8">
+        <div className="relative w-full max-w-[800px] sm:max-w-[600px] md:max-w-[600px] lg:max-w-[750px] h-48 sm:h-56 md:h-72 lg:h-96">
           <Image 
             src="/media/transparent.png" 
             alt="Contract Drafting Illustration" 
             width={750} 
             height={800} 
-            className="object-contain"
+            className="object-contain w-full h-full"
+            priority
           />
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center mt-6 md:mt-0">
-        <div className="mb-6">
-          <Link href="/lawyer/chatroom-page" className="text-secondary text-[18px] hover:foreground">
+      <div className="flex-1 flex flex-col justify-center space-y-6 md:space-y-8 px-4 md:px-6 lg:px-8 mt-4 md:mt-0">
+        <div className="w-full md:w-[80%] lg:w-[70%]">
+          <Link 
+            href="/lawyer/chatroom-page" 
+            className="text-secondary hover:text-foreground text-base sm:text-lg md:text-xl lg:text-[18px] transition-colors duration-300"
+          >
             Link to the Negotiation
           </Link>
         </div>
 
-        <div className="mb-6 flex items-center justify-start">
-          <input type="checkbox" id="agreement" className="mr-2" />
-          <label htmlFor="agreement" className="text-[18px] text-primary">
+        <div className="flex items-center space-x-3 w-full md:w-[80%] lg:w-[70%]">
+          <input 
+            type="checkbox" 
+            id="agreement" 
+            className="w-4 h-4 cursor-pointer"
+          />
+          <label 
+            htmlFor="agreement" 
+            className="text-primary text-base sm:text-lg md:text-xl lg:text-[18px] cursor-pointer"
+          >
             Creating of the Agreement and Conditions
           </label>
         </div>
 
-        <Link href="/lawyer/agreements">
-          <button className="bg-foreground text-white w-[60%] py-2 rounded-lg hover:bg-primary hover:text-foreground hover:border border-foreground transition duration-300 text-[16px] md:text-[20px] lg:text-[22px]">
-            Start to draft contract
-          </button>
-        </Link>
-
+        <div className="w-full md:w-[80%] lg:w-[70%]">
+          <Link href="/lawyer/agreements" className="block">
+            <button className="bg-foreground text-white w-full py-2.5 sm:py-3 rounded-lg hover:bg-primary hover:text-white hover:border border-foreground transition duration-300 text-base sm:text-lg md:text-xl lg:text-[22px]">
+              Start to draft contract
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
 export default ContractDrafting;
-
-

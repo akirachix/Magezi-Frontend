@@ -26,17 +26,17 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
   const handleNavigation = (href: string) => {
     if (href) {
       router.push(href);
-      setSidebarOpen(false); // Close sidebar on navigation
+      setSidebarOpen(false); 
     }
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen); // Toggle sidebar open/close
+    setSidebarOpen(!isSidebarOpen); 
   };
 
   return (
     <div className="relative h-full">
-      {/* Hamburger Menu Icon */}
+
       <button onClick={toggleSidebar} className="absolute top-4 left-4 md:hidden p-4 z-50">
         {isSidebarOpen ? (
           <MdClose className="w-8 h-8 text-primary" />
@@ -45,7 +45,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
         )}
       </button>
 
-      {/* Sidebar */}
       <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transition-transform duration-300 z-40 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-4">
           <Image
@@ -77,7 +76,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
         <div className="mt-auto p-4">
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="flex items-center w-full px-4 py-2 text-[#562B00] hover:bg-orange-100 rounded-lg transition-colors"
+            className="flex items-center w-full mt-[100%] px-4 py-2 text-primary hover:bg-orange-100 rounded-lg transition-colors"
           >
             <MdOutlineSettings className="w-6 h-6 mr-4" />
             <span className="text-sm md:text-base lg:text-lg font-medium">
@@ -87,7 +86,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
           {showSettings && (
             <div className="mt-2 ml-6">
               <button
-                onClick={() => handleNavigation('/teaser/teasertwo')}
+                onClick={() => handleNavigation('/teaser/teaserone')}
                 className="block py-2 text-primary hover:text-red-600 transition-colors"
               >
                 <span className="flex items-center">
@@ -100,7 +99,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
         </div>
       </div>
 
-      {/* Sidebar Backdrop */}
       {isSidebarOpen && (
         <div
           onClick={toggleSidebar}

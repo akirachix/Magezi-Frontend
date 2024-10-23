@@ -4,6 +4,8 @@ import Link from "next/link";
 import useTransactions from "@/app/hooks/useTransactions";
 import LawyerSidebar from "../../components/lawyerSidebar";
 
+
+
 const TransactionsDisplay = () => {
   const { transactions, isLoading, error } = useTransactions();
 
@@ -25,11 +27,6 @@ const TransactionsDisplay = () => {
             <Link href="/lawyer/transactions/history-of-transactions">
               <button className="custom-button bg-hover text-white py-2 px-4 rounded-lg w-full md:w-auto">
                 History Of Transactions
-              </button>
-            </Link>
-            <Link href="/lawyer/transactions/upload_transactions">
-              <button className="custom-button bg-hover text-white py-2 px-4 rounded-lg w-full md:w-auto">
-                Upload Payments
               </button>
             </Link>
             <Link href="/lawyer/transactions/history-of-transactions">
@@ -75,7 +72,7 @@ const TransactionsDisplay = () => {
                           </span>
                         </td>
                         <td className="p-3 text-sm md:text-base lg:text-lg">{transaction.amount}</td>
-                        <td className="p-3 text-sm md:text-base lg:text-lg">{transaction.code}</td>
+                        <td className="p-3 text-sm md:text-base lg:text-lg">{transaction.unique_code}</td>
                       </tr>
                     ))
                 ) : (

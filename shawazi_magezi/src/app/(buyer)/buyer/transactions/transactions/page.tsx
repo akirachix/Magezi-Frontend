@@ -23,17 +23,17 @@ const TransactionsDisplay = () => {
 
         <div className="w-full max-w-5xl mt-12 md:mt-16 lg:mt-20 mx-auto">
           <div className="flex flex-col md:flex-row justify-between gap-3 mb-6">
-            <Link href="/lawyer/transactions/history-of-transactions">
+            <Link href="/buyer/transactions/history-of-transactions">
               <button className="custom-button bg-hover text-white py-2 px-4 rounded-lg w-full md:w-auto">
                 History Of Transactions
               </button>
             </Link>
-            <Link href="/lawyer/transactions/upload_transactions">
+            <Link href="/buyer/transactions/upload_transactions">
               <button className="custom-button bg-hover text-white py-2 px-4 rounded-lg w-full md:w-auto">
                 Upload Payments
               </button>
             </Link>
-            <Link href="/lawyer/transactions/history-of-transactions">
+            <Link href="/buyer/transactions/history-of-transactions">
               <button className="custom-button bg-hover text-white py-2 px-4 rounded-lg w-full md:w-auto">
                 View More
               </button>

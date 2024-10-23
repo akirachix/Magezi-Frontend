@@ -23,9 +23,8 @@ const Transactionss = () => {
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const typedTransactions: Transaction[] = transactions as unknown as Transaction[];
+  const typedTransactions: Transaction[] = transactions as Transaction[];
 
-  // Filter transactions based on status
   const filteredTransactions = typedTransactions.filter((transaction) => {
     const statusMatch =
       !filterStatus ||
@@ -33,10 +32,8 @@ const Transactionss = () => {
     return statusMatch;
   });
 
-  // Calculate the total number of pages
   const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
 
-  // Get the transactions for the current page
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -46,7 +43,6 @@ const Transactionss = () => {
     setFilterStatus("");
   };
 
-  // Handle page change
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);

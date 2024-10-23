@@ -94,7 +94,7 @@ const TransactionsPage: React.FC = () => {
       <div className="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 md:pl-8 lg:pl-12 xl:pl-16 overflow-x-hidden md:max-w-[calc(100%-16rem)] lg:max-w-none">
         <div className="relative flex items-center justify-center mb-6 md:mb-8">
           <Link
-            href="/buyer/transactions/transactions"
+            href="/seller/transactions/transactions"
             className="absolute left-0 top-1/2 transform -translate-y-1/2"
           >
             <IoArrowBackOutline className="border-2 text-black hover:bg-secondary text-[20px] sm:text-[24px] md:text-[28px] ml-2 sm:ml-4" />

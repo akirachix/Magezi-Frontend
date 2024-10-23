@@ -21,9 +21,8 @@ const Transactionss = () => {
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const typedTransactions: Transaction[] = transactions as unknown as Transaction[];
+  const typedTransactions: Transaction[] = transactions as Transaction[];
 
-  
   const filteredTransactions = typedTransactions.filter((transaction) => {
     const statusMatch =
       !filterStatus ||
@@ -31,7 +30,6 @@ const Transactionss = () => {
     return statusMatch;
   });
 
- 
   const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
 
   const paginatedTransactions = filteredTransactions.slice(
@@ -67,7 +65,7 @@ const Transactionss = () => {
           </header>
 
           <div className="flex flex-col gap-3">
-            <Link href="/buyer/transactions/transactions" className="w-fit">
+            <Link href="/seller/transactions/transactions" className="w-fit">
               <IoArrowBackOutline className="text-xl sm:text-2xl md:text-3xl hover:bg-secondary border-2 p-1" />
             </Link>
 

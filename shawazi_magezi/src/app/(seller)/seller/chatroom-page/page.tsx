@@ -3,17 +3,11 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SellerSidebar from "../components/Sellersidebar";
-// import BuyerSidebar from '../components/BuyerSidebar';
 const ChatRoomPage = () => {
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="w-[20%]">
-        {/* <BuyerSidebar /> */}
-        <SellerSidebar />
-      </div>
-      {/* Main Content */}
-      <div className="flex flex-col items-center justify-start text-center mb-10 p-4 w-[80%]">
+    <div className="flex flex-col items-center justify-start text-center mb-10 p-4 md:ml-[5%] lg:ml-[3%]">
+      <SellerSidebar />
+      <div>
         <div className="items-center mb-[5%]">
           <h1 className="text-[28px] font-bold text-primary text-center md:text-[32px] lg:text-[36px]">
             ChatRoom
@@ -35,8 +29,8 @@ const ChatRoomPage = () => {
             </div>
           </div>
         </div>
-        <Link href="/seller/chatroom">
-          <button className="bg-foreground text-white py-2 px-6 rounded-lg hover:bg-white hover:text-foreground hover:border border-foreground transition duration-300 text-[18px] md:text-[20px] lg:text-[22px]">
+        <Link href="/seller/chatroom" className="w-full">
+          <button className="bg-foreground text-white w-full py-2 rounded-lg hover:bg-white hover:text-foreground hover:border border-foreground transition duration-300 text-[18px] md:text-[20px] lg:text-[22px]">
             Start Chat
           </button>
         </Link>

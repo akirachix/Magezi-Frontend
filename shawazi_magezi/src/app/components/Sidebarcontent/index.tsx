@@ -83,7 +83,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
               Settings
             </span>
           </button>
-          {/* {showSettings && (
+          {showSettings && (
             <div className="mt-2 ml-6">
               <button
                 onClick={() => handleNavigation('/teaser/teaserone')}
@@ -95,7 +95,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
                 </span>
               </button>
             </div>
-          )} */}
+          )}
         </div>
       </div>
 

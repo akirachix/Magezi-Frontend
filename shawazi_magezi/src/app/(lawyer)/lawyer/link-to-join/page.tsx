@@ -45,7 +45,7 @@ const ContractDrafting: React.FC = () => {
         </div>
 
         <div className="w-full md:w-[80%] lg:w-[70%]">
-          <Link href="/lawyer/agreements" className="block">
+          <Link href="/lawyer/select-users" className="block">
             <button className="bg-foreground text-white w-full py-2.5 sm:py-3 rounded-lg hover:bg-primary hover:text-white hover:border border-foreground transition duration-300 text-base sm:text-lg md:text-xl lg:text-[22px]">
               Start to draft contract
             </button>

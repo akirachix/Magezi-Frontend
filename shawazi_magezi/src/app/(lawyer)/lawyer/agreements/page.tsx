@@ -63,14 +63,14 @@ const agreementSchema = yup.object().shape({
     .positive("Must be a positive number"),
 });
 
-// const CreateAgreement = () => {
-//   const router = useRouter();
-//   const { loading, error } = useNewAgreements();
-//   const [submitting, setSubmitting] = useState(false);
-//   const [submitError, setSubmitError] = useState<string | null>(null);
-//   const [buyers, setBuyers] = useState<{ id: string; name: string }[]>([]);
-//   const [sellers, setSellers] = useState<{ id: string; name: string }[]>([]);
-//   const [fetchError, setFetchError] = useState<string | null>(null);
+const CreateAgreement = () => {
+  const router = useRouter();
+  const { loading, error } = useNewAgreements();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [buyers, setBuyers] = useState<{ id: string; name: string }[]>([]);
+  const [sellers, setSellers] = useState<{ id: string; name: string }[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const {
     register,

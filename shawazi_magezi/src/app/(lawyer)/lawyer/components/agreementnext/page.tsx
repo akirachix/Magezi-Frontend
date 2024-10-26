@@ -15,20 +15,19 @@ const TermsAndConditions: React.FC = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(UserRole.EMPTY);
   const [showLawyerView, setShowLawyerView] = useState(false);
+  const [buyers, setBuyers] = useState<Record<string, string>>({});
+  const [sellers, setSellers] = useState<Record<string, string>>({});
   const router = useRouter();
+
   useEffect(() => {
     const existingRole = getCookie("userRole");
     if (existingRole && ["buyer", "seller", "lawyer"]) {
       setUserRole(existingRole as UserRole);
     }
-    const storedAgreement = localStorage.getItem("recentAgreement");
-    if (storedAgreement) {
-      setAgreement(JSON.parse(storedAgreement));
-      setLoading(false);
-    } else {
-      fetchAgreements();
-    }
+    fetchAgreements();
+    fetchUsers();
   }, []);
+
   const fetchAgreements = async () => {
     try {
       setLoading(true);
@@ -43,16 +42,12 @@ const TermsAndConditions: React.FC = () => {
       if (!Array.isArray(data) || data.length === 0) {
         throw new Error("No agreements found");
       }
+
       const mostRecentAgreement = data.sort(
-        (a, b) =>
-          new Date(b.date_created).getTime() -
-          new Date(a.date_created).getTime()
+        (a, b) => b.agreement_id - a.agreement_id  
       )[0];
+
       setAgreement(mostRecentAgreement);
-      localStorage.setItem(
-        "recentAgreement",
-        JSON.stringify(mostRecentAgreement)
-      );
       const initialCheckedTerms =
         mostRecentAgreement.terms?.reduce(
           (acc: Record<string, boolean>, term: Term) => {
@@ -72,15 +67,45 @@ const TermsAndConditions: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("/api/users");
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const users = await response.json();
+      const buyerMap: Record<string, string> = {};
+      const sellerMap: Record<string, string> = {};
+
+      users.forEach((user: any) => {
+        if (user.role === "buyer") {
+          buyerMap[user.id] = `${user.first_name} ${user.last_name}`;
+        }
+        if (user.role === "seller") {
+          sellerMap[user.id] = `${user.first_name} ${user.last_name}`;
+        }
+      });
+
+      setBuyers(buyerMap);
+      setSellers(sellerMap);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setError("Failed to load users");
+    }
+  };
+
   const handleTermCheck = (termId: string) => {
     setCheckedTerms((prev) => ({
       ...prev,
       [termId]: !prev[termId],
     }));
   };
+
   const handleClosePopup = () => {
     setShowPopup(false);
   };
+
   const handleRoleSelection = (role: UserRole) => {
     setCookie("userRole", role, { maxAge: 3600 });
     setUserRole(role);
@@ -88,6 +113,7 @@ const TermsAndConditions: React.FC = () => {
       setShowPopup(true);
     }
   };
+
   const handleSubmit = async (response: {
     buyer_agreed?: boolean;
     seller_agreed?: boolean;
@@ -119,6 +145,7 @@ const TermsAndConditions: React.FC = () => {
       );
     }
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -126,6 +153,7 @@ const TermsAndConditions: React.FC = () => {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="text-center py-4">
@@ -139,8 +167,12 @@ const TermsAndConditions: React.FC = () => {
       </div>
     );
   }
-  if (!agreement)
-    return <div className="text-center py-4">No agreement found.</div>;
+
+  if (!agreement) return <div className="text-center py-4">No agreement found.</div>;
+
+  const buyerName = agreement.buyer ? buyers[agreement.buyer] : "Unknown Buyer";
+  const sellerName = agreement.seller ? sellers[agreement.seller] : "Unknown Seller";
+
   return (
     <div className="flex">
       <LawyerSidebar />
@@ -150,52 +182,62 @@ const TermsAndConditions: React.FC = () => {
         </h1>
         <div className="mb-6 p-6 border rounded gap-x-10">
           <h2 className="text-lg font-semibold">Agreement Details</h2>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
+            <p className="flex-1 text-white">
+              <strong>Buyer Name:</strong> {buyerName}
+            </p>
+          </div>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
+            <p className="flex-1 text-white">
+              <strong>Seller Name:</strong> {sellerName}
+            </p>
+          </div>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Parcel Number:</strong> {agreement.parcel_number}
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Date Created:</strong>{" "}
               {new Date(agreement.date_created).toLocaleDateString()}
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Contract Duration:</strong> {agreement.contract_duration}{" "}
               months
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Agreed Amount:</strong> Ksh {agreement.agreed_amount}
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Installment Schedule:</strong>{" "}
               {agreement.installment_schedule} months
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Penalties Interest Rate:</strong>{" "}
               {agreement.penalties_interest_rate}%
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Down Payment:</strong> Ksh {agreement.down_payment}
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Remaining Amount:</strong> Ksh{" "}
               {agreement.remaining_amount}
             </p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-customGreen shadow p-4 rounded">
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white">
               <strong>Total Amount Made:</strong> Ksh{" "}
               {agreement.total_amount_made}
@@ -260,11 +302,13 @@ const TermsAndConditions: React.FC = () => {
             onSubmit={handleSubmit}
             agreement={agreement}
             userRole={userRole}
-            onAgreementUpdate={() => fetchAgreements()}
+            onAgreementUpdate={() => fetchAgreements()} 
           />
         )}
       </div>
     </div>
   );
 };
+
 export default TermsAndConditions;
+

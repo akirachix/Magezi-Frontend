@@ -1,3 +1,15 @@
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -127,6 +139,7 @@ const Login = () => {
                 className={`w-full border text-[16px] sm:text-[18px] ${
                   errors.password ? "border-red-500" : "border-foreground"
                 } border-2 rounded-md shadow-sm p-2 sm:p-3 focus:outline-none focus:ring-1 focus:ring-foreground`}
+                placeholder="@Pass123!"
               />
               <button
                 type="button"
@@ -134,9 +147,9 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <FaEyeSlash className="h-5 w-5 text-primary" />
-                ) : (
                   <FaEye className="h-5 w-5 text-primary" />
+                ) : (
+                  <FaEyeSlash className="h-5 w-5 text-primary" />
                 )}
               </button>
             </div>
@@ -168,7 +181,7 @@ const Login = () => {
         </form>
         <div className="mt-4 text-center">
            Don&#39;t have an account?{" "}
-          <Link href="/register" className="text-primary underline">
+          <Link href="/register" className="text-primary  hover:text-secondary">
             Sign up 
           </Link>
         </div>

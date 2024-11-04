@@ -19,6 +19,10 @@ type AgreementFormData = {
   buyer_id: string;
   seller_id: string;
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
 type ErrorType = {
   message: string;
 };
@@ -59,6 +63,10 @@ const agreementSchema = yup.object().shape({
     .required("Total amount made is required")
     .positive("Must be a positive number"),
 });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
 const CreateAgreement = () => {
   const router = useRouter();
   const { loading, error } = useNewAgreements();
@@ -67,6 +75,10 @@ const CreateAgreement = () => {
   const [buyers, setBuyers] = useState<{ id: string; name: string }[]>([]);
   const [sellers, setSellers] = useState<{ id: string; name: string }[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
   const {
     register,
     handleSubmit,
@@ -78,32 +90,60 @@ const CreateAgreement = () => {
     setCookie("userRole", "lawyer", { maxAge: 3600 });
     fetchUsers();
   }, []);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/users');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+<<<<<<< HEAD
       const data = await response.json();
+=======
+
+      const data = await response.json();
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
       const buyersList = data.filter((user: any) => user.role === 'buyer')
         .map((user: any) => ({
           id: user.id,
           name: `${user.first_name} ${user.last_name}`,
         }));
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
       const sellersList = data.filter((user: any) => user.role === 'seller')
         .map((user: any) => ({
           id: user.id,
           name: `${user.first_name} ${user.last_name}`,
         }));
+<<<<<<< HEAD
       setBuyers(buyersList);
       setSellers(sellersList);
       console.log("Buyers: ", buyersList);
       console.log("Sellers: ", sellersList);
+=======
+
+      setBuyers(buyersList);
+      setSellers(sellersList);
+
+      console.log("Buyers: ", buyersList);
+      console.log("Sellers: ", sellersList);
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
     } catch (error) {
       console.error('Error fetching users:', error);
       setFetchError(error instanceof Error ? error.message : 'Failed to fetch users');
     }
   };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
   const onSubmit = async (data: AgreementFormData) => {
     const transformedData = {
       ...data,
@@ -111,8 +151,10 @@ const CreateAgreement = () => {
       buyer: data.buyer_id,   // Updated field name
       seller: data.seller_id,  // Updated field name
     };
+
     setSubmitting(true);
     setSubmitError(null);
+
     try {
       const response = await fetch("/api/agreements", {
         method: "POST",
@@ -121,6 +163,7 @@ const CreateAgreement = () => {
         },
         body: JSON.stringify(transformedData),
       });
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
@@ -128,8 +171,15 @@ const CreateAgreement = () => {
           "Failed to create agreement"
         );
       }
+
       const newAgreement = await response.json();
+<<<<<<< HEAD
       console.log("New Agreement: ", newAgreement);
+=======
+
+      console.log("New Agreement: ", newAgreement);
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
       router.push(`/lawyer/components/agreementnext?agreement_id=${newAgreement.agreement_id}&buyer_id=${data.buyer_id}&seller_id=${data.seller_id}`);
     } catch (error) {
       console.error("Failed to submit agreement:", error);
@@ -178,11 +228,16 @@ const CreateAgreement = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 text-brown-700">
               Create Agreement
             </h1>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
             {(submitError || fetchError) && (
               <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                 {submitError || fetchError}
               </div>
             )}
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col">
@@ -200,6 +255,10 @@ const CreateAgreement = () => {
                     <p className="mt-1 text-sm text-red-500">{errors.buyer_id.message}</p>
                   )}
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
                 <div className="flex flex-col">
                   <label className="text-sm font-semibold mb-2 text-gray-700">Select Seller</label>
                   <select
@@ -215,6 +274,10 @@ const CreateAgreement = () => {
                     <p className="mt-1 text-sm text-red-500">{errors.seller_id.message}</p>
                   )}
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
                 {formFields.map(({ label, name, type }) => (
                   <div key={name} className="flex flex-col">
                     <label className="text-sm font-semibold mb-2 text-gray-700">{label}</label>
@@ -230,6 +293,7 @@ const CreateAgreement = () => {
                   </div>
                 ))}
               </div>
+
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <button
                   type="submit"
@@ -240,6 +304,16 @@ const CreateAgreement = () => {
                 >
                   {submitting ? "Creating..." : "Create Agreement"}
                 </button>
+<<<<<<< HEAD
+=======
+                <button
+                  type="button"
+                  className="flex-1 bg-transparent text-foreground border-foreground border-2 hover:bg-foreground hover:text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 text-center"
+                  onClick={() => router.push("/lawyer/components/agreementnext")}
+                >
+                  Next Page
+                </button>
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
               </div>
             </form>
           </div>
@@ -249,6 +323,14 @@ const CreateAgreement = () => {
   );
 };
 export default CreateAgreement;
+<<<<<<< HEAD
 function useNewAgreements() {
   return { loading: false, error: null as ErrorType | null };
 }
+=======
+
+function useNewAgreements() {
+  return { loading: false, error: null as ErrorType | null }; 
+}
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2

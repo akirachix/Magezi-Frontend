@@ -17,7 +17,10 @@ const TermsAndConditions: React.FC = () => {
   const [showLawyerView, setShowLawyerView] = useState(false);
   const [buyers, setBuyers] = useState<Record<string, string>>({});
   const [sellers, setSellers] = useState<Record<string, string>>({});
+<<<<<<< HEAD
   const [transactionAmount, setTransactionAmount] = useState<number>(0);
+=======
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
   const router = useRouter();
 
   useEffect(() => {
@@ -43,9 +46,15 @@ const TermsAndConditions: React.FC = () => {
       if (!Array.isArray(data) || data.length === 0) {
         throw new Error("No agreements found");
       }
+
       const mostRecentAgreement = data.sort(
+<<<<<<< HEAD
         (a, b) => b.agreement_id - a.agreement_id
+=======
+        (a, b) => b.agreement_id - a.agreement_id  
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
       )[0];
+
       setAgreement(mostRecentAgreement);
       const initialCheckedTerms =
         mostRecentAgreement.terms?.reduce(
@@ -67,6 +76,7 @@ const TermsAndConditions: React.FC = () => {
     }
   };
 
+<<<<<<< HEAD
   const handleTransaction = async (amount: number) => {
     if (!agreement) return;
 
@@ -100,6 +110,8 @@ const TermsAndConditions: React.FC = () => {
     }
   };
 
+=======
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/users");
@@ -109,6 +121,10 @@ const TermsAndConditions: React.FC = () => {
       const users = await response.json();
       const buyerMap: Record<string, string> = {};
       const sellerMap: Record<string, string> = {};
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
       users.forEach((user: any) => {
         if (user.role === "buyer") {
           buyerMap[user.id] = `${user.first_name} ${user.last_name}`;
@@ -117,6 +133,10 @@ const TermsAndConditions: React.FC = () => {
           sellerMap[user.id] = `${user.first_name} ${user.last_name}`;
         }
       });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
       setBuyers(buyerMap);
       setSellers(sellerMap);
     } catch (error) {
@@ -359,7 +379,7 @@ const TermsAndConditions: React.FC = () => {
             onSubmit={handleSubmit}
             agreement={agreement}
             userRole={userRole}
-            onAgreementUpdate={() => fetchAgreements()}
+            onAgreementUpdate={() => fetchAgreements()} 
           />
         )}
       </div>
@@ -369,6 +389,7 @@ const TermsAndConditions: React.FC = () => {
 
 export default TermsAndConditions;
 
+<<<<<<< HEAD
 
 
 
@@ -725,3 +746,5 @@ export default TermsAndConditions;
 
 
 
+=======
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2

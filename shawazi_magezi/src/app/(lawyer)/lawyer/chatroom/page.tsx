@@ -372,7 +372,16 @@ const ChatRoom: React.FC = () => {
                 <Send />
               </button>
             </form>
+<<<<<<< HEAD
         
+=======
+            {/* <button
+              className="w-full mt-2 bg-hover text-white hover:bg-green-600 p-2 rounded"
+              onClick={handleInviteLawyerClick}
+            >
+              Invite Lawyer
+            </button> */}
+>>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
           </div>
 
           {errorMessage && (

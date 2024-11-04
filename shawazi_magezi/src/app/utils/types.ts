@@ -111,7 +111,26 @@ export interface UserLogin {
 
   phone_number: string;
   password: string;
+  
 }
+
+// export interface UserLogin {
+//   // message: string;
+//   // first_name: string;
+//   // last_name: string;
+//     phone_number: string;
+//   password: string;
+//   role: string;
+//   userId?: string;  // Add this if your backend provides it
+// }
+
+// interface LoginResponse {
+//   message: string;
+//   first_name: string;
+//   last_name: string;
+//   role: string;
+//   userId?: string;  // Add this if your backend provides it
+// }
 
 export interface UserDatas {
   name: ReactNode;
@@ -156,25 +175,62 @@ export interface Term {
   value: string;
 }
 
+
+// export interface AgreementFormData {
+//   agreement_id: number;
+//   buyer: string;
+//   seller: string;
+//   lawyer?: string;
+//   parcel_number: string;
+//   date_created: string;
+//   contract_duration: number;
+//   agreed_amount: number;
+//   installment_schedule: number;
+//   penalties_interest_rate: number;
+//   down_payment: number;
+//   remaining_amount: number;
+//   total_amount_made?: number;
+//   terms?: Term[];
+//   buyer_agreed?: boolean;
+//   seller_agreed?: boolean;
+// }
+
+
 export interface AgreementFormData {
-  terms: [];
   agreement_id: number;
-  parcel_number: string;
-  seller: string;
   buyer: string;
-  lawyer: string;
-  contract_duration: number;
+  seller: string;
+  lawyer?: string;
+  parcel_number: string;
   date_created: string;
+  contract_duration: number;
   agreed_amount: number;
-  installment_schedule: number; 
+  installment_schedule: number;
   penalties_interest_rate: number;
   down_payment: number;
-  buyer_agreed: string;
-  seller_agreed: string;
+  remaining_amount: number;
+  total_amount_made?: number;
+  terms?: Term[];
+  buyer_agreed?: boolean;
+  seller_agreed?: boolean;
+  // terms: [];
+  // agreement_id: number;
+  // parcel_number: string;
+  // seller: string;
+  // buyer: string;
+  // lawyer: string;
+  // contract_duration: number;
+  // date_created: string;
+  // agreed_amount: number;
+  // installment_schedule: number; 
+  // penalties_interest_rate: number;
+  // down_payment: number;
+  // buyer_agreed: string;
+  // seller_agreed: string;
   terms_and_conditions: string;
   transaction_count: number;
-  remaining_amount: number;
-  total_amount_made: number;
+  // remaining_amount: number;
+  // total_amount_made: number;
   agreement_hash: string;
   previous_hash: string;
   transactions_history: string;
@@ -205,6 +261,12 @@ export interface AgreementType {
   previous_hash?: string;
   transactions_history?: string;
 }
+
+export interface Term {
+  id?: string | number; // Adjusted to 'string | number | undefined'
+  text: string;
+}
+
 
 export interface ContractReviewPopupProps {
   

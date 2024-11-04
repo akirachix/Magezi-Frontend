@@ -23,25 +23,11 @@ const ContractDrafting: React.FC = () => {
       <div className="flex-1 flex flex-col justify-center space-y-6 md:space-y-8 px-4 md:px-6 lg:px-8 mt-4 md:mt-0">
         <div className="w-full md:w-[80%] lg:w-[70%]">
           <Link 
-            href="/lawyer/chatroom-page" 
+            href="/lawyer/chatroom" 
             className="text-secondary hover:text-foreground text-base sm:text-lg md:text-xl lg:text-[18px] transition-colors duration-300"
           >
             Link to the Negotiation
           </Link>
-        </div>
-
-        <div className="flex items-center space-x-3 w-full md:w-[80%] lg:w-[70%]">
-          <input 
-            type="checkbox" 
-            id="agreement" 
-            className="w-4 h-4 cursor-pointer"
-          />
-          <label 
-            htmlFor="agreement" 
-            className="text-primary text-base sm:text-lg md:text-xl lg:text-[18px] cursor-pointer"
-          >
-            Creating of the Agreement and Conditions
-          </label>
         </div>
 
         <div className="w-full md:w-[80%] lg:w-[70%]">

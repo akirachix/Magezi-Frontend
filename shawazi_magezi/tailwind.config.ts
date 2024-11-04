@@ -14,6 +14,7 @@ const config: Config = {
         primary: "#3E1C00",
         secondary: "#E4960E",
         customGreen: "#508408",
+        lightGreen: "#7BAA39",
         'secondary-light': '#FFEDD5',
         'custom-green': '#508408',
         'border-color': '#F30808',

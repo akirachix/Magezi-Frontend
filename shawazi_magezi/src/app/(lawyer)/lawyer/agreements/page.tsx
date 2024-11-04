@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next";
 import * as yup from "yup";
 import LawyerSidebar from "../components/lawyerSidebar";
-
 type AgreementFormData = {
   parcel_number: string;
   date_created: string;
@@ -242,13 +240,6 @@ const CreateAgreement = () => {
                 >
                   {submitting ? "Creating..." : "Create Agreement"}
                 </button>
-                <button
-                  type="button"
-                  className="flex-1 bg-transparent text-foreground border-foreground border-2 hover:bg-foreground hover:text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 text-center"
-                  onClick={() => router.push("/lawyer/components/agreementnext")}
-                >
-                  Next Page
-                </button>
               </div>
             </form>
           </div>
@@ -258,8 +249,6 @@ const CreateAgreement = () => {
   );
 };
 export default CreateAgreement;
-
-function useNewAgreements(){
+function useNewAgreements() {
   return { loading: false, error: null as ErrorType | null };
 }
-

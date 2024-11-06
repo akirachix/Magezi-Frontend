@@ -8,7 +8,7 @@ import { postTransaction } from "@/app/utils/postTransaction";
 import { fetchTransaction } from "@/app/utils/fetchTransaction";
 import { formatDate } from "@/app/utils/formatDate";
 import Cookies from "js-cookie";
-import BuyerSidebar from "../../components/buyerSidebar";
+import BuyerSidebar from "../../components/Buyersidebar";
 
 
 

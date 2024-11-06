@@ -12,33 +12,30 @@ export const useGetUsers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true); // Keep track if there are more users to fetch
-
+  const [hasMore, setHasMore] = useState<boolean>(true); 
   const loadUsers = async (pageToFetch: number) => {
     setLoading(true);
     try {
       const { buyers, sellers } = await fetchUsers(pageToFetch);
       console.log('Fetched Users on Page', pageToFetch, ':', { buyers, sellers });
 
-      // Declare constant for role values
       const BUYER_ROLE: UserType['role'] = 'buyer';
       const SELLER_ROLE: UserType['role'] = 'seller';
 
-      // Transform fetched users into UserType[]
       const usersArray: UserType[] = [
         ...Object.entries(buyers).map(([id, fullName]) => ({
           id,
           first_name: fullName,
-          role: BUYER_ROLE, // Use the constant instead of type assertion
+          role: BUYER_ROLE,
         })),
         ...Object.entries(sellers).map(([id, fullName]) => ({
           id,
           first_name: fullName,
-          role: SELLER_ROLE, // Use the constant instead of type assertion
+          role: SELLER_ROLE, 
         })),
       ];
 
-      setUsers((prevUsers) => [...prevUsers, ...usersArray]); // Append new users
+      setUsers((prevUsers) => [...prevUsers, ...usersArray]); 
       setHasMore(usersArray.length > 0); 
 
     } catch (error) {

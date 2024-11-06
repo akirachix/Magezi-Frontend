@@ -72,9 +72,8 @@ export interface LandDetails {
   longitude: string;
 }
 
-// Updated User interface to use specific types
 export interface User {
-  id: string; // Assuming id is a string, please adjust if it's a number
+  id: string; 
   last_name: string;
   first_name: string;
   phone_number: string;
@@ -159,7 +158,7 @@ export interface Term {
 }
 
 export interface AgreementFormData {
-  terms: Term[]; // Changed to an array of Term objects
+  terms: Term[]; 
   agreement_id: number;
   parcel_number: string;
   seller: string;

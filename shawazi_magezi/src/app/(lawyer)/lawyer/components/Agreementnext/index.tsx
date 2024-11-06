@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { getCookie, setCookie } from "cookies-next";
 import { AgreementFormData, Term, UserRole } from "@/app/utils/types";
@@ -6,6 +7,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import ContractReviewPopup from "@/app/components/Contractreviewpop";
 import LawyerSidebar from "../Lawyersidebar";
 import Link from "next/link";
+import { fetchAgreements } from "@/app/utils/fetchAgreements"; 
+import { fetchUsers } from "@/app/utils/fetchUsers";
 
 const TermsAndConditions: React.FC = () => {
   const [agreement, setAgreement] = useState<AgreementFormData | null>(null);
@@ -27,34 +30,18 @@ const TermsAndConditions: React.FC = () => {
     if (existingRole && ["buyer", "seller", "lawyer"].includes(existingRole)) {
       setUserRole(existingRole as UserRole);
     }
-    fetchAgreements(parcelNumber);
-    fetchUsers();
+    
+    loadAgreements(parcelNumber);
+    loadUsers();
   }, [parcelNumber]);
 
-  const fetchAgreements = async (parcelNumber: string) => {
+  const loadAgreements = async (parcelNumber: string) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/agreements?parcel_number=${parcelNumber}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch agreements: ${response.status} ${response.statusText}`);
-      }
-      const data: AgreementFormData[] = await response.json();
-      if (!Array.isArray(data) || data.length === 0) {
-        throw new Error("No agreements found");
-      }
-
-      const mostRecentAgreement = data.sort((a, b) => b.agreement_id - a.agreement_id)[0];
-      setAgreement(mostRecentAgreement);
-
-      const initialCheckedTerms =
-        mostRecentAgreement.terms?.reduce((acc: Record<string, boolean>, term: Term) => {
-          if (term.id) {
-            acc[term.id] = false;
-          }
-          return acc;
-        }, {}) || {};
-      setCheckedTerms(initialCheckedTerms);
+      const { agreement, checkedTerms } = await fetchAgreements(parcelNumber);
+      setAgreement(agreement);
+      setCheckedTerms(checkedTerms);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred");
     } finally {
@@ -62,25 +49,11 @@ const TermsAndConditions: React.FC = () => {
     }
   };
 
-  const fetchUsers = async () => {
+  const loadUsers = async () => {
     try {
-      const response = await fetch("/api/users");
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const users = await response.json();
-      const buyerMap: Record<string, string> = {};
-      const sellerMap: Record<string, string> = {};
-      users.forEach((user: { role: string; id: string | number; first_name: string; last_name: string; }) => {
-        if (user.role === "buyer") {
-          buyerMap[user.id] = `${user.first_name} ${user.last_name}`;
-        }
-        if (user.role === "seller") {
-          sellerMap[user.id] = `${user.first_name} ${user.last_name}`;
-        }
-      });
-      setBuyers(buyerMap);
-      setSellers(sellerMap);
+      const { buyers, sellers } = await fetchUsers();
+      setBuyers(buyers);
+      setSellers(sellers);
     } catch (error) {
       console.error("Error fetching users:", error);
       setError("Failed to load users");
@@ -106,34 +79,6 @@ const TermsAndConditions: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (response: { buyer_agreed?: boolean; seller_agreed?: boolean; }) => {
-    if (!agreement) return;
-    try {
-      const updatedAgreement = { ...agreement, ...response };
-      const res = await fetch(`/api/agreements/${agreement.agreement_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedAgreement),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update agreement");
-      }
-      const result: AgreementFormData = await res.json();
-      setAgreement(result);
-      setShowPopup(false);
-      if (userRole === UserRole.BUYER && result.buyer_agreed) {
-        router.push("/buyer/buyer_agree");
-      } else if (userRole === UserRole.SELLER && result.seller_agreed) {
-        router.push("/seller/seller_agree");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -147,7 +92,7 @@ const TermsAndConditions: React.FC = () => {
       <div className="text-center py-4">
         <p className="text-red-500 mb-4">{error}</p>
         <button
-          onClick={() => fetchAgreements(parcelNumber)}
+          onClick={() => loadAgreements(parcelNumber)} 
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Retry Loading Agreement
@@ -160,7 +105,11 @@ const TermsAndConditions: React.FC = () => {
 
   const buyerName = agreement.buyer ? buyers[agreement.buyer] : "Unknown Buyer";
   const sellerName = agreement.seller ? sellers[agreement.seller] : "Unknown Seller";
-  
+
+  function handleSubmit(): Promise<void> {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="flex">
       <LawyerSidebar />
@@ -221,7 +170,7 @@ const TermsAndConditions: React.FC = () => {
           </div>
         ))}
 
-       {(!getCookie("userRole") || getCookie("userRole") === "lawyer") && (
+        {(!getCookie("userRole") || getCookie("userRole") === "lawyer") && (
           <Link href="/lawyer/lawyer_agree">
             <button
               onClick={() => {
@@ -243,16 +192,14 @@ const TermsAndConditions: React.FC = () => {
             Check Who Agreed
           </button>
         )}
-        
+
         {showPopup && (
           <ContractReviewPopup
             onClose={handleClosePopup}
             onSubmit={handleSubmit}
             agreement={agreement}
             userRole={userRole}
-            onAgreementUpdate={function (): void {
-              throw new Error("Function not implemented.");
-            }}
+            onAgreementUpdate={() => loadAgreements(parcelNumber)} 
           />
         )}
       </div>
@@ -261,31 +208,3 @@ const TermsAndConditions: React.FC = () => {
 };
 
 export default TermsAndConditions;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

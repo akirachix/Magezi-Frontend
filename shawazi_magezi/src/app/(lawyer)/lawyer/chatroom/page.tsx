@@ -70,7 +70,7 @@ const ChatRoom: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!loading && users) {
+    if (!loading && Array.isArray(users)) { // Ensure users is an array before filtering
       const filteredUsers: GetUserType[] = users.filter((user) => {
         if (currentUserRole === "lawyer") {
           return user.role === "buyer" || user.role === "seller";
@@ -130,6 +130,7 @@ const ChatRoom: React.FC = () => {
       handleSendMessage(e);
     }
   };
+
   const filteredMessages = selectedUser
     ? localMessages.filter((message: MessageType) => {
         const senderMatch =
@@ -151,8 +152,6 @@ const ChatRoom: React.FC = () => {
     setSelectedUser(user);
     setIsUserListVisible(false);
   };
-
-
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -370,7 +369,6 @@ const ChatRoom: React.FC = () => {
                 <Send />
               </button>
             </form>
-        
           </div>
 
           {errorMessage && (

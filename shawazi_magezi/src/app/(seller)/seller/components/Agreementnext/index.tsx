@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { getCookie, setCookie } from "cookies-next";
 import { AgreementFormData, Term, UserRole } from "@/app/utils/types";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ContractReviewPopup from "@/app/components/Contractreviewpop";
 import SellerSidebar from "../Sellersidebar";
+import { fetchLandDetails } from "@/app/utils/getLandDetails";
+import { fetchUsers } from "@/app/utils/fetchUsers";
+import { fetchAgreements } from "@/app/utils/fetchAgreements";
 
 const TermsAndConditions: React.FC = () => {
   const [agreement, setAgreement] = useState<AgreementFormData | null>(null);
@@ -16,8 +19,7 @@ const TermsAndConditions: React.FC = () => {
   const [userRole, setUserRole] = useState<UserRole>(UserRole.EMPTY);
   const [buyers, setBuyers] = useState<Record<string, string>>({});
   const [sellers, setSellers] = useState<Record<string, string>>({});
-  const router = useRouter();
-
+  
   const searchParams = useSearchParams();
   const parcelNumber = searchParams.get('parcel_number') || 'DEFAULT_VALUE';
 
@@ -26,78 +28,37 @@ const TermsAndConditions: React.FC = () => {
     if (existingRole && ["buyer", "seller", "lawyer"].includes(existingRole)) {
       setUserRole(existingRole as UserRole);
     }
-    fetchAgreements(parcelNumber); 
-    fetchUsers();
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { agreement: fetchedAgreement, checkedTerms: fetchedCheckedTerms } = await fetchAgreements(parcelNumber);
+        setAgreement(fetchedAgreement);
+        setCheckedTerms(fetchedCheckedTerms);
+        
+        const users = await fetchUsers();
+        setBuyers(users.buyers);
+        setSellers(users.sellers);
+        
+        await fetchLandDetails(parcelNumber); 
+      } catch (err) {
+        console.error(err);
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [parcelNumber]);
-
-  const fetchAgreements = async (parcelNumber: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/agreements?parcel_number=${parcelNumber}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch agreements: ${response.status} ${response.statusText}`);
-      }
-      const data: AgreementFormData[] = await response.json();
-      if (!Array.isArray(data) || data.length === 0) {
-        throw new Error("No agreements found");
-      }
-
-      const mostRecentAgreement = data.sort((a, b) => b.agreement_id - a.agreement_id)[0];
-      setAgreement(mostRecentAgreement);
-
-      const initialCheckedTerms =
-        mostRecentAgreement.terms?.reduce((acc: Record<string, boolean>, term: Term) => {
-          if (term.id) {
-            acc[term.id] = false;
-          }
-          return acc;
-        }, {}) || {};
-
-      setCheckedTerms(initialCheckedTerms);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("/api/users");
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const users = await response.json();
-      const buyerMap: Record<string, string> = {};
-      const sellerMap: Record<string, string> = {};
-      users.forEach((user: { role: string; id: string | number; first_name: string; last_name: string; }) => {
-        if (user.role === "buyer") {
-          buyerMap[user.id] = `${user.first_name} ${user.last_name}`;
-        }
-        if (user.role === "seller") {
-          sellerMap[user.id] = `${user.first_name} ${user.last_name}`;
-        }
-      });
-      setBuyers(buyerMap);
-      setSellers(sellerMap);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setError("Failed to load users");
-    }
-  };
-
-  const handleTermCheck = (termId: string) => {
-    setCheckedTerms((prev) => ({
-      ...prev,
-      [termId]: !prev[termId],
-    }));
-  };
 
   const handleClosePopup = () => {
     setShowPopup(false);
+  };
+
+  const handleSubmit = async (): Promise<void> => {
+    throw new Error("Function not implemented.");
   };
 
   const handleRoleSelection = (role: UserRole) => {
@@ -108,32 +69,11 @@ const TermsAndConditions: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (response: { buyer_agreed?: boolean; seller_agreed?: boolean; }) => {
-    if (!agreement) return;
-    try {
-      const updatedAgreement = { ...agreement, ...response };
-      const res = await fetch(`/api/agreements/${agreement.agreement_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedAgreement),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update agreement");
-      }
-      const result: AgreementFormData = await res.json();
-      setAgreement(result);
-      setShowPopup(false);
-      if (userRole === UserRole.BUYER && result.buyer_agreed) {
-        router.push("/buyer/buyer_agree");
-      } else if (userRole === UserRole.SELLER && result.seller_agreed) {
-        router.push("/seller/seller_agree");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
-    }
+  const handleTermCheck = (termId: string) => {
+    setCheckedTerms((prev) => ({
+      ...prev,
+      [termId]: !prev[termId],
+    }));
   };
 
   if (loading) {
@@ -160,8 +100,8 @@ const TermsAndConditions: React.FC = () => {
 
   if (!agreement) return <div className="text-center py-4">No agreement found.</div>;
 
-  const buyerName = agreement.buyer ? buyers[agreement.buyer] : "Unknown Buyer";
-  const sellerName = agreement.seller ? sellers[agreement.seller] : "Unknown Seller";
+  const buyerDisplayName = agreement.buyer ? buyers[agreement.buyer] : "Unknown Buyer";
+  const sellerDisplayName = agreement.seller ? sellers[agreement.seller] : "Unknown Seller";
 
   return (
     <div className="flex">
@@ -171,10 +111,10 @@ const TermsAndConditions: React.FC = () => {
         <div className="mb-6 p-6 border rounded gap-x-10">
           <h2 className="text-lg font-semibold">Agreement Details</h2>
           <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Buyer Name:</strong> {buyerName}</p>
+            <p className="flex-1 text-white"><strong>Buyer Name:</strong> {buyerDisplayName}</p>
           </div>
           <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Seller Name:</strong> {sellerName}</p>
+            <p className="flex-1 text-white"><strong>Seller Name:</strong> {sellerDisplayName}</p>
           </div>
           <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
             <p className="flex-1 text-white"><strong>Parcel Number:</strong> {agreement.parcel_number || parcelNumber}</p>
@@ -205,24 +145,20 @@ const TermsAndConditions: React.FC = () => {
           </div>
         </div>
 
-        {agreement.terms && agreement.terms.map((term: Term) => (
+        {agreement.terms?.map((term: Term) => (
           <div key={term.id} className="mb-4 p-4 border rounded shadow bg-green-50 flex justify-between items-center">
             <div className="flex-1"><span>{term.text}</span></div>
             <div className="flex items-center">
               <input
                 type="checkbox"
                 checked={term.id ? checkedTerms[String(term.id)] || false : false}
-                onChange={() => {
-                  if (term.id !== undefined) {
-                    handleTermCheck(String(term.id));
-                  }
-                }}
+                onChange={() => handleTermCheck(String(term.id))}
                 className="form-checkbox h-5 w-5 text-green-600"
               />
             </div>
           </div>
         ))}
-        
+
         {(!getCookie("userRole") || getCookie("userRole") === "seller") && (
           <button
             onClick={() => handleRoleSelection(UserRole.SELLER)}
@@ -235,7 +171,7 @@ const TermsAndConditions: React.FC = () => {
         {showPopup && agreement && (
           <ContractReviewPopup
             onClose={handleClosePopup}
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit} 
             agreement={agreement}
             userRole={userRole}
             onAgreementUpdate={() => fetchAgreements(parcelNumber)} 

@@ -72,7 +72,11 @@ export interface LandDetails {
   longitude: string;
 }
 
+// Updated User interface to use specific types
 export interface User {
+  id: string; // Assuming id is a string, please adjust if it's a number
+  last_name: string;
+  first_name: string;
   phone_number: string;
   role: string;
   password: string;
@@ -108,11 +112,10 @@ export interface User {
 }
 
 export interface UserLogin {
- 
-  role: string; 
-
+  role: unknown;
   phone_number: string;
   password: string;
+  
 }
 
 export interface UserDatas {
@@ -128,7 +131,7 @@ export interface UserDatas {
 
 export interface LandPlot {
   owner_name: string;
-  latitude: number;
+  latitude: number;   
   longitude: number;
   id: string;
   location_name: string;
@@ -137,12 +140,12 @@ export interface LandPlot {
 declare module 'cookie' {
   interface Cookies {
     get(name: string): string | undefined;
-    getJSON<T>(name: string): T | undefined;
-    set(name: string, value: string | object, options?: Record<string, unknown>): void;
-    remove(name: string, options?: Record<string, unknown>): void;
+    getJSON<T>(name: string): T | undefined; 
+    set(name: string, value: string | object, options?: Record<string, unknown>): void; 
+    remove(name: string, options?: Record<string, unknown>): void; 
   }
 
-  const Cookies: Cookies;
+  const Cookies: Cookies; 
 }
 
 export interface Term {
@@ -156,24 +159,24 @@ export interface Term {
 }
 
 export interface AgreementFormData {
+  terms: Term[]; // Changed to an array of Term objects
   agreement_id: number;
-  buyer: string;
-  seller: string;
-  lawyer?: string;
   parcel_number: string;
-  date_created: string;
+  seller: string;
+  buyer: string;
+  lawyer: string;
   contract_duration: number;
+  date_created: string;
   agreed_amount: number;
-  installment_schedule: number;
+  installment_schedule: number; 
   penalties_interest_rate: number;
   down_payment: number;
-  remaining_amount: number;
-  total_amount_made?: number;
-  terms?: Term[];
-  buyer_agreed?: boolean;
-  seller_agreed?: boolean;
+  buyer_agreed: string;
+  seller_agreed: string;
   terms_and_conditions: string;
   transaction_count: number;
+  remaining_amount: number;
+  total_amount_made: number;
   agreement_hash: string;
   previous_hash: string;
   transactions_history: string;
@@ -203,11 +206,6 @@ export interface AgreementType {
   agreement_hash?: string;
   previous_hash?: string;
   transactions_history?: string;
-}
-
-export interface Term {
-  id?: string | number; 
-  text: string;
 }
 
 export interface ContractReviewPopupProps {

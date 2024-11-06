@@ -1,11 +1,13 @@
-'use client'
+'use client';
+
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next";
 import * as yup from "yup";
-import LawyerSidebar from "../components/lawyerSidebar";
+import LawyerSidebar from "../components/Lawyersidebar";
+
 type AgreementFormData = {
   parcel_number: string;
   date_created: string;
@@ -14,14 +16,21 @@ type AgreementFormData = {
   installment_schedule: number;
   penalties_interest_rate: number;
   down_payment: number;
-  remaining_amount: number;
-  total_amount_made: number;
   buyer_id: string;
   seller_id: string;
 };
+
 type ErrorType = {
   message: string;
 };
+
+type User = {
+  id: string | number; 
+  first_name: string;
+  last_name: string;
+  role: string;
+};
+
 const agreementSchema = yup.object().shape({
   buyer_id: yup.string().required("Buyer selection is required"),
   seller_id: yup.string().required("Seller selection is required"),
@@ -50,15 +59,8 @@ const agreementSchema = yup.object().shape({
     .number()
     .required("Down payment is required")
     .positive("Must be a positive number"),
-  remaining_amount: yup
-    .number()
-    .required("Remaining amount is required")
-    .positive("Must be a positive number"),
-  total_amount_made: yup
-    .number()
-    .required("Total amount made is required")
-    .positive("Must be a positive number"),
 });
+
 const CreateAgreement = () => {
   const router = useRouter();
   const { loading, error } = useNewAgreements();
@@ -67,6 +69,7 @@ const CreateAgreement = () => {
   const [buyers, setBuyers] = useState<{ id: string; name: string }[]>([]);
   const [sellers, setSellers] = useState<{ id: string; name: string }[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  
   const {
     register,
     handleSubmit,
@@ -74,25 +77,27 @@ const CreateAgreement = () => {
   } = useForm<AgreementFormData>({
     resolver: yupResolver(agreementSchema),
   });
+
   useEffect(() => {
     setCookie("userRole", "lawyer", { maxAge: 3600 });
     fetchUsers();
   }, []);
+
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/users');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
-      const buyersList = data.filter((user: any) => user.role === 'buyer')
-        .map((user: any) => ({
-          id: user.id,
+      const data: User[] = await response.json();
+      const buyersList = data.filter((user) => user.role === 'buyer')
+        .map((user) => ({
+          id: String(user.id), // Convert to string
           name: `${user.first_name} ${user.last_name}`,
         }));
-      const sellersList = data.filter((user: any) => user.role === 'seller')
-        .map((user: any) => ({
-          id: user.id,
+      const sellersList = data.filter((user) => user.role === 'seller')
+        .map((user) => ({
+          id: String(user.id), // Convert to string
           name: `${user.first_name} ${user.last_name}`,
         }));
       setBuyers(buyersList);
@@ -104,17 +109,19 @@ const CreateAgreement = () => {
       setFetchError(error instanceof Error ? error.message : 'Failed to fetch users');
     }
   };
+
   const onSubmit = async (data: AgreementFormData) => {
     const transformedData = {
       ...data,
       date_created: data.date_created.toString().split("T")[0],
-      buyer: data.buyer_id,   // Updated field name
-      seller: data.seller_id,  // Updated field name
+      buyer: data.buyer_id,
+      seller: data.seller_id,
+      parcel_number: data.parcel_number,
     };
-
+  
     setSubmitting(true);
     setSubmitError(null);
-
+  
     try {
       const response = await fetch("/api/agreements", {
         method: "POST",
@@ -123,7 +130,7 @@ const CreateAgreement = () => {
         },
         body: JSON.stringify(transformedData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
@@ -131,10 +138,11 @@ const CreateAgreement = () => {
           "Failed to create agreement"
         );
       }
-
+  
       const newAgreement = await response.json();
       console.log("New Agreement: ", newAgreement);
-      router.push(`/lawyer/components/agreementnext?agreement_id=${newAgreement.agreement_id}&buyer_id=${data.buyer_id}&seller_id=${data.seller_id}`);
+  
+      router.push(`/lawyer/agreementnext?agreement_id=${newAgreement.agreement_id}&buyer_id=${data.buyer_id}&seller_id=${data.seller_id}&parcel_number=${data.parcel_number}`);
     } catch (error) {
       console.error("Failed to submit agreement:", error);
       setSubmitError(error instanceof Error ? error.message : "An unexpected error occurred.");
@@ -142,6 +150,7 @@ const CreateAgreement = () => {
       setSubmitting(false);
     }
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -149,6 +158,7 @@ const CreateAgreement = () => {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="text-center py-4">
@@ -162,6 +172,7 @@ const CreateAgreement = () => {
       </div>
     );
   }
+
   const formFields = [
     { label: "Parcel Number", name: "parcel_number", type: "text" },
     { label: "Date Created", name: "date_created", type: "date" },
@@ -170,9 +181,8 @@ const CreateAgreement = () => {
     { label: "Installment Schedule (in months)", name: "installment_schedule", type: "number" },
     { label: "Penalties Interest Rate (%)", name: "penalties_interest_rate", type: "number" },
     { label: "Down Payment", name: "down_payment", type: "number" },
-    { label: "Remaining Amount", name: "remaining_amount", type: "number" },
-    { label: "Total Amount Made", name: "total_amount_made", type: "number" },
   ];
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <LawyerSidebar />
@@ -254,7 +264,9 @@ const CreateAgreement = () => {
     </div>
   );
 };
+
 export default CreateAgreement;
+
 function useNewAgreements() {
   return { loading: false, error: null as ErrorType | null };
 }

@@ -7,7 +7,7 @@ import { MdDelete, MdClose } from "react-icons/md";
 import { AiFillCamera } from "react-icons/ai";
 import Modal from "react-modal";
 import Image from "next/image";
-import BuyerSidebar from "../components/buyerSidebar";
+import BuyerSidebar from "../components/Buyersidebar";
 
 const Profile = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);

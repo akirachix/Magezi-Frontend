@@ -72,12 +72,12 @@ export interface LandDetails {
   longitude: string;
 }
 
-export interface User{
-    phone_number: string;
-    role: string;
-    password:string;
-
+export interface User {
+  phone_number: string;
+  role: string;
+  password: string;
 }
+
 export interface Transaction {
   date: string;
   status: string;
@@ -87,7 +87,7 @@ export interface Transaction {
 export interface NotificationData {
   message: string;
   timestamp: string;
-  type:string
+  type: string;
 }
 
 export interface UserProfile {
@@ -108,33 +108,16 @@ export interface User {
 }
 
 export interface UserLogin {
+ 
+  role: string; 
 
   phone_number: string;
   password: string;
-  
 }
-
-// export interface UserLogin {
-//   // message: string;
-//   // first_name: string;
-//   // last_name: string;
-//     phone_number: string;
-//   password: string;
-//   role: string;
-//   userId?: string;  // Add this if your backend provides it
-// }
-
-// interface LoginResponse {
-//   message: string;
-//   first_name: string;
-//   last_name: string;
-//   role: string;
-//   userId?: string;  // Add this if your backend provides it
-// }
 
 export interface UserDatas {
   name: ReactNode;
-  id:string;
+  id: string;
   first_name: string;
   last_name: string;
   phone_number: string;
@@ -143,27 +126,24 @@ export interface UserDatas {
   role: 'buyer' | 'seller' | 'lawyer';
 }
 
-
 export interface LandPlot {
   owner_name: string;
-  latitude: number;   
+  latitude: number;
   longitude: number;
   id: string;
   location_name: string;
 }
 
-
 declare module 'cookie' {
   interface Cookies {
     get(name: string): string | undefined;
-    getJSON<T>(name: string): T | undefined; 
-    set(name: string, value: string | object, options?: Record<string, unknown>): void; 
-    remove(name: string, options?: Record<string, unknown>): void; 
+    getJSON<T>(name: string): T | undefined;
+    set(name: string, value: string | object, options?: Record<string, unknown>): void;
+    remove(name: string, options?: Record<string, unknown>): void;
   }
 
-  const Cookies: Cookies; 
+  const Cookies: Cookies;
 }
-
 
 export interface Term {
   text: string;
@@ -174,27 +154,6 @@ export interface Term {
   description: string;
   value: string;
 }
-
-
-// export interface AgreementFormData {
-//   agreement_id: number;
-//   buyer: string;
-//   seller: string;
-//   lawyer?: string;
-//   parcel_number: string;
-//   date_created: string;
-//   contract_duration: number;
-//   agreed_amount: number;
-//   installment_schedule: number;
-//   penalties_interest_rate: number;
-//   down_payment: number;
-//   remaining_amount: number;
-//   total_amount_made?: number;
-//   terms?: Term[];
-//   buyer_agreed?: boolean;
-//   seller_agreed?: boolean;
-// }
-
 
 export interface AgreementFormData {
   agreement_id: number;
@@ -213,24 +172,8 @@ export interface AgreementFormData {
   terms?: Term[];
   buyer_agreed?: boolean;
   seller_agreed?: boolean;
-  // terms: [];
-  // agreement_id: number;
-  // parcel_number: string;
-  // seller: string;
-  // buyer: string;
-  // lawyer: string;
-  // contract_duration: number;
-  // date_created: string;
-  // agreed_amount: number;
-  // installment_schedule: number; 
-  // penalties_interest_rate: number;
-  // down_payment: number;
-  // buyer_agreed: string;
-  // seller_agreed: string;
   terms_and_conditions: string;
   transaction_count: number;
-  // remaining_amount: number;
-  // total_amount_made: number;
   agreement_hash: string;
   previous_hash: string;
   transactions_history: string;
@@ -263,21 +206,17 @@ export interface AgreementType {
 }
 
 export interface Term {
-  id?: string | number; // Adjusted to 'string | number | undefined'
+  id?: string | number; 
   text: string;
 }
 
-
 export interface ContractReviewPopupProps {
-  
   onClose: () => void;
   onAgreementUpdate: () => void;
   onSubmit: (response: { buyer_agreed?: boolean; seller_agreed?: boolean }) => Promise<void>; 
   latestTerm?: Term;
   agreement: AgreementFormData;
   userRole: UserRole;
-     
-
 }
 
 export interface Transaction {
@@ -293,7 +232,6 @@ export interface APIResponse<T> {
   error?: string;
 }
 
-
 export enum UserRole {
   EMPTY = "", 
   BUYER = 'buyer',
@@ -301,7 +239,6 @@ export enum UserRole {
   LAWYER = 'lawyer',
   ADMIN = 'admin',
 }
-
 
 export enum AgreementStatus {
   PENDING = 'pending',

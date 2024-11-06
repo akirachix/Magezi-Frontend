@@ -10,7 +10,7 @@ import { UserDatas } from "@/app/utils/types";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
 import InviteLawyerModal from "@/app/(lawyer)/lawyer/components/Invite-lawyer";
-import LawyerSidebar from "../components/lawyerSidebar";
+import LawyerSidebar from "../components/Lawyersidebar";
 
 type GetUserType = {
   id: string;
@@ -152,9 +152,7 @@ const ChatRoom: React.FC = () => {
     setIsUserListVisible(false);
   };
 
-  const handleInviteLawyerClick = () => {
-    setIsModalOpen(true);
-  };
+
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -372,16 +370,7 @@ const ChatRoom: React.FC = () => {
                 <Send />
               </button>
             </form>
-<<<<<<< HEAD
         
-=======
-            {/* <button
-              className="w-full mt-2 bg-hover text-white hover:bg-green-600 p-2 rounded"
-              onClick={handleInviteLawyerClick}
-            >
-              Invite Lawyer
-            </button> */}
->>>>>>> 9947671e6511558c86099ccd95d79281780e6fb2
           </div>
 
           {errorMessage && (

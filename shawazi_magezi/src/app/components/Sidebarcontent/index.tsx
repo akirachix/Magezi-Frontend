@@ -1,6 +1,3 @@
-
-
-
 'use client';
 
 import React, { useState } from 'react';
@@ -38,7 +35,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
   return (
     <div className="relative h-full">
 
-      <button onClick={toggleSidebar} className="absolute top-4 left-4 md:hidden p-4 z-50">
+      <button 
+        onClick={toggleSidebar} 
+        className="absolute top-4 left-4 p-4 z-50 md:hidden"
+      >
         {isSidebarOpen ? (
           <MdClose className="w-8 h-8 text-primary" />
         ) : (
@@ -46,7 +46,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
         )}
       </button>
 
-      <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transition-transform duration-300 z-40 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      <div 
+        className={`fixed top-0 left-0 h-full bg-white shadow-lg transition-transform duration-300 z-40 
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        md:translate-x-0 md:w-64 lg:w-72`}
+      >
         <div className="p-4">
           <Image
             src="/images/shawazilogo.png"
@@ -77,7 +81,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ menuItems }) => {
         <div className="mt-auto p-4">
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="flex items-center w-full mt-[110%] px-4 py-2 text-primary hover:bg-orange-100 rounded-lg transition-colors"
+            className="flex items-center w-full mt-4 px-4 py-2 text-primary hover:bg-orange-100 rounded-lg transition-colors"
           >
             <MdOutlineSettings className="w-6 h-6 mr-4" />
             <span className="text-sm md:text-base lg:text-lg font-medium">

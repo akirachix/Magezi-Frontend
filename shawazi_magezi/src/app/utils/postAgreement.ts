@@ -24,3 +24,22 @@ export const patchAgreement = async (id: string, data: FormData) => {
     }
   }
 };
+
+import { AgreementFormData } from "./types";
+
+export const fetchAgreements = async (parcelNumber: string): Promise<AgreementFormData[]> => {
+  try {
+    const response = await fetch(`/api/agreements?parcel_number=${parcelNumber}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch agreements: ${response.status}`);
+    }
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid agreement data format");
+    }
+    return data;
+  } catch (error) {
+    console.error('Error fetching agreements:', error);
+    throw error;
+  }
+};

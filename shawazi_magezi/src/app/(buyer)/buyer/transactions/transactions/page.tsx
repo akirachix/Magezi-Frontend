@@ -2,7 +2,7 @@
 import { formatDate } from "@/app/utils/formatDate";
 import Link from "next/link";
 import useTransactions from "@/app/hooks/useTransactions";
-import BuyerSidebar from "../../components/buyerSidebar";
+import BuyerSidebar from "../../components/Buyersidebar";
 
 
 const TransactionsDisplay = () => {

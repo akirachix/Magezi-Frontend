@@ -10,7 +10,7 @@ import { UserDatas } from "@/app/utils/types";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
 import InviteLawyerModal from "@/app/(lawyer)/lawyer/components/Invite-lawyer";
-import LawyerSidebar from "../components/lawyerSidebar";
+import LawyerSidebar from "../components/Lawyersidebar";
 
 type GetUserType = {
   id: string;
@@ -70,7 +70,7 @@ const ChatRoom: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!loading && users) {
+    if (!loading && Array.isArray(users)) { // Ensure users is an array before filtering
       const filteredUsers: GetUserType[] = users.filter((user) => {
         if (currentUserRole === "lawyer") {
           return user.role === "buyer" || user.role === "seller";
@@ -130,6 +130,7 @@ const ChatRoom: React.FC = () => {
       handleSendMessage(e);
     }
   };
+
   const filteredMessages = selectedUser
     ? localMessages.filter((message: MessageType) => {
         const senderMatch =
@@ -150,10 +151,6 @@ const ChatRoom: React.FC = () => {
   const startConversation = (user: GetUserType) => {
     setSelectedUser(user);
     setIsUserListVisible(false);
-  };
-
-  const handleInviteLawyerClick = () => {
-    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -372,12 +369,6 @@ const ChatRoom: React.FC = () => {
                 <Send />
               </button>
             </form>
-            <button
-              className="w-full mt-2 bg-hover text-white hover:bg-green-600 p-2 rounded"
-              onClick={handleInviteLawyerClick}
-            >
-              Invite Lawyer
-            </button>
           </div>
 
           {errorMessage && (

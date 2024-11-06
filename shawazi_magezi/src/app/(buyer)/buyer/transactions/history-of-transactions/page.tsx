@@ -4,7 +4,7 @@ import { formatDate } from "@/app/utils/formatDate";
 import useTransactions from "@/app/hooks/useTransactions";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
-import BuyerSidebar from "../../components/buyerSidebar";
+import BuyerSidebar from "../../components/Buyersidebar";
 
 
 

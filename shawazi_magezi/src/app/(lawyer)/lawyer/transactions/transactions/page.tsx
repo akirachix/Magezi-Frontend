@@ -2,7 +2,7 @@
 import { formatDate } from "@/app/utils/formatDate";
 import Link from "next/link";
 import useTransactions from "@/app/hooks/useTransactions";
-import LawyerSidebar from "../../components/lawyerSidebar";
+import LawyerSidebar from "../../components/Lawyersidebar";
 
 
 

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,17 +11,38 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import { loginUser } from "@/app/utils/userLogin";
 import { useRouter } from "next/navigation";
 import { setCookie, getCookie } from "cookies-next";
-import { UserLogin } from "../utils/types";
+
+interface LoginFormData {
+  phone_number: string;
+  password: string;
+  role?: string; 
+}
+
+interface LoginResponse {
+  message: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+}
 
 const schema = yup.object().shape({
   phone_number: yup.string().required("Phone number is required"),
   password: yup.string().required("Password is required"),
+  role: yup.string().optional() 
 });
 
 const Login = () => {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<UserLogin>({
-    resolver: yupResolver(schema),
+  const { 
+    register, 
+    handleSubmit, 
+    setValue, 
+    formState: { errors } 
+  } = useForm<LoginFormData>({
+    resolver: yupResolver<LoginFormData>(schema), 
     mode: 'onChange',
+    defaultValues: {
+      role: 'user'
+    }
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,12 +59,18 @@ const Login = () => {
     }
   }, [setValue]);
 
-  const onSubmit = async (data: UserLogin) => {
+  const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
     setError("");
 
     try {
-      const loginResponse = await loginUser(data);
+
+      const loginData = {
+        ...data,
+        role: data.role || 'user' 
+      };
+
+      const loginResponse = await loginUser(loginData) as LoginResponse;
       if (loginResponse) {
         const { message, first_name, last_name, role } = loginResponse;
 
@@ -167,7 +195,7 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-4 text-center">
-           Don&#39;t have an account?{" "}
+          Don&#39;t have an account?{" "}
           <Link href="/register" className="text-primary underline">
             Sign up 
           </Link>

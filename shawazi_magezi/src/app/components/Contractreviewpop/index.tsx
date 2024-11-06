@@ -76,7 +76,11 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
           <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
             <h2 className="text-lg font-semibold text-indigo-500">Agreement Details</h2>
             {[
-              { label: "Parcel Number", value: localAgreement.parcel_number },
+              // { label: "Parcel Number", value: localAgreement.parcel_number },
+              { 
+                label: "Parcel Number", 
+                value: localAgreement.parcel_number
+              },
               { label: "Date Created", value: new Date(localAgreement.date_created).toLocaleDateString() },
               { label: "Contract Duration", value: `${localAgreement.contract_duration} months` },
               { label: "Agreed Amount", value: `Ksh ${localAgreement.agreed_amount}` },

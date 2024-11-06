@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import BuyerSidebar from "../components/buyerSidebar";
+import BuyerSidebar from "../components/Buyersidebar";
 const ChatRoomPage = () => {
   return (
     <div className="flex flex-col items-center justify-start text-center mb-10 p-4 md:ml-[5%] lg:ml-[3%]">

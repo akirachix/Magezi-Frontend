@@ -8,7 +8,7 @@ import { LandDetails, UserDatas } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import LandSearch from "../components/Searchbar";
 import Cookies from "js-cookie";
-import BuyerSidebar from "../components/buyerSidebar";
+import BuyerSidebar from "../components/Buyersidebar";
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
 function LandDetailsList() {
@@ -125,11 +125,9 @@ function LandDetailsList() {
   };
   return (
     <div className="flex flex-col md:flex-row">
-      {/* Sidebar */}
       <div className="w-full md:w-64 md:fixed md:top-0 md:left-0 md:h-full">
         <BuyerSidebar />
       </div>
-      {/* Main content */}
       <div className="w-full md:ml-64 pt-20 transition-all duration-300">
         <div className="container mx-auto px-4">
           <div className="bg-[#D0F1A1] p-6 rounded-lg mb-8">

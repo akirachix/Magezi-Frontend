@@ -128,7 +128,7 @@ const TermsAndConditions: React.FC = () => {
       if (userRole === UserRole.BUYER && result.buyer_agreed) {
         router.push("/buyer/buyer_agree");
       } else if (userRole === UserRole.SELLER && result.seller_agreed) {
-        router.push("/Seller_agree");
+        router.push("/seller/seller_agree");
       }
     } catch (err) {
       setError(
@@ -262,7 +262,7 @@ const TermsAndConditions: React.FC = () => {
         )}
 
         {(!getCookie("userRole") || getCookie("userRole") === "lawyer") && (
-          <Link href="/Lawyer_agree">
+          <Link href="/lawyer/lawyer_agree">
             <button
               onClick={() => {
                 handleRoleSelection(UserRole.LAWYER);

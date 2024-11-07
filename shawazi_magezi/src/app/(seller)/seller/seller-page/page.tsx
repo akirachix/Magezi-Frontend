@@ -360,6 +360,16 @@
 
 // export default SellerPage;
 
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { FC, useEffect, useState } from "react";
@@ -367,6 +377,7 @@ import Link from "next/link";
 import { Transaction } from "@/app/utils/types";
 import SellerNotifications from "@/app/components/Notificationbell";
 import LocationMap from "../components/LocationMap";
+import Sidebar from "@/app/(admin)/admin/components/Sidebar";
 
 const SellerPage: FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -409,6 +420,9 @@ const SellerPage: FC = () => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen mt-10">
       <div className="flex-1 p-4 sm:p-6 lg:p-8">
+        <Sidebar setActiveChart={function (chartName: string): void {
+          throw new Error("Function not implemented.");
+        } }/>
         <div className="flex justify-end mb-4">
           <SellerNotifications />
         </div>
@@ -419,7 +433,7 @@ const SellerPage: FC = () => {
           </h2>
         </header>
 
-        <section className="mb-8">
+        <section className="mb-8 ml-80">
           <h2 className="text-xl sm:text-xl lg:text-2xl font-semibold text-primary mb-4">
             Your Current Area
           </h2>
@@ -432,11 +446,13 @@ const SellerPage: FC = () => {
               Go to chats
             </button>
           </Link>
+
           <Link href="/transactions/upload_transactions" className="block">
             <button className="bg-yellow-500 w-full lg:h-40 sm:h-10 text-lg sm:text-xl text-white py-4 sm:py-6 px-2 sm:px-4 rounded-md shadow-lg hover:bg-yellow-600 transition-colors">
               Upload receipt of payment
             </button>
           </Link>
+
           <Link href="/profile" className="block">
             <button className="bg-yellow-500 w-full lg:h-40 sm:h-10  text-lg sm:text-xl text-white py-4 sm:py-6 px-2 sm:px-4 rounded-md shadow-lg hover:bg-yellow-600 transition-colors">
               View Profile

@@ -1,5 +1,5 @@
 "use client";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SetStateAction, useEffect, useState } from "react";
 import useDisplayLand from "@/app/hooks/useDisplayLand";
@@ -7,8 +7,9 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { LandDetails, UserDatas } from "@/app/utils/types";
 import { FaTh, FaList } from "react-icons/fa";
 import LandSearch from "../components/Searchbar";
+// import SideBar from "@/app/components/Sidebarpwa";
+import { fetchUsers } from "@/app/utils/fetchUsers";
 import Cookies from 'js-cookie';
-import BuyerSideBar from "../components/Buyer_sidebar";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const ITEMS_PER_PAGE = 6;
@@ -42,6 +43,7 @@ function LandDetailsList() {
   const [loadingStates, setLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
+ 
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,65 +80,53 @@ function LandDetailsList() {
     width: "100%",
     height: "250px",
   };
-
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const handleInterestClick = async (land: LandDetails) => {
     setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: true }));
+  
     try {
       const userPhone = Cookies.get("userPhone");
       if (!userPhone) {
         toast.error("User is not logged in!");
         return;
       }
-      const response = await fetch(`${BASE_URL}/api/users/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data.");
-      }
-      const users: UserDatas[] = await response.json();
+  
+      const users: UserDatas[] = await fetchUsers();
       const currentUser = users.find((user) => user.phone_number === userPhone);
       if (!currentUser) {
         toast.error("User not found!");
         return;
       }
+  
       if (!currentUser.first_name || !currentUser.last_name) {
         toast.error("Invalid buyer data!");
         return;
       }
+  
       const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
       const notificationData = {
         message: `A buyer named ${buyerName} is interested in your land in ${land.location_name}!`,
         timestamp: new Date().toISOString(),
       };
-      console.log('Notification Data:', notificationData);
-      const postResponse = await fetch(
-        `${BASE_URL}/api/notify-seller/${land.land_details_id}/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(notificationData),
-        }
-      );
-      if (!postResponse.ok) {
-        const errorMessage = await postResponse.text();
-        console.error("Error response:", errorMessage);
-        throw new Error("Failed to send notification.");
-      }
-      Cookies.set('buyerNotification', JSON.stringify(notificationData), { expires: 7 });
-      toast.success("Interest expressed successfully. Notification sent to seller.");
+  
+      console.log("Interest expressed:", {
+        landId: land.land_details_id,
+        ...notificationData
+      });
+  
+      toast.success("Interest expressed successfully.");
     } catch (error) {
       console.error("Error:", error);
-      toast.error("This land is already under consideration by another buyer.");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to express interest. Please try again later.");
+      }
     } finally {
       setLoadingStates((prev) => ({ ...prev, [land.land_details_id]: false }));
     }
   };
+
+  
   return (
     <div
       className={`relative ${
@@ -266,7 +256,7 @@ function LandDetailsList() {
         </div>
       </div>
       <ToastContainer />
-      <BuyerSideBar userRole={""}/>
+      {/* <BuyerSideBar userRole={""}/> */}
     </div>
   );
 }

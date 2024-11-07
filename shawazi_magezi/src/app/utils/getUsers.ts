@@ -17,7 +17,10 @@ export const fetchUsers = async () => {
       console.error('Error in fetchUsers:', error);
       throw error;
     }
+    
   };
+
+
   
   
 

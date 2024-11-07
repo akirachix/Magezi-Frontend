@@ -1,6 +1,6 @@
-export const fetchUsers = async () => {
+export const fetchTransactions = async () => {
   try {
-    const response = await fetch('/admin/api/users', {
+    const response = await fetch('/api/transactions', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -14,40 +14,8 @@ export const fetchUsers = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error in fetchUsers:', error);
+    console.error('Error in fetchTransactions:', error);
     throw error;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -69,7 +69,7 @@ const DocumentViewer = () => {
     const doc = new jsPDF();
     const lineHeight = 10;
     let yPosition = 20;
-    const pageWidth = doc.internal.pageSize.width; // Changed to const
+    const pageWidth = doc.internal.pageSize.width; 
 
     const addText = (text: string, fontSize: number = 12, align: string = 'left') => {
       doc.setFontSize(fontSize);
@@ -98,7 +98,6 @@ const DocumentViewer = () => {
       }
     };
 
-    // Generate document content
     doc.setFont("helvetica", "bold");
     addText("LAND SALE AGREEMENT", 18, 'center');
     addText("(INSTALLMENT PURCHASE)", 16, 'center');
@@ -114,7 +113,6 @@ const DocumentViewer = () => {
     addText(`AND`);
     addText(`${agreement.buyer?.first_name || '[Buyer First Name]'} ${agreement.buyer?.last_name || '[Buyer Last Name]'} (hereinafter called 'the Buyer')`);
 
-    // Property Description
     addSection("1. PROPERTY DESCRIPTION");
     addText("1.1 The Seller agrees to sell and the Buyer agrees to purchase:");
     addText(`Location: Latitude ${agreement.parcel_number?.latitude || '[Latitude]'}`);
@@ -123,7 +121,6 @@ const DocumentViewer = () => {
     addText("1.3 Approximate Area: [Insert Area] hectares/acres");
     addText("1.4 The property includes all improvements, fixtures, and natural resources thereon.");
 
-    // Purchase Price
     addSection("2. PURCHASE PRICE AND PAYMENT TERMS");
     addText(`2.1 Total Purchase Price: ${formatCurrency(agreement.agreed_amount)}`);
     addText(`2.2 Down Payment: ${formatCurrency(agreement.down_payment)}`);
@@ -134,7 +131,6 @@ const DocumentViewer = () => {
     addText("    Due Date: 1st day of each month");
     addText("2.6 Payment Method: Through approved banking channels or mobile money transfer");
 
-    // Due Diligence
     addSection("3. DUE DILIGENCE AND REPRESENTATIONS");
     addText("3.1 The Seller warrants:");
     addText("    a) They have legitimate title to the property");
@@ -145,7 +141,6 @@ const DocumentViewer = () => {
     addText("    b) They have verified the title documents");
     addText("    c) They have conducted necessary searches at the lands office");
 
-    // Save the PDF
     doc.save(`land-sale-agreement-${agreement.agreement_id}.pdf`);
   };
 
@@ -167,7 +162,6 @@ const DocumentViewer = () => {
     }
   };
 
-  // Loading and error states
   if (loading) {
     return <div className="flex items-center justify-center p-6">Loading agreements...</div>;
   }

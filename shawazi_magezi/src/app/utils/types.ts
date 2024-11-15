@@ -158,32 +158,9 @@ export interface AgreementFormData {
   transactions_history: string;
   agreement: string;
 }
-// export interface AgreementType {
-//   agreement_id: string | null | undefined;
-//   id?: number;
-//   parcel_number: string;
-//   agreed_amount: number;
-//   buyer_agreed: boolean;
-//   seller_agreed: boolean;
-//   date_created: string;
-//   terms?: string;
-//   buyer?: string;
-//   seller?: string;
-//   lawyer?: string;
-//   contract_duration?: number;
-//   installment_schedule?: string;
-//   penalties_interest_rate?: number;
-//   down_payment?: number;
-//   terms_and_conditions?: string;
-//   transaction_count?: number;
-//   remaining_amount?: number;
-//   total_amount_made?: number;
-//   agreement_hash?: string;
-//   previous_hash?: string;
-//   transactions_history?: string;
-// }
+
   export interface AgreementType {
-    agreement_id: number;  // Ensure this is required
+    agreement_id: number;  
     buyer?: {
         first_name: string;
         last_name: string;
@@ -212,23 +189,7 @@ export interface AgreementFormData {
     lawyer?: string;
     terms?: string;
 }
-    // agreement_id: number;
-  // seller: { email: string };
-  // buyer: { email: string };
-  // agreed_amount: number;
-  // buyer_agreed: boolean;
-  // seller_agreed: boolean;
-// export interface AgreementType {
-//   agreement_id: number;
-//   seller: { email: string };
-//   buyer: { email: string };
-//   agreed_amount: number;
-//   buyer_agreed: boolean;
-//   seller_agreed: boolean;
-//   date_created: string;
-//   terms_and_conditions?: string;
-//   transactions_history: any[];
-// }
+
 export interface ContractReviewPopupProps {
   onClose: () => void;
   onAgreementUpdate: () => void;

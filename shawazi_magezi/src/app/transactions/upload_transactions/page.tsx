@@ -8,7 +8,7 @@ import { postTransaction } from "@/app/utils/postTransaction";
 import { fetchTransaction } from "@/app/utils/fetchTransaction";
 import { formatDate } from "@/app/utils/formatDate";
 import Cookies from "js-cookie"; 
-import SideBarPwa from "@/app/components/Sidebarpwa";
+// import SideBarPwa from "@/app/components/Sidebarpwa";
 
 interface Transaction {
   name: string;
@@ -90,7 +90,7 @@ const TransactionsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
-      <SideBarPwa userRole={""} />
+      {/* <SideBarPwa userRole={""} /> */}
       <div className="flex-1 p-4 sm:p-8 lg:p-16 overflow-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-primary text-center">
           Transactions

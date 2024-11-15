@@ -21,7 +21,7 @@ const ContractDrafting: React.FC = () => {
 
       <div className="flex-1 flex flex-col justify-center mt-6 md:mt-0">
         <div className="mb-6">
-          <Link href="/chatroom-page" className="text-secondary text-[18px] hover:foreground">
+          <Link href="/lawyer/chatroom-page" className="text-secondary text-[18px] hover:foreground">
             Link to the Negotiation
           </Link>
         </div>
@@ -33,7 +33,7 @@ const ContractDrafting: React.FC = () => {
           </label>
         </div>
 
-        <Link href="/lawyer/components/Agreements">
+        <Link href="/lawyer/agreements">
           <button className="bg-foreground text-white w-[60%] py-2 rounded-lg hover:bg-primary hover:text-foreground hover:border border-foreground transition duration-300 text-[16px] md:text-[20px] lg:text-[22px]">
             Start to draft contract
           </button>

@@ -4,14 +4,14 @@ import Link from "next/link";
 import useTransactions from "@/app/hooks/useTransactions";
 
 import ProgressBar from "@/app/components/Progressbar";
-import SideBarPwa from "@/app/components/Sidebarpwa";
+// import SideBarPwa from "@/app/components/Sidebarpwa";
 
 const TransactionsDisplay = () => {
   const { transactions, isLoading, error } = useTransactions();
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white">
-      <SideBarPwa userRole={""} />
+      {/* <SideBarPwa userRole={""} /> */}
 
       <div className="flex-grow p-6 md:mr-4 lg:mr-0">
         <header className="flex justify-center items-center p-4 w-full max-w-5xl">

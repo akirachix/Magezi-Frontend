@@ -336,3 +336,38 @@ export type OptionalProperties<T, K extends keyof T> = Omit<T, K> & Partial<Pick
 export type ReadonlyProperties<T> = {
   readonly [P in keyof T]: T[P];
 };
+
+
+
+// // types.ts
+// export enum UserRole {
+//   BUYER = 'buyer',
+//   SELLER = 'seller',
+//   LAWYER = 'lawyer',
+//   EMPTY = ''
+// }
+
+export interface Term {
+  // id: string;
+  text: string;
+  required: boolean;
+}
+
+export interface AgreementFormData {
+  // agreement_id: string;
+  parcel_number: string;
+  date_created: string;
+  contract_duration: number;
+  agreed_amount: number;
+  installment_schedule: number;
+  penalties_interest_rate: number;
+  down_payment: number;
+  remaining_amount: number;
+  total_amount_made: number;
+  created_by: string;
+  status: 'draft' | 'pending' | 'approved';
+  // terms?: Term[];
+  // buyer_agreed?: boolean;
+  // seller_agreed?: boolean;
+  lawyer_approved?: boolean;
+}

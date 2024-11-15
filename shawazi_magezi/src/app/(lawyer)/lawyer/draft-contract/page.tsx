@@ -5,10 +5,9 @@ import { CheckCircle, Settings, Shield } from "lucide-react";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import Link from "next/link";
-import SideBar from "@/app/components/Sidebarpwa";
+import LawyerSidebar from "../components/LawyerSidebar";
 
 const WelcomeSection = () => {
-
   const [userData, setUserData] = useState({
     username: "",
     userPhone: "",
@@ -41,13 +40,20 @@ const WelcomeSection = () => {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-white max-w-[100vw] lg:max-w-[80vw] mx-0 lg:ml-32">
-      <SideBar userRole={userData.user_role} />
-      <div className="flex flex-col flex-grow p-4 md:p-8 text-center">
+    <div className="flex min-h-screen bg-white">
+      {/* Sidebar */}
+      <div className="w-full md:w-[20%]">
+        <LawyerSidebar />
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex flex-col flex-grow p-4 md:p-8 text-center w-full md:w-[80%]">
         <h1 className="text-3xl md:text-4xl lg:text-4xl font-semibold text-gray-800 mt-6 md:mt-10 mb-6 md:mb-8">
           Welcome to The Shawazi Application
         </h1>
-        <div className="flex flex-col ml-20 md:flex-row mt-4 md:mt-6 items-center md:items-start gap-10 md:gap-20 lg:gap-32">
+        
+        <div className="flex flex-col md:flex-row mt-4 md:mt-6 items-center md:items-start gap-10 md:gap-20 lg:gap-32">
+          {/* Image */}
           <div className="w-full md:w-1/2 flex justify-center">
             <Image
               src="/media/low.png"
@@ -58,6 +64,7 @@ const WelcomeSection = () => {
             />
           </div>
 
+          {/* Features */}
           <div className="w-full md:w-1/2 space-y-6 md:space-y-8 lg:space-y-10">
             <div className="flex gap-4 md:gap-6">
               <CheckCircle className="text-black" size={30} />
@@ -81,12 +88,11 @@ const WelcomeSection = () => {
             </div>
           </div>
         </div>
-        
+
+        {/* Button */}
         <div className="mt-10 md:mt-20 flex justify-center">
-          <Link href="/lawyer/components/Link-to-join">
-            <button
-              className="bg-foreground text-white px-16 md:px-32 py-3 mt-10 md:mt-20 rounded-md text-lg hover:bg-primary transition duration-300 shadow-md"
-            >
+          <Link href="/lawyer/link-to-join">
+            <button className="bg-foreground text-white px-16 md:px-32 py-3 mt-10 md:mt-20 rounded-md text-lg hover:bg-primary transition duration-300 shadow-md">
               View Agreement
             </button>
           </Link>
@@ -95,4 +101,5 @@ const WelcomeSection = () => {
     </div>
   );
 };
+
 export default WelcomeSection;

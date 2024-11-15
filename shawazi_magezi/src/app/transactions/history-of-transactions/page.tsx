@@ -4,7 +4,7 @@ import { formatDate } from "@/app/utils/formatDate";
 import useTransactions from "@/app/hooks/useTransactions";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
-import SideBar from '@/app/components/Sidebarpwa';
+// import SideBar from '@/app/components/Sidebarpwa';
 
 interface Transaction {
   date: string;
@@ -114,7 +114,7 @@ const Transactionss = () => {
         </table>
       </div>
 
-      <SideBar userRole={""} />
+      {/* <SideBar userRole={""} /> */}
     </div>
   );
 };

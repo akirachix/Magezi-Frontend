@@ -170,8 +170,8 @@ export interface AgreementFormData {
         last_name: string;
     };
     parcel_number?: {
-        latitude: number | string; // Update to match actual response type
-        longitude: number | string; // Update to match actual response type
+        latitude: number | string; 
+        longitude: number | string; 
     };
     agreed_amount?: number;
     down_payment?: number;

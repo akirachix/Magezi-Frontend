@@ -27,6 +27,7 @@
     "express": "^4.21.0",
     "http-proxy-middleware": "^3.0.2",
     "js-cookie": "^3.0.5",
+    "jspdf": "^2.5.2",
     "leaflet": "^1.9.4",
     "leaflet.gridlayer.googlemutant": "^0.14.1",
     "lucide-react": "^0.446.0",

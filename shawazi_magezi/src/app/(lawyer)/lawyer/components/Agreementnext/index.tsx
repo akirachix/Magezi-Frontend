@@ -82,7 +82,7 @@ const TermsAndConditions: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-500"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-green-500"></div>
       </div>
     );
   }
@@ -90,10 +90,10 @@ const TermsAndConditions: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-4">
-        <p className="text-red-500 mb-4">{error}</p>
+        <p className="text-red-500 mb-4 text-lg">{error}</p>
         <button
           onClick={() => loadAgreements(parcelNumber)} 
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 text-lg"
         >
           Retry Loading Agreement
         </button>
@@ -101,7 +101,7 @@ const TermsAndConditions: React.FC = () => {
     );
   }
 
-  if (!agreement) return <div className="text-center py-4">No agreement found.</div>;
+  if (!agreement) return <div className="text-center py-4 text-lg">No agreement found.</div>;
 
   const buyerName = agreement.buyer ? buyers[agreement.buyer] : "Unknown Buyer";
   const sellerName = agreement.seller ? sellers[agreement.seller] : "Unknown Seller";
@@ -111,50 +111,50 @@ const TermsAndConditions: React.FC = () => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex flex-col lg:flex-row">
       <LawyerSidebar />
-      <div className="p-4 max-w-3xl mx-auto flex-grow">
-        <h1 className="text-2xl font-bold mb-4 text-center">Terms And Conditions</h1>
-        <div className="mb-6 p-6 border rounded gap-x-10">
-          <h2 className="text-lg font-semibold">Agreement Details</h2>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Buyer Name:</strong> {buyerName}</p>
+      <div className="p-6 max-w-3xl mx-auto flex-grow">
+        <h1 className="text-3xl font-bold mb-6 text-center">Terms And Conditions</h1>
+        <div className="mb-8 p-6 border rounded gap-x-10">
+          <h2 className="text-xl font-semibold">Agreement Details</h2>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Buyer Name:</strong> {buyerName}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Seller Name:</strong> {sellerName}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Seller Name:</strong> {sellerName}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Parcel Number:</strong> {agreement.parcel_number || parcelNumber}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Parcel Number:</strong> {agreement.parcel_number || parcelNumber}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Date Created:</strong> {new Date(agreement.date_created).toLocaleDateString()}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Date Created:</strong> {new Date(agreement.date_created).toLocaleDateString()}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Contract Duration:</strong> {agreement.contract_duration} months</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Contract Duration:</strong> {agreement.contract_duration} months</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Agreed Amount:</strong> Ksh {agreement.agreed_amount}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Agreed Amount:</strong> Ksh {agreement.agreed_amount}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Installment Schedule:</strong> {agreement.installment_schedule} months</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Installment Schedule:</strong> {agreement.installment_schedule} months</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Penalties Interest Rate:</strong> {agreement.penalties_interest_rate}%</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Penalties Interest Rate:</strong> {agreement.penalties_interest_rate}%</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Down Payment:</strong> Ksh {agreement.down_payment}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Down Payment:</strong> Ksh {agreement.down_payment}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Remaining Amount:</strong> Ksh {agreement.remaining_amount}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Remaining Amount:</strong> Ksh {agreement.remaining_amount}</p>
           </div>
-          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-4 rounded">
-            <p className="flex-1 text-white"><strong>Total Amount Made:</strong> Ksh {agreement.total_amount_made || 0}</p>
+          <div className="flex justify-between items-center my-4 bg-lightGreen shadow p-6 rounded">
+            <p className="flex-1 text-white text-lg"><strong>Total Amount Made:</strong> Ksh {agreement.total_amount_made || 0}</p>
           </div>
         </div>
 
         {agreement.terms && agreement.terms.map((term: Term) => (
-          <div key={term.id} className="mb-4 p-4 border rounded shadow bg-green-50 flex justify-between items-center">
-            <div className="flex-1"><span>{term.text}</span></div>
+          <div key={term.id} className="mb-6 p-6 border rounded shadow bg-green-50 flex justify-between items-center">
+            <div className="flex-1 text-lg"><span>{term.text}</span></div>
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -164,7 +164,7 @@ const TermsAndConditions: React.FC = () => {
                     handleTermCheck(String(term.id));
                   }
                 }}
-                className="form-checkbox h-5 w-5 text-green-600"
+                className="form-checkbox h-6 w-6 text-green-600"
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ const TermsAndConditions: React.FC = () => {
                 handleRoleSelection(UserRole.LAWYER);
                 setShowLawyerView((prev) => !prev);
               }}
-              className="mt-4 w-full bg-hover text-white p-2 rounded hover:bg-green-200"
+              className="mt-6 w-full bg-hover text-white py-3 rounded hover:bg-green-200 text-lg"
             >
               {showLawyerView ? "Hide Agreement Status" : "Check Who Agreed"}
             </button>
@@ -187,6 +187,7 @@ const TermsAndConditions: React.FC = () => {
         {showLawyerView && userRole === UserRole.LAWYER && (
           <button
             onClick={() => router.push(`/lawyer/lawyer_agree?parcel_number=${parcelNumber}`)}
+           
             className="mt-4 w-full bg-hover text-white p-2 rounded hover:bg-white"
           >
             Check Who Agreed

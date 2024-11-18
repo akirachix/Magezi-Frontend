@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { FileText as DocumentIcon, Download as DownloadIcon, EyeIcon } from 'lucide-react';
 import { AgreementType } from "@/app/utils/types";
 import { jsPDF } from 'jspdf';
-
 const DocumentViewer = () => {
   const [agreements, setAgreements] = useState<AgreementType[]>([]);
   const [selectedAgreement, setSelectedAgreement] = useState<AgreementType | null>(null);
@@ -11,11 +10,9 @@ const DocumentViewer = () => {
   const [error, setError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [latestId, setLatestId] = useState<number | null>(null);
-
   useEffect(() => {
     fetchAgreements();
   }, []);
-
   const fetchAgreements = async () => {
     try {
       const response = await fetch('/api/agreements/');
@@ -37,7 +34,6 @@ const DocumentViewer = () => {
       setLoading(false);
     }
   };
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       let progress = 0;
@@ -55,7 +51,6 @@ const DocumentViewer = () => {
       }, 200);
     }
   };
-
   const formatCurrency = (amount?: number) => {
     if (amount === undefined || amount === null) return "Ksh 0.00";
     return new Intl.NumberFormat('en-US', {
@@ -63,14 +58,12 @@ const DocumentViewer = () => {
       currency: 'KSH'
     }).format(amount);
   };
-
   const generatePDF = async (agreement: AgreementType) => {
     if (!agreement) return;
     const doc = new jsPDF();
     const lineHeight = 10;
     let yPosition = 20;
-    const pageWidth = doc.internal.pageSize.width; 
-
+    const pageWidth = doc.internal.pageSize.width;
     const addText = (text: string, fontSize: number = 12, align: string = 'left') => {
       doc.setFontSize(fontSize);
       if (align === 'center') {
@@ -81,7 +74,6 @@ const DocumentViewer = () => {
       }
       yPosition += lineHeight;
     };
-
     const addSection = (title: string) => {
       checkPageSpace(30);
       yPosition += 5;
@@ -90,14 +82,12 @@ const DocumentViewer = () => {
       doc.setFont("helvetica", "normal");
       yPosition += 2;
     };
-
     const checkPageSpace = (requiredSpace: number) => {
       if (yPosition + requiredSpace > 280) {
         doc.addPage();
         yPosition = 20;
       }
     };
-
     doc.setFont("helvetica", "bold");
     addText("LAND SALE AGREEMENT", 18, 'center');
     addText("(INSTALLMENT PURCHASE)", 16, 'center');
@@ -112,7 +102,6 @@ const DocumentViewer = () => {
     addText(`${agreement.seller?.first_name || '[Seller First Name]'} ${agreement.seller?.last_name || '[Seller Last Name]'} (hereinafter called 'the Seller')`);
     addText(`AND`);
     addText(`${agreement.buyer?.first_name || '[Buyer First Name]'} ${agreement.buyer?.last_name || '[Buyer Last Name]'} (hereinafter called 'the Buyer')`);
-
     addSection("1. PROPERTY DESCRIPTION");
     addText("1.1 The Seller agrees to sell and the Buyer agrees to purchase:");
     addText(`Location: Latitude ${agreement.parcel_number?.latitude || '[Latitude]'}`);
@@ -120,7 +109,6 @@ const DocumentViewer = () => {
     addText("1.2 Land Reference Number: [Insert LR Number]");
     addText("1.3 Approximate Area: [Insert Area] hectares/acres");
     addText("1.4 The property includes all improvements, fixtures, and natural resources thereon.");
-
     addSection("2. PURCHASE PRICE AND PAYMENT TERMS");
     addText(`2.1 Total Purchase Price: ${formatCurrency(agreement.agreed_amount)}`);
     addText(`2.2 Down Payment: ${formatCurrency(agreement.down_payment)}`);
@@ -130,7 +118,6 @@ const DocumentViewer = () => {
     addText(`    Monthly Payment: ${formatCurrency(agreement.installment_schedule && agreement.agreed_amount ? agreement.agreed_amount / agreement.installment_schedule : 0)}`);
     addText("    Due Date: 1st day of each month");
     addText("2.6 Payment Method: Through approved banking channels or mobile money transfer");
-
     addSection("3. DUE DILIGENCE AND REPRESENTATIONS");
     addText("3.1 The Seller warrants:");
     addText("    a) They have legitimate title to the property");
@@ -140,10 +127,8 @@ const DocumentViewer = () => {
     addText("    a) They have inspected the property");
     addText("    b) They have verified the title documents");
     addText("    c) They have conducted necessary searches at the lands office");
-
     doc.save(`land-sale-agreement-${agreement.agreement_id}.pdf`);
   };
-
   const viewAgreementDetails = async (id: number) => {
     try {
       setError(null);
@@ -161,14 +146,12 @@ const DocumentViewer = () => {
       setError(err instanceof Error ? err.message : 'Failed to load agreement details');
     }
   };
-
   if (loading) {
     return <div className="flex items-center justify-center p-6">Loading agreements...</div>;
   }
   if (error) {
     return <div className="text-red-600 p-6">{error}</div>;
   }
-
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="mb-6">
@@ -197,7 +180,6 @@ const DocumentViewer = () => {
           )}
         </div>
       </div>
-      {/* Display Agreements */}
       <div className="mt-8">
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Available Agreements</h3>
         <div className="space-y-4">
@@ -234,7 +216,6 @@ const DocumentViewer = () => {
           ))}
         </div>
       </div>
-
       {selectedAgreement && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-lg max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
@@ -251,7 +232,7 @@ const DocumentViewer = () => {
                   <li><strong>Interest Rate:</strong> 10% above base rate (Barclays Bank/Standard Chartered)</li>
                   <li><strong>Property Location:</strong> {selectedAgreement.parcel_number?.latitude || '[Latitude]'}, {selectedAgreement.parcel_number?.longitude || '[Longitude]'}</li>
                   <li><strong>Purchase Price:</strong> {formatCurrency(selectedAgreement.agreed_amount)}</li>
-
+11:39
                 </ul>
                 <h4 className="font-semibold text-lg mt-6">Financial Terms</h4>
                 <ul>
@@ -285,16 +266,7 @@ const DocumentViewer = () => {
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hash</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {selectedAgreement.transactions_history.map((transaction: { amount: number; timestamp: string; transaction_count: number; current_hash: string }, index: number) => (
-                          <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(transaction.amount)}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{new Date(transaction.timestamp).toLocaleString()}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{transaction.transaction_count}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 break-all">{transaction.current_hash}</td>
-                          </tr>
-                        ))}
-                      </tbody>
+  
                     </table>
                   </div>
                 </div>
@@ -359,3 +331,9 @@ const DocumentViewer = () => {
   );
 };
 export default DocumentViewer;
+
+
+
+
+
+

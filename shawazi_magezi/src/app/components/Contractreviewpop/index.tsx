@@ -1,21 +1,19 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, CheckCircle } from 'lucide-react';
 import { AgreementFormData, ContractReviewPopupProps } from '@/app/utils/types';
 
-
 const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
   agreement,
   onClose,
   onAgreementUpdate,
-  onSubmit,
   userRole,
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [localAgreement, setLocalAgreement] = useState<AgreementFormData>(agreement);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,25 +25,38 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
       setError('Agreement ID is missing. Cannot update agreement.');
       return;
     }
-
+    if (isSubmitting) {
+      return;
+    }
     setError(null);
     setSuccessMessage(null);
+    setIsSubmitting(true);
 
     try {
-      await onSubmit({
-        buyer_agreed: userRole === 'buyer' ? agreed : undefined,
-        seller_agreed: userRole === 'seller' ? agreed : undefined,
-      });
+      setLocalAgreement(prev => ({
+        ...prev,
+        buyer_agreed: userRole === 'buyer' ? agreed : prev.buyer_agreed,
+        seller_agreed: userRole === 'seller' ? agreed : prev.seller_agreed,
+      }));
 
-      onAgreementUpdate(); 
+      await onAgreementUpdate({ ...localAgreement, [userRole === 'buyer' ? 'buyer_agreed' : 'seller_agreed']: agreed });
+
       setSuccessMessage(agreed ? 'Contract agreement successful!' : 'You have disagreed with the contract.');
 
       setTimeout(() => {
         onClose();
-        router.push(userRole === 'buyer' ? '/buyer/buyer_agree' : userRole === 'seller' ? '/seller/seller_agree' : '/Lawyer_agree');
+        const redirectPath = userRole === 'buyer'
+          ? '/buyer/buyer_agree'
+          : userRole === 'seller'
+          ? '/seller/seller_agree'
+          : '/lawyer_agree'; 
+        router.push(redirectPath);
       }, 1000);
-    } catch {
+    } catch (error) {
+      console.error('Error in handleAgree:', error);
       setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,28 +70,21 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
               <X size={24} />
             </button>
           </div>
-
           {error && (
             <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
             </div>
           )}
-
           {successMessage && (
             <div className="mb-4 p-2 bg-green-100 border border-green-400 text-green-700 rounded flex items-center">
               <CheckCircle className="mr-2" size={20} />
               {successMessage}
             </div>
           )}
-
           <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
             <h2 className="text-lg font-semibold text-indigo-500">Agreement Details</h2>
             {[
-              // { label: "Parcel Number", value: localAgreement.parcel_number },
-              { 
-                label: "Parcel Number", 
-                value: localAgreement.parcel_number
-              },
+              { label: "Parcel Number", value: localAgreement.parcel_number },
               { label: "Date Created", value: new Date(localAgreement.date_created).toLocaleDateString() },
               { label: "Contract Duration", value: `${localAgreement.contract_duration} months` },
               { label: "Agreed Amount", value: `Ksh ${localAgreement.agreed_amount}` },
@@ -97,7 +101,6 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
               </div>
             ))}
           </div>
-
           {(userRole === 'buyer' || userRole === 'seller') && !successMessage && (
             <div className="mb-4">
               <p className="font-semibold text-lg">Do you agree to the terms?</p>
@@ -111,7 +114,6 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
               </div>
             </div>
           )}
-
           {userRole === 'lawyer' && (
             <div className="mb-4">
               <h2 className="font-semibold text-lg">Agreement Status:</h2>
@@ -120,7 +122,6 @@ const ContractReviewPopup: React.FC<ContractReviewPopupProps> = ({
             </div>
           )}
         </div>
-
         <div className="p-4 bg-indigo-100 rounded-b-lg">
           <p className="mb-2 font-medium text-center text-gray-800">
             Both parties have a right to agree or disagree to the terms and conditions.
